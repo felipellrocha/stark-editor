@@ -16,7 +16,7 @@ class component extends Component {
     } = this.props;
 
     const rows = [...Array(grid.rows)].map((_, i) => {
-      return data.slice(i * grid.columns, i * grid.columns + (grid.columns - 1));
+      return data.slice(i * grid.columns, i * grid.columns + (grid.columns));
     });
 
     return (

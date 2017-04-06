@@ -8,6 +8,7 @@
   background: #fff;
   font-family: Helvetica Neue;
   box-sizing: border-box;
+  overflow: auto;
 
   h1 {
     font-weight: 100;

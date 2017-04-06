@@ -1,6 +1,7 @@
 :local(.component) {
   font-family: Helvetica Neue;
   background: #eee;
+  border: 1px solid #ddd;
 
   .row {
     display: flex;

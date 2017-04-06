@@ -1,28 +1,4 @@
 :local(.component) {
   font-family: Helvetica Neue;
   background: #eee;
-  border: 1px solid #ddd;
-
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 1px;
-
-    &:last-child {
-      margin-bottom: 0px;
-    }
-
-    .tile {
-      background: #fff;
-      margin-right: 1px;
-
-      &:last-child {
-        margin-right: 0px;
-      }
-
-      &:hover {
-        background: #eee;
-      }
-    }
-  }
 }
