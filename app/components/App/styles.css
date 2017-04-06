@@ -3,3 +3,7 @@ body {
   margin: 0;
   background: #eee;
 }
+
+:local(.component) {
+  margin: 15px 15px 15px 315px;
+}

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import type { Children } from 'react';
 
-import './styles.css';
+import styles from './styles.css';
 
 import {
   Sidebar,
@@ -16,7 +16,9 @@ export default class component extends Component {
     return (
       <div>
         <Sidebar />
-        {this.props.children}
+        <div className={styles.component}>
+          {this.props.children}
+        </div>
       </div>
     );
   }

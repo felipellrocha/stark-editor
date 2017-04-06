@@ -8,4 +8,19 @@
   background: #fff;
   font-family: Helvetica Neue;
   box-sizing: border-box;
+
+  h1 {
+    font-weight: 100;
+    padding: 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .tilesets {
+    padding: 10px 0;
+  }
+
+  .actions {
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+  }
 }

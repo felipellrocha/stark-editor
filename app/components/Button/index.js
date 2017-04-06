@@ -3,22 +3,22 @@ import { connect } from 'react-redux';
 
 import styles from './styles.css';
 
-class Tile extends Component {
+class component extends Component {
   render() {
     const {
-      app,
+      label,
+      onClick,
     } = this.props;
 
     return (
-      <div className={styles.component}>
-        { app.name }
-      </div>
+      <a
+        className={styles.component}
+        onClick={onClick}
+      >
+        { label }
+      </a>
     );
   }
 }
 
-export default connect(
-  (state) => ({
-    app: state.app,
-  }),
-)(Tile);
+export default component;

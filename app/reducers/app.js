@@ -5,7 +5,7 @@ import {
 } from 'actions';
 
 const initialState = {
-  name: 'The Lattice',
+  name: 'Game Editor',
   grid: {
     rows: 5,
     columns: 10,
