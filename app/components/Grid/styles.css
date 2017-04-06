@@ -1,0 +1,29 @@
+:local(.component) {
+  margin: 15px 15px 15px 315px;
+  font-family: Helvetica Neue;
+
+  border: 1px solid #ddd;
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 1px;
+
+    &:last-child {
+      margin-bottom: 0px;
+    }
+
+    .tile {
+      background: #fff;
+      margin-right: 1px;
+
+      &:last-child {
+        margin-right: 0px;
+      }
+
+      &:hover {
+        background: #eee;
+      }
+    }
+  }
+}
