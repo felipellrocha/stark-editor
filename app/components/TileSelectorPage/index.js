@@ -5,6 +5,10 @@ import {
   Grid,
 } from 'components';
 
+import {
+  putDownTile,
+} from 'actions';
+
 import styles from './styles.css';
 
 class component extends Component {
@@ -13,14 +17,13 @@ class component extends Component {
       app: {
         grid,
         tile,
-      }
+        data,
+      },
     } = this.props;
-
-    const data = [...Array(grid.rows * grid.columns)].map((_, i) => [0, i])
 
     return (
       <div className={styles.component} >
-        <Grid grid={grid} data={data} />
+        <Grid grid={grid} data={data} tileAction={putDownTile} />
       </div>
     );
   }

@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { nativeImage } from 'electron';
 
 import {
   selectTilesets,
+  selectTile,
 } from 'actions';
 
 import {
   Button,
   Grid,
+  Tile,
 } from 'components';
 
 import styles from './styles.css';
@@ -31,22 +32,21 @@ class component extends Component {
 
   _renderGrid(tileset, index) {
     const {
-      app: {
-        tile,
-      }
-    } = this.props;
-
-    const image = nativeImage.createFromPath(tileset);
-    const size = image.getSize();
-
-    const rows = size.height / tile.height;
-    const columns = size.width / tile.width;
+      rows,
+      columns,
+      src,
+    } = tileset;
 
     const data = [...Array(rows * columns)].map((_, i) => [index, i])
 
     return (
       <div>
-        <Grid data={data} grid={{ rows:rows, columns:columns }} />
+        <h3>{ src }</h3>
+        <Grid
+          data={data}
+          grid={{ rows:rows, columns:columns }}
+          tileAction={selectTile}
+        />
       </div>
     );
   }
@@ -56,6 +56,10 @@ class component extends Component {
       app: {
         name,
         tilesets,
+        selectedTile: [
+          setIndex,
+          tileIndex,
+        ],
       },
     } = this.props;
 
@@ -66,6 +70,7 @@ class component extends Component {
           { tilesets.map(this._renderGrid) }
         </div>
         <div className="actions">
+          <Tile setIndex={setIndex} tileIndex={tileIndex} />
           <Button
             label="Add tilesets"
             onClick={this._handleSelectTiles}

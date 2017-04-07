@@ -16,6 +16,10 @@
     border-bottom: 1px solid #eee;
   }
 
+  h3 {
+    font-size: 16px;
+  }
+
   .tilesets {
     padding: 10px 0;
   }

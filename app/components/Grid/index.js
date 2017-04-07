@@ -3,6 +3,10 @@ import { connect } from 'react-redux';
 
 import styles from './styles.css';
 
+import {
+  Tile,
+} from 'components';
+
 class component extends Component {
   render() {
     const {
@@ -10,7 +14,6 @@ class component extends Component {
         tile,
         tilesets,
       },
-
       grid,
       data,
     } = this.props;
@@ -24,31 +27,22 @@ class component extends Component {
         className={styles.component}
         style={{width: grid.columns * tile.width + (grid.columns - 1)}}
       >
-        {rows.map(columns => {
+        {rows.map((columns, y) => {
 
           return (
             <div className="row">
-              {columns.map(column => {
-
+              {columns.map((column, x) => {
                 const [ setIndex, tileIndex ] = column;
-
-                const style = {
-                  height: tile.height,
-                  width: tile.width,
-                };
-
-                const tileset = tilesets[setIndex];
-
-                if (tileset) {
-                  const left = (tileIndex % grid.columns) * tile.width;
-                  const top = Math.floor(tileIndex / grid.columns) * tile.height;
-
-                  style['backgroundImage'] = `url('file://${tileset}')`;
-                  style['backgroundPosition'] = `-${left}px -${top}px`;
-                }
                 
                 return (
-                  <div className="tile" style={style} />
+                  <Tile
+                    setIndex={setIndex}
+                    tileIndex={tileIndex}
+                    grid={grid}
+                    tileAction={this.props.tileAction}
+                    x={x}
+                    y={y}
+                  />
                 )
               })}
             </div>
