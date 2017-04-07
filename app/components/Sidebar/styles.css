@@ -20,12 +20,22 @@
     font-size: 16px;
   }
 
-  .tilesets {
+  .separator {
     padding: 10px 0;
   }
 
   .actions {
-    padding: 10px 0;
     border-top: 1px solid #eee;
+  }
+
+  .layer {
+    padding: 5px 5px;
+    font-size: 12px;
+    font-weight: 100;
+  }
+
+  .selected {
+    background: #D33E43;
+    color: #fff;
   }
 }

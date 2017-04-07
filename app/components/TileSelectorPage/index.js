@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import {
   Grid,
+  Workspace,
 } from 'components';
 
 import {
@@ -18,12 +19,15 @@ class component extends Component {
         grid,
         tile,
         data,
+        layers
       },
     } = this.props;
 
     return (
       <div className={styles.component} >
-        <Grid grid={grid} data={data} tileAction={putDownTile} />
+        <Workspace
+          layers={layers}
+        />
       </div>
     );
   }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import classnames from 'classnames';
 import styles from './styles.css';
 
 import {
@@ -16,15 +17,18 @@ class component extends Component {
       },
       grid,
       data,
+      className,
     } = this.props;
 
     const rows = [...Array(grid.rows)].map((_, i) => {
       return data.slice(i * grid.columns, i * grid.columns + (grid.columns));
     });
 
+    const classes = classnames(styles.component, className);
+
     return (
       <div
-        className={styles.component}
+        className={classes}
         style={{width: grid.columns * tile.width + (grid.columns - 1)}}
       >
         {rows.map((columns, y) => {

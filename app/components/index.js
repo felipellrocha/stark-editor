@@ -1,4 +1,5 @@
 export Grid from './Grid'
+export Workspace from './Workspace'
 export Tile from './Tile'
 export Sidebar from './Sidebar'
 export App from './App'

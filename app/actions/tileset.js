@@ -1,5 +1,14 @@
 import electron from 'electron';
 
+export const SELECT_LAYER = 'SELECT_LAYER';
+
+export function selectLayer(layer) {
+  return {
+    type: SELECT_LAYER,
+    layer,
+  }
+}
+
 export const SELECT_TILE = 'SELECT_TILE';
 
 export function selectTile(tile) {
