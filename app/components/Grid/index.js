@@ -29,7 +29,7 @@ class component extends Component {
     return (
       <div
         className={classes}
-        style={{width: grid.columns * tile.width + (grid.columns - 1)}}
+        style={{width: grid.columns * tile.width + grid.columns}}
       >
         {rows.map((columns, y) => {
 

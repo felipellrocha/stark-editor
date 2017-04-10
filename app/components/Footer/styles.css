@@ -1,0 +1,41 @@
+:local(.component) {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 300px;
+  padding: 10px;
+  background: #fff;
+  font-family: Helvetica Neue;
+  box-sizing: border-box;
+  overflow: auto;
+  display: flex;
+  justify-content: space-between;
+
+  .right {
+    display: flex;
+  }
+}
+
+:local(.icon) {
+  padding: 0 5px;
+  svg {
+    height: 32px;
+  }
+
+  path {
+    stroke: #555;
+    stroke-width: .25px;
+  }
+
+  &:hover {
+    path {
+      stroke: #ddd;
+    }
+  }
+}
+
+:local(.unsaved) {
+  path {
+    stroke: #D33E43;
+  }
+}

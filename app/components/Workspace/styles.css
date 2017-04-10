@@ -2,7 +2,6 @@
   position: relative;
   user-select: none;
   background: #fff;
-  border: 1px solid #000;
 }
 
 :local(.stack) {

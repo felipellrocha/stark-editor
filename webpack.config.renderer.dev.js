@@ -112,13 +112,9 @@ export default merge(baseConfig, {
       },
       // SVG Font
       {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        test: /\.svg$/,
         use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'image/svg+xml',
-          }
+          loader: 'raw-loader',
         }
       },
       // Common Image Formats

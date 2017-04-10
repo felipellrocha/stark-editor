@@ -1,8 +1,9 @@
 :local(.component) {
-  margin-right: 1px;
+  border-right: 1px solid #ddd;
 
   &:last-child {
     margin-right: 0px;
+    border-right: 0px;
   }
 
   &:hover {

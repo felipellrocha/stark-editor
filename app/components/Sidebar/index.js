@@ -11,7 +11,6 @@ import {
 import {
   Button,
   Grid,
-  Tile,
 } from 'components';
 
 import styles from './styles.css';
@@ -95,7 +94,6 @@ class component extends Component {
           { tilesets.map(this._renderGrid) }
         </div>
         <div className="actions separator">
-          <Tile setIndex={setIndex} tileIndex={tileIndex} />
           <Button
             label="Add tilesets"
             onClick={this._handleSelectTiles}

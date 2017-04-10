@@ -1,14 +1,13 @@
 :local(.component) {
   font-family: Helvetica Neue;
-  border: 1px solid #ddd;
 
   .row {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 1px;
+    border-bottom: 1px solid #ddd;
 
     &:last-child {
-      margin-bottom: 0px;
+      border-bottom: 0px;
     }
   }
 }

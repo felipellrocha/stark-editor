@@ -9,6 +9,8 @@
   font-family: Helvetica Neue;
   box-sizing: border-box;
   overflow: auto;
+  border-right: 1px solid #808080;
+  box-shadow: 0 0 7px #808080;
 
   h1 {
     font-weight: 100;

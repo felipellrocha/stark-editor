@@ -5,6 +5,7 @@ import styles from './styles.css';
 
 import {
   Sidebar,
+  Footer,
 } from 'components';
 
 export default class component extends Component {
@@ -19,6 +20,7 @@ export default class component extends Component {
         <div className={styles.component}>
           {this.props.children}
         </div>
+        <Footer />
       </div>
     );
   }

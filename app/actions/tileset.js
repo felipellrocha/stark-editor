@@ -21,7 +21,6 @@ export function selectTile(tile) {
 export const PUT_DOWN_TILE = 'PUT_DOWN_TILE';
 
 export function putDownTile(tile) {
-  console.log(tile);
   return {
     type: PUT_DOWN_TILE,
     tile,

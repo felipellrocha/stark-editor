@@ -20,28 +20,20 @@ const initialState = {
   },
   layers: [
     {
-      type: 'base',
-      name: 'none',
-      protected: true,
-      data: [...Array(50)].map((_, i) => [-1, i]),
-    },
-    {
       type: 'tile',
       name: 'background',
-      protected: false,
       data: [...Array(50)].map((_, i) => [-1, i]),
     },
     {
       type: 'tile',
       name: 'foreground',
-      protected: false,
       data: [...Array(50)].map((_, i) => [-1, i]),
     },
   ],
   data: [...Array(50)].map((_, i) => [-1, i]),
   tilesets: [ ],
   selectedTile: [-1, 0],
-  selectedLayer: 1,
+  selectedLayer: 0,
 };
 
 export default handleActions({

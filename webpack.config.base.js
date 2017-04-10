@@ -19,12 +19,6 @@ export default {
     }]
   },
 
-  resolve: {
-    root: [
-      path.resolve('./app'),
-    ],
-  },
-
   output: {
     path: path.join(__dirname, 'app'),
     filename: 'bundle.js',
@@ -36,7 +30,7 @@ export default {
    * Determine the array of extensions that should be used to resolve modules.
    */
   resolve: {
-    extensions: ['.js', '.jsx', '.json'],
+    extensions: ['.js', '.jsx', '.json', '.svg'],
     modules: [
       path.join(__dirname, 'app'),
       'node_modules',

@@ -15,10 +15,18 @@ class component extends Component {
   constructor(props) {
     super(props);
 
-    this._handleHover = this._handleHover.bind(this);
+    this._handlePutTile = this._handlePutTile.bind(this);
+    this._handleMouseDown = this._handleMouseDown.bind(this);
+    this._handleMouseUp = this._handleMouseUp.bind(this);
+
+    this.state = {
+      mouseDown: false,
+    }
   }
 
-  _handleHover(e) {
+  _handlePutTile(e) {
+    if (!this.state.mouseDown && e.type !== 'click') { return }
+
     const {
       dispatch,
       app: {
@@ -27,9 +35,21 @@ class component extends Component {
     } = this.props;
 
     dispatch(putDownTile({
-      x: Math.floor(e.nativeEvent.offsetX / tile.width),
-      y: Math.floor(e.nativeEvent.offsetY / tile.height),
+      x: Math.floor(e.nativeEvent.offsetX / (tile.width + 1)),
+      y: Math.floor(e.nativeEvent.offsetY / (tile.height + 1)),
     }));
+  }
+
+  _handleMouseDown() {
+    this.setState({
+      mouseDown: true,
+    });
+  }
+
+  _handleMouseUp() {
+    this.setState({
+      mouseDown: false,
+    });
   }
 
   render() {
@@ -44,15 +64,17 @@ class component extends Component {
     } = this.props;
 
     const style = {
-      width: grid.columns * tile.width + tile.width,
-      height: grid.rows * tile.height + tile.height,
+      width: grid.columns * tile.width + (grid.columns - 1),
+      height: grid.rows * tile.height + (grid.rows - 1),
     }
 
     return (
       <div
         className={styles.component}
-        onClick={this._handleHover}
-        onDrag={this._handleHover}
+        onClick={this._handlePutTile}
+        onMouseMove={this._handlePutTile}
+        onMouseDown={this._handleMouseDown}
+        onMouseUp={this._handleMouseUp}
         style={style}
       > 
         {layers.map(layer => {
