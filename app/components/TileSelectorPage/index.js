@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
+
+// this needs to be imported like this because on some bug
+// on importing. I don't know if the issue is with babel
+// or webpack.
+import App from 'components/App';
 
 import {
   Grid,
@@ -33,8 +39,7 @@ class component extends Component {
   }
 }
 
-export default connect(
-  (state) => ({
-    app: state.app,
-  }),
+export default compose(
+  connect(state => ({ app: state })),
+  App(),
 )(component);

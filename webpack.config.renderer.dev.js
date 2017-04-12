@@ -32,7 +32,7 @@ if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
 }
 
 export default merge(baseConfig, {
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
 
   entry: [
     'react-hot-loader/patch',

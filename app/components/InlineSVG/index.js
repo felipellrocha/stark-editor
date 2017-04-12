@@ -8,6 +8,7 @@ export default class component extends Component {
 
     return (
       <div
+        {...this.props}
         className={classes}
         dangerouslySetInnerHTML={{ __html: src }}
       />

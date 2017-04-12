@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import type { Children } from 'react';
+import React from 'react';
 
 import styles from './styles.css';
 
@@ -8,20 +7,16 @@ import {
   Footer,
 } from 'components';
 
-export default class component extends Component {
-  props: {
-    children: Children
-  };
-
-  render() {
+export default function() {
+  return (Component) => (props) => {
     return (
       <div>
         <Sidebar />
         <div className={styles.component}>
-          {this.props.children}
+          <Component {...props} />
         </div>
         <Footer />
       </div>
     );
   }
-}
+};

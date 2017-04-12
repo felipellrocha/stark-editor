@@ -59,6 +59,6 @@ class component extends Component {
 
 export default connect(
   (state) => ({
-    app: state.app,
+    app: state,
   }),
 )(component);

@@ -6,10 +6,12 @@ import {
   RECEIVE_TILESETS,
   SELECT_TILE,
   SELECT_LAYER,
+  LOAD_STAGE,
 } from 'actions';
 
 const initialState = {
   name: 'Game Editor',
+  filename: '/Users/fllr/game/game.targ',
   grid: {
     rows: 5,
     columns: 10,
@@ -65,18 +67,14 @@ export default handleActions({
 
     const index = (grid.columns * y) + x;
 
-    /*
-    const newData = [
-      ...data.slice(0, index),
-      selectedTile,
-      ...data.slice(index + 1, data.length)
-    ];
-    */
     const currentLayer = layers[selectedLayer];
     const newData = arrayReplace(currentLayer.data, selectedTile, index);
     const newLayer = Object.assign({}, currentLayer, { data: newData });
     const newLayers = arrayReplace(state.layers, newLayer, selectedLayer);
 
     return Object.assign({}, state, { layers: newLayers });
+  },
+  LOAD_STAGE: (state, action) => {
+    return Object.assign({}, state, action.data);
   },
 }, initialState);
