@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 import {
+  App,
   Grid,
   Workspace,
 } from 'components';
@@ -14,6 +16,7 @@ import styles from './styles.css';
 
 class component extends Component {
   render() {
+    console.log(typeof App, typeof Workspace);
     const {
       app: {
         grid,
@@ -33,8 +36,14 @@ class component extends Component {
   }
 }
 
-export default connect(
-  (state) => ({
-    app: state.app,
-  }),
+console.log(typeof Workspace);
+console.log(typeof App);
+console.log(typeof connect);
+
+/*
+export default compose(
+  App(),
+  connect(state => ({ app: state })),
 )(component);
+*/
+export default connect(state => ({ app: state}))(component)

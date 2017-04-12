@@ -1,11 +1,12 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
 import { hashHistory } from 'react-router';
 import { routerMiddleware, push } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
-
-
+import {
+  setStateEnhancer,
+  thunk,
+} from 'utils';
 
 export default (initialState: ?counterStateType) => {
   // Redux Configuration
@@ -42,6 +43,7 @@ export default (initialState: ?counterStateType) => {
   /* eslint-enable no-underscore-dangle */
 
   // Apply Middleware & Compose Enhancers
+  enhancers.push(setStateEnhancer());
   enhancers.push(applyMiddleware(...middleware));
   const enhancer = composeEnhancers(...enhancers);
 

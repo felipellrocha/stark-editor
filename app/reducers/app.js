@@ -10,6 +10,7 @@ import {
 
 const initialState = {
   name: 'Game Editor',
+  filename: '/Users/fllr/game/game.targ',
   grid: {
     rows: 5,
     columns: 10,
@@ -80,3 +81,9 @@ export default handleActions({
     return Object.assign({}, state, { layers: newLayers });
   },
 }, initialState);
+  /*
+  '@@INIT': (state, action) => {
+    return Object.assign({}, initialState);
+  }
+}, {});
+*/

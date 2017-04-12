@@ -5,23 +5,20 @@ import { Router, hashHistory } from 'react-router';
 import { AppContainer } from 'react-hot-loader';
 import { syncHistoryWithStore } from 'react-router-redux';
 import configureStore from './store/configureStore';
-import routes from './routes';
+//import routes from './routes';
 //import './app.global.css';
 
-const store = configureStore();
-const history = syncHistoryWithStore(hashHistory, store);
+import {
+  TileSelectorPage,
+} from './components';
 
-const Root = function({ store, history }) {
-  return (
-    <Provider store={store}>
-      <Router key={Math.random()} history={history} routes={routes} />
-    </Provider>
-  );
-}
+const store = configureStore();
 
 render(
   <AppContainer>
-    <Root store={store} history={history} />
+    <Provider store={store}>
+      <TileSelectorPage />
+    </Provider>
   </AppContainer>,
   document.getElementById('root')
 );
