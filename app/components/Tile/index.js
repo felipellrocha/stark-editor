@@ -1,13 +1,20 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+
+import classnames from 'classnames';
 
 import styles from './styles.css';
 
-class component extends Component {
+class component extends PureComponent {
   constructor(props) {
     super(props);
 
     this._dispatchAction = this._dispatchAction.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return nextProps.setIndex !== this.props.setIndex
+      && nextProps.tileIndex !== this.props.tileIndex;
   }
 
   _dispatchAction() {
@@ -37,12 +44,15 @@ class component extends Component {
       setIndex,
       tileIndex,
       grid,
+      className,
     } = this.props;
 
     const style = {
       height: tile.height,
       width: tile.width,
     };
+
+    const classes = classnames(styles.component, className);
 
     if (setIndex >= 0) {
       const tileset = tilesets[setIndex];
@@ -55,7 +65,7 @@ class component extends Component {
     }
     
     return (
-      <div className={styles.component} style={style} onClick={this._dispatchAction} />
+      <div className={classes} style={style} onClick={this._dispatchAction} />
     )
   }
 }

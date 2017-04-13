@@ -11,9 +11,13 @@ export function selectTilesets() {
     } = getState();
 
     const tilesets = electron.remote.dialog.showOpenDialog({
-      properties: ['openFile', 'multiSelections']
+      properties: ['openFile', 'multiSelections'],
+      filters: [
+        {name: 'Image Files', extensions: ['png', 'jpg']},
+      ],
     })
 
+    if (tilesets)
     dispatch(receiveTilesets(tilesets.map(tileset => {
       const image = nativeImage.createFromPath(tileset);
       const size = image.getSize();

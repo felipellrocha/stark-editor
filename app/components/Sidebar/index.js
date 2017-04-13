@@ -1,6 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+
+import { memoize } from 'lodash';
 
 import {
   selectTilesets,
@@ -15,7 +17,7 @@ import {
 
 import styles from './styles.css';
 
-class component extends Component {
+class component extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -47,14 +49,20 @@ class component extends Component {
       src,
     } = tileset;
 
-    const data = [...Array(rows * columns)].map((_, i) => [index, i])
+    const [
+      data,
+      grid,
+    ] = _getGridData(rows, columns, index);
+
+    const key = `${rows}_${columns}_${index}`
 
     return (
       <div>
         <h3>{ src }</h3>
         <Grid
+          key={key}
           data={data}
-          grid={{ rows:rows, columns:columns }}
+          grid={grid}
           tileAction={selectTile}
         />
       </div>
@@ -63,16 +71,10 @@ class component extends Component {
 
   render() {
     const {
-      app: {
-        name,
-        tilesets,
-        selectedTile: [
-          setIndex,
-          tileIndex,
-        ],
-        layers,
-        selectedLayer,
-      },
+      name,
+      tilesets,
+      layers,
+      selectedLayer,
     } = this.props;
 
     return (
@@ -84,9 +86,14 @@ class component extends Component {
               'selected': selectedLayer === i,
             });
 
-            if (layer.type !== 'base')
             return (
-              <div className={classes} onClick={() => this._handleSelectLayer(i)}>{ layer.name }</div>
+              <div
+                key={ layer.name }
+                className={classes}
+                onClick={() => this._handleSelectLayer(i)}
+              >
+                { layer.name }
+              </div>
             )
           })}
         </div>
@@ -94,18 +101,27 @@ class component extends Component {
           { tilesets.map(this._renderGrid) }
         </div>
         <div className="actions separator">
-          <Button
-            label="Add tilesets"
-            onClick={this._handleSelectTiles}
-          />
+          <Button onClick={this._handleSelectTiles}>
+            Add tilesets
+          </Button>
         </div>
       </div>
     );
   }
 }
 
+const _getGridData = memoize(function(rows, columns, index) {
+  return [
+    [...Array(rows * columns)].map((_, i) => [index, i]),
+    { rows, columns },
+  ];
+});
+
 export default connect(
   (state) => ({
-    app: state,
+    name: state.name,
+    tilesets: state.tilesets,
+    layers: state.layers,
+    selectedLayer: state.selectedLayer,
   }),
 )(component);

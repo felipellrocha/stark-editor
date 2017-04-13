@@ -10,28 +10,58 @@
   overflow: auto;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
-  .right {
+  .left, .right {
     display: flex;
+    align-items: center;
+    font-size: 12px;
+  }
+
+  .clear {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
   }
 }
 
 :local(.icon) {
+  .icon {
+    height: 16px;
+  }
+
+  path {
+    fill: #555;
+  }
+}
+
+:local(.buttonIcon) {
   padding: 0 5px;
+
   svg {
     height: 32px;
   }
 
   path {
-    stroke: #555;
-    stroke-width: .25px;
+    fill: #fff;
+    //stroke-width: .25px;
   }
 
   &:hover {
     path {
-      stroke: #ddd;
+      fill: #ddd;
     }
   }
+}
+
+:local(.tile) {
+  border: 1px solid #808080;
+  border-right: 1px solid #808080 !important;
+}
+
+:local(.button) {
+  display: flex;
+  align-items: center;
 }
 
 :local(.unsaved) {

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
 import styles from './styles.css';
@@ -11,11 +11,13 @@ import {
   putDownTile,
 } from 'actions';
 
-class component extends Component {
+class component extends PureComponent {
   constructor(props) {
     super(props);
 
     this._handlePutTile = this._handlePutTile.bind(this);
+    this._executePutTile = this._executePutTile.bind(this);
+
     this._handleMouseDown = this._handleMouseDown.bind(this);
     this._handleMouseUp = this._handleMouseUp.bind(this);
 
@@ -28,16 +30,22 @@ class component extends Component {
     if (!this.state.mouseDown && e.type !== 'click') { return }
 
     const {
+      offsetX: x,
+      offsetY: y,
+    } = e.nativeEvent;
+
+    const {
       dispatch,
-      app: {
-        tile,
-      }
+      tile,
     } = this.props;
 
     dispatch(putDownTile({
-      x: Math.floor(e.nativeEvent.offsetX / (tile.width + 1)),
-      y: Math.floor(e.nativeEvent.offsetY / (tile.height + 1)),
+      x: Math.floor(x / (tile.width + 1)),
+      y: Math.floor(y / (tile.height + 1)),
     }));
+  }
+
+  _executePutTile(x, y) {
   }
 
   _handleMouseDown() {
@@ -54,10 +62,8 @@ class component extends Component {
 
   render() {
     const {
-      app: {
-        grid,
-        tile,
-      },
+      grid,
+      tile,
       data,
       layers,
       tileAction,
@@ -80,6 +86,7 @@ class component extends Component {
         {layers.map(layer => {
           return (
             <Grid
+              key={layer.name}
               grid={grid}
               data={layer.data}
               className={styles.stack}
@@ -91,10 +98,9 @@ class component extends Component {
   }
 }
 
-          //<Grid grid={grid} data={data} tileAction={} />
-
 export default connect(
   (state) => ({
-    app: state,
+    grid: state.grid,
+    tile: state.tile,
   }),
 )(component);

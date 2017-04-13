@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
@@ -18,7 +18,7 @@ import {
 
 import styles from './styles.css';
 
-class component extends Component {
+class component extends PureComponent {
   render() {
     const {
       app: {

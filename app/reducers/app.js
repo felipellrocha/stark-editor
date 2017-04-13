@@ -13,30 +13,24 @@ const initialState = {
   name: 'Game Editor',
   filename: '/Users/fllr/game/game.targ',
   grid: {
-    rows: 5,
-    columns: 10,
+    rows: 20,
+    columns: 20,
   },
   tile: {
-    width: 32,
-    height: 32,
+    width: 48,
+    height: 48,
   },
-  layers: [
-    {
-      type: 'tile',
-      name: 'background',
-      data: [...Array(50)].map((_, i) => [-1, i]),
-    },
-    {
-      type: 'tile',
-      name: 'foreground',
-      data: [...Array(50)].map((_, i) => [-1, i]),
-    },
-  ],
-  data: [...Array(50)].map((_, i) => [-1, i]),
+  layers: [],
   tilesets: [ ],
   selectedTile: [-1, 0],
   selectedLayer: 0,
 };
+
+initialState.layers = ['background', 'foreground'].map(name => ({
+  type: 'tile',
+  name: name,
+  data: [...Array(initialState.grid.rows * initialState.grid.columns)].map((_, i) => [-1, 0]),
+}));
 
 export default handleActions({
   RECEIVE_TILESETS: (state, action) => {
@@ -68,6 +62,10 @@ export default handleActions({
     const index = (grid.columns * y) + x;
 
     const currentLayer = layers[selectedLayer];
+    const currentTile = currentLayer.data[index];
+
+    if (currentTile[0] == selectedTile[0] && currentTile[1] == selectedTile[1]) return state;
+
     const newData = arrayReplace(currentLayer.data, selectedTile, index);
     const newLayer = Object.assign({}, currentLayer, { data: newData });
     const newLayers = arrayReplace(state.layers, newLayer, selectedLayer);

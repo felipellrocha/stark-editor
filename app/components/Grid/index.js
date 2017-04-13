@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
 import classnames from 'classnames';
@@ -8,21 +8,17 @@ import {
   Tile,
 } from 'components';
 
-class component extends Component {
+class component extends PureComponent {
   render() {
     const {
-      app: {
-        tile,
-        tilesets,
-      },
+      tile,
+      tilesets,
       grid,
       data,
       className,
     } = this.props;
 
-    const rows = [...Array(grid.rows)].map((_, i) => {
-      return data.slice(i * grid.columns, i * grid.columns + (grid.columns));
-    });
+    const rows = [...Array(grid.rows)]
 
     const classes = classnames(styles.component, className);
 
@@ -31,15 +27,17 @@ class component extends Component {
         className={classes}
         style={{width: grid.columns * tile.width + grid.columns}}
       >
-        {rows.map((columns, y) => {
+        {rows.map((_, y) => {
+          const columns = [...Array(grid.columns)]
 
           return (
-            <div className="row">
-              {columns.map((column, x) => {
-                const [ setIndex, tileIndex ] = column;
+            <div className="row" key={y}>
+              {columns.map((_, x) => {
+                const [ setIndex, tileIndex ] = data[y * grid.columns + x];
                 
                 return (
                   <Tile
+                    key={`${x}_${y}`}
                     setIndex={setIndex}
                     tileIndex={tileIndex}
                     grid={grid}
@@ -59,6 +57,7 @@ class component extends Component {
 
 export default connect(
   (state) => ({
-    app: state,
+    tile: state.tile,
+    tilesets: state.tilesets,
   }),
 )(component);
