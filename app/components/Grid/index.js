@@ -57,7 +57,7 @@ class component extends PureComponent {
 
 export default connect(
   (state) => ({
-    tile: state.tile,
-    tilesets: state.tilesets,
+    tile: state.app.tile,
+    tilesets: state.app.tilesets,
   }),
 )(component);

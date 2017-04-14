@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
+import path from 'path';
+
 import classnames from 'classnames';
 
 import styles from './styles.css';
@@ -38,6 +40,7 @@ class component extends PureComponent {
       tileIndex,
       grid,
       className,
+      basepath,
     } = this.props;
 
     const style = {
@@ -52,8 +55,9 @@ class component extends PureComponent {
 
       const left = (tileIndex % tileset.columns) * tile.width;
       const top = Math.floor(tileIndex / tileset.columns) * tile.height;
+      const src = path.resolve(basepath, tileset.src)
 
-      style['backgroundImage'] = `url('file://${tileset.src}')`;
+      style['backgroundImage'] = `url('file://${src}')`;
       style['backgroundPosition'] = `-${left}px -${top}px`;
     }
     
@@ -65,7 +69,8 @@ class component extends PureComponent {
 
 export default connect(
   (state) => ({
-    tile: state.tile,
-    tilesets: state.tilesets,
+    tile: state.app.tile,
+    tilesets: state.app.tilesets,
+    basepath: state.global.basepath,
   }),
 )(component);

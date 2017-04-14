@@ -119,8 +119,8 @@ class component extends PureComponent {
 
 export default connect(
   (state) => ({
-    selectedTile: state.selectedTile,
-    zoom: state.zoom,
-    selectedAction: state.selectedAction,
+    selectedTile: state.app.selectedTile,
+    zoom: state.app.zoom,
+    selectedAction: state.app.selectedAction,
   }),
 )(component);

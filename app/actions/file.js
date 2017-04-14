@@ -1,13 +1,19 @@
 import electron from 'electron';
 import { nativeImage } from 'electron';
 import fs from 'fs';
+import path from 'path';
 
 export const RECEIVE_TILESETS = 'RECEIVE_TILESETS';
 
 export function selectTilesets() {
   return (dispatch, getState) => {
     const {
-      tile,
+      app: {
+        tile,
+      },
+      global: {
+        basepath,
+      },
     } = getState();
 
     const tilesets = electron.remote.dialog.showOpenDialog({
@@ -25,8 +31,12 @@ export function selectTilesets() {
       const rows = size.height / tile.height;
       const columns = size.width / tile.width;
 
+      const src = path.relative(basepath, tileset);
+      const name = path.basename(tileset);
+
       return {
-        src: tileset,
+        src,
+        name,
         rows,
         columns,
       };
@@ -41,17 +51,49 @@ export function receiveTilesets(tilesets) {
   }
 }
 
-export function writeFile() {
+export function writeFile(saveAs = false) {
   return (dispatch, getState) => {
-    const state = getState();
+    const {
+      global: {
+        filename: globalFilename,
+        basepath: oldBasepath,
+      },
+      app,
+    } = getState();
 
-    fs.writeFileSync(state.filename, JSON.stringify(state));
+    const filename = (() => {
+      if (globalFilename === '' || saveAs) {
+        return electron.remote.dialog.showSaveDialog({
+          properties: ['openFile'],
+          filters: [
+            {name: 'Game Files', extensions: ['targ']},
+          ],
+        })
+      } else {
+        return state.global.filename;
+      }
+    })();
+    const newBasepath = path.dirname(filename);
+    
+    dispatch(saveFilename(filename, oldBasepath, newBasepath));
+
+    fs.writeFileSync(filename, JSON.stringify(app));
+  }
+}
+
+export const SAVE_FILENAME = 'SAVE_FILENAME';
+
+export function saveFilename(filename, oldBasepath, newBasepath) {
+  return {
+    type: SAVE_FILENAME,
+    filename,
+    oldBasepath,
+    newBasepath,
   }
 }
 
 export function openFile() {
-  return (dispatch, getState, setState) => {
-    const state = getState();
+  return dispatch => {
 
     const gameFile = electron.remote.dialog.showOpenDialog({
       properties: ['openFile'],

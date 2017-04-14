@@ -47,6 +47,7 @@ class component extends PureComponent {
       rows,
       columns,
       src,
+      name,
     } = tileset;
 
     const [
@@ -58,7 +59,7 @@ class component extends PureComponent {
 
     return (
       <div key={key}>
-        <h3>{ src }</h3>
+        <h3>{ name }</h3>
         <Grid
           data={data}
           grid={grid}
@@ -118,9 +119,10 @@ const _getGridData = memoize(function(tileset, rows, columns, index) {
 
 export default connect(
   (state) => ({
-    name: state.name,
-    tilesets: state.tilesets,
-    layers: state.layers,
-    selectedLayer: state.selectedLayer,
+    name: state.app.name,
+    tilesets: state.app.tilesets,
+    layers: state.app.layers,
+    selectedLayer: state.app.selectedLayer,
+    basepath: state.app.basepath,
   }),
 )(component);

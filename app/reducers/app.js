@@ -2,6 +2,8 @@ import { handleActions } from 'redux-actions';
 
 import { arrayReplace } from 'utils';
 
+import path from 'path';
+
 import {
   RECEIVE_TILESETS,
   PAINT_TILE,
@@ -10,6 +12,7 @@ import {
   LOAD_STAGE,
   CHANGE_ZOOM,
   CHANGE_TILING_METHOD,
+  SAVE_FILENAME,
 } from 'actions';
 
 import {
@@ -18,7 +21,6 @@ import {
 
 const initialState = {
   name: 'Game Editor',
-  filename: '/Users/fllr/game/game.targ',
   zoom: .5,
   grid: {
     columns: 20,
@@ -50,6 +52,18 @@ export default handleActions({
   },
   RECEIVE_TILESETS: (state, action) => {
     const tilesets = [...state.tilesets, ...action.tilesets];
+
+    return Object.assign({}, state, { tilesets: tilesets });
+  },
+  SAVE_FILENAME: (state, action) => {
+    const tilesets = state.tilesets.map(tileset => {
+      const resolve = path.resolve(action.oldBasepath, tileset.src);
+      const src = path.relative(action.newBasepath, resolve);
+
+      return Object.assign({}, tileset, {
+        src,
+      });
+    });
 
     return Object.assign({}, state, { tilesets: tilesets });
   },

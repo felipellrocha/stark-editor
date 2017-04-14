@@ -44,11 +44,11 @@ class component extends PureComponent {
 
 export default compose(
   connect(state => ({
-    grid: state.grid,
-    tile: state.tile,
-    data: state.data,
-    layers: state.layers,
-    zoom: state.zoom,
+    grid: state.app.grid,
+    tile: state.app.tile,
+    data: state.app.data,
+    layers: state.app.layers,
+    zoom: state.app.zoom,
   })),
   App(),
 )(component);
