@@ -4,19 +4,25 @@ import { arrayReplace } from 'utils';
 
 import {
   RECEIVE_TILESETS,
+  PAINT_TILE,
   SELECT_TILE,
   SELECT_LAYER,
   LOAD_STAGE,
   CHANGE_ZOOM,
+  CHANGE_TILING_METHOD,
 } from 'actions';
+
+import {
+  flood,
+} from 'utils';
 
 const initialState = {
   name: 'Game Editor',
   filename: '/Users/fllr/game/game.targ',
   zoom: .5,
   grid: {
-    columns: 40,
-    rows: 20,
+    columns: 20,
+    rows: 10,
   },
   tile: {
     width: 48,
@@ -26,6 +32,7 @@ const initialState = {
   tilesets: [ ],
   selectedTile: [-1, 0],
   selectedLayer: 0,
+  selectedAction: 'put',
 };
 
 initialState.layers = ['background', 'foreground'].map(name => ({
@@ -35,8 +42,11 @@ initialState.layers = ['background', 'foreground'].map(name => ({
 }));
 
 export default handleActions({
-  CHANGE_ZOOM: (state, actions) => {
-    return Object.assign({}, state, { zoom: actions.zoom });
+  CHANGE_TILING_METHOD: (state, action) => {
+    return Object.assign({}, state, { selectedAction: action.method });
+  },
+  CHANGE_ZOOM: (state, action) => {
+    return Object.assign({}, state, { zoom: action.zoom });
   },
   RECEIVE_TILESETS: (state, action) => {
     const tilesets = [...state.tilesets, ...action.tilesets];
@@ -48,6 +58,34 @@ export default handleActions({
   },
   SELECT_TILE: (state, action) => {
     return Object.assign({}, state, { selectedTile: action.tile });
+  },
+  PAINT_TILE: (state, action) => {
+    const {
+      tile: {
+        x,
+        y,
+      }
+    } = action;
+
+    const {
+      layers,
+      grid,
+      selectedTile,
+      selectedLayer,
+    } = state;
+
+    const index = (grid.columns * y) + x;
+
+    const currentLayer = layers[selectedLayer];
+    const currentTile = currentLayer.data[index];
+
+    const newData = [...currentLayer.data];
+    flood(x, y, selectedTile, currentTile, newData, grid);
+
+    const newLayer = Object.assign({}, currentLayer, { data: newData });
+    const newLayers = arrayReplace(state.layers, newLayer, selectedLayer);
+
+    return Object.assign({}, state, { layers: newLayers });
   },
   PUT_DOWN_TILE: (state, action) => {
     const {

@@ -27,11 +27,29 @@ export function selectTile(tile) {
   }
 }
 
+export const PAINT_TILE = 'PAINT_TILE';
+
+export function paintTile(tile) {
+  return {
+    type: PAINT_TILE,
+    tile,
+  }
+}
+
 export const PUT_DOWN_TILE = 'PUT_DOWN_TILE';
 
 export function putDownTile(tile) {
   return {
     type: PUT_DOWN_TILE,
     tile,
+  }
+}
+
+export const CHANGE_TILING_METHOD = 'CHANGE_TILING_METHOD'
+
+export function changeTilingMethod(method) {
+  return {
+    type: CHANGE_TILING_METHOD,
+    method,
   }
 }

@@ -18,6 +18,10 @@
     font-size: 12px;
   }
 
+  .tiling {
+    display: flex;
+  }
+
   .middle {
     text-align: center;
     font-size: 11px;
@@ -37,6 +41,12 @@
 
   path {
     fill: #555;
+  }
+}
+
+:local(.selectedIcon) {
+  path {
+    fill: #D33E43;
   }
 }
 

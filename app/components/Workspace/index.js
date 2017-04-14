@@ -9,6 +9,7 @@ import {
 
 import {
   putDownTile,
+  paintTile,
 } from 'actions';
 
 class component extends PureComponent {
@@ -37,12 +38,20 @@ class component extends PureComponent {
     const {
       dispatch,
       tile,
+      method,
     } = this.props;
 
-    dispatch(putDownTile({
-      x: Math.floor(x / (tile.width + 1)),
-      y: Math.floor(y / (tile.height + 1)),
-    }));
+    if (method === 'put') { 
+      dispatch(putDownTile({
+        x: Math.floor(x / (tile.width + 1)),
+        y: Math.floor(y / (tile.height + 1)),
+      }));
+    } else {
+      dispatch(paintTile({
+        x: Math.floor(x / (tile.width + 1)),
+        y: Math.floor(y / (tile.height + 1)),
+      }));
+    }
   }
 
   _executePutTile(x, y) {
@@ -102,5 +111,6 @@ export default connect(
   (state) => ({
     grid: state.grid,
     tile: state.tile,
+    method: state.selectedAction,
   }),
 )(component);

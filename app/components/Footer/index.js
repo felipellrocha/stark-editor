@@ -13,6 +13,7 @@ import {
   selectTile,
   openFile,
   changeZoom,
+  changeTilingMethod,
 } from 'actions';
 
 import styles from './styles.css';
@@ -25,6 +26,15 @@ class component extends PureComponent {
     this._handleOpen = this._handleOpen.bind(this);
     this._handleClear = this._handleClear.bind(this);
     this._handleChangeZoom = this._handleChangeZoom.bind(this);
+    this._handleChangeTileMethod = this._handleChangeTileMethod.bind(this);
+  }
+
+  _handleChangeTileMethod(value) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(changeTilingMethod(value));
   }
 
   _handleChangeZoom(e) {
@@ -66,6 +76,7 @@ class component extends PureComponent {
         tileIndex,
       ],
       zoom,
+      selectedAction,
     } = this.props;
 
     return (
@@ -75,6 +86,14 @@ class component extends PureComponent {
           <div className="clear" onClick={this._handleClear}>
             <InlineSVG className={styles.icon} icon="cross" /> Clear tile selection
           </div>
+        </div>
+        <div className="tiling">
+          <a onClick={() => this._handleChangeTileMethod('put')}>
+            <InlineSVG icon="pencil" className={ selectedAction === 'put' && styles.selectedIcon } />
+          </a>
+          <a onClick={() => this._handleChangeTileMethod('paint')}>
+            <InlineSVG icon="drop" className={ selectedAction === 'paint' && styles.selectedIcon } />
+          </a>
         </div>
         <div className="middle">
           <div>
@@ -102,5 +121,6 @@ export default connect(
   (state) => ({
     selectedTile: state.selectedTile,
     zoom: state.zoom,
+    selectedAction: state.selectedAction,
   }),
 )(component);
