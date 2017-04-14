@@ -5,5 +5,5 @@ body {
 }
 
 :local(.component) {
-  margin: 15px 15px 15px 315px;
+  margin: 15px 315px 100px 315px;
 }

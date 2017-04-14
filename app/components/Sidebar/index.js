@@ -52,15 +52,14 @@ class component extends PureComponent {
     const [
       data,
       grid,
-    ] = _getGridData(rows, columns, index);
+    ] = _getGridData(tileset, rows, columns, index);
 
     const key = `${rows}_${columns}_${index}`
 
     return (
-      <div>
+      <div key={key}>
         <h3>{ src }</h3>
         <Grid
-          key={key}
           data={data}
           grid={grid}
           tileAction={selectTile}
@@ -110,7 +109,7 @@ class component extends PureComponent {
   }
 }
 
-const _getGridData = memoize(function(rows, columns, index) {
+const _getGridData = memoize(function(tileset, rows, columns, index) {
   return [
     [...Array(rows * columns)].map((_, i) => [index, i]),
     { rows, columns },

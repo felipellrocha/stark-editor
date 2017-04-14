@@ -12,11 +12,6 @@ class component extends PureComponent {
     this._dispatchAction = this._dispatchAction.bind(this);
   }
 
-  shouldComponentUpdate(nextProps) {
-    return nextProps.setIndex !== this.props.setIndex
-      && nextProps.tileIndex !== this.props.tileIndex;
-  }
-
   _dispatchAction() {
     const {
       setIndex,
@@ -37,10 +32,8 @@ class component extends PureComponent {
 
   render() {
     const {
-      app: {
-        tile,
-        tilesets,
-      },
+      tile,
+      tilesets,
       setIndex,
       tileIndex,
       grid,
@@ -72,6 +65,7 @@ class component extends PureComponent {
 
 export default connect(
   (state) => ({
-    app: state,
+    tile: state.tile,
+    tilesets: state.tilesets,
   }),
 )(component);

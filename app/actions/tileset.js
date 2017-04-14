@@ -1,5 +1,14 @@
 import electron from 'electron';
 
+export const CHANGE_ZOOM = 'CHANGE_ZOOM';
+
+export function changeZoom(zoom) {
+  return {
+    type: CHANGE_ZOOM,
+    zoom,
+  }
+}
+
 export const SELECT_LAYER = 'SELECT_LAYER';
 
 export function selectLayer(layer) {

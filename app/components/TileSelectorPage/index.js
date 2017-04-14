@@ -21,16 +21,19 @@ import styles from './styles.css';
 class component extends PureComponent {
   render() {
     const {
-      app: {
-        grid,
-        tile,
-        data,
-        layers
-      },
+      grid,
+      tile,
+      data,
+      layers,
+      zoom,
     } = this.props;
+    
+    const style = {
+      transform: `scale(${zoom})`,
+    };
 
     return (
-      <div className={styles.component} >
+      <div className={styles.component} style={style} >
         <Workspace
           layers={layers}
         />
@@ -40,6 +43,12 @@ class component extends PureComponent {
 }
 
 export default compose(
-  connect(state => ({ app: state })),
+  connect(state => ({
+    grid: state.grid,
+    tile: state.tile,
+    data: state.data,
+    layers: state.layers,
+    zoom: state.zoom,
+  })),
   App(),
 )(component);

@@ -18,6 +18,11 @@
     font-size: 12px;
   }
 
+  .middle {
+    text-align: center;
+    font-size: 11px;
+  }
+
   .clear {
     display: flex;
     align-items: center;

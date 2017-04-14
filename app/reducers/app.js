@@ -7,14 +7,16 @@ import {
   SELECT_TILE,
   SELECT_LAYER,
   LOAD_STAGE,
+  CHANGE_ZOOM,
 } from 'actions';
 
 const initialState = {
   name: 'Game Editor',
   filename: '/Users/fllr/game/game.targ',
+  zoom: .5,
   grid: {
+    columns: 40,
     rows: 20,
-    columns: 20,
   },
   tile: {
     width: 48,
@@ -33,6 +35,9 @@ initialState.layers = ['background', 'foreground'].map(name => ({
 }));
 
 export default handleActions({
+  CHANGE_ZOOM: (state, actions) => {
+    return Object.assign({}, state, { zoom: actions.zoom });
+  },
   RECEIVE_TILESETS: (state, action) => {
     const tilesets = [...state.tilesets, ...action.tilesets];
 
@@ -64,7 +69,7 @@ export default handleActions({
     const currentLayer = layers[selectedLayer];
     const currentTile = currentLayer.data[index];
 
-    if (currentTile[0] == selectedTile[0] && currentTile[1] == selectedTile[1]) return state;
+    if (currentTile[0] === selectedTile[0] && currentTile[1] === selectedTile[1]) { return state };
 
     const newData = arrayReplace(currentLayer.data, selectedTile, index);
     const newLayer = Object.assign({}, currentLayer, { data: newData });

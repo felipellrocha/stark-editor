@@ -12,6 +12,7 @@ import {
   writeFile,
   selectTile,
   openFile,
+  changeZoom,
 } from 'actions';
 
 import styles from './styles.css';
@@ -23,6 +24,15 @@ class component extends PureComponent {
     this._handleWrite = this._handleWrite.bind(this);
     this._handleOpen = this._handleOpen.bind(this);
     this._handleClear = this._handleClear.bind(this);
+    this._handleChangeZoom = this._handleChangeZoom.bind(this);
+  }
+
+  _handleChangeZoom(e) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(changeZoom(e.target.value));
   }
 
   _handleOpen() {
@@ -55,6 +65,7 @@ class component extends PureComponent {
         setIndex,
         tileIndex,
       ],
+      zoom,
     } = this.props;
 
     return (
@@ -66,6 +77,10 @@ class component extends PureComponent {
           </div>
         </div>
         <div className="middle">
+          <div>
+            <div>Zoom</div>
+            <input type="range" min="0" max="1" step="0.05" value={zoom} onChange={this._handleChangeZoom} />
+          </div>
         </div>
         <div className="right">
           <Button onClick={this._handleOpen} className={styles.button}>
@@ -86,5 +101,6 @@ class component extends PureComponent {
 export default connect(
   (state) => ({
     selectedTile: state.selectedTile,
+    zoom: state.zoom,
   }),
 )(component);
