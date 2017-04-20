@@ -41,7 +41,7 @@ export default class MenuBuilder {
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
-        { label: 'Hide ElectronReact', accelerator: 'Command+H', selector: 'hide:' },
+        { label: 'Hide Stark Editor', accelerator: 'Command+H', selector: 'hide:' },
         { label: 'Hide Others', accelerator: 'Command+Shift+H', selector: 'hideOtherApplications:' },
         { label: 'Show All', selector: 'unhideAllApplications:' },
         { type: 'separator' },

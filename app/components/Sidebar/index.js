@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import classnames from 'classnames';
+import { withRouter } from 'react-router-dom'
 
 import { memoize } from 'lodash';
 
@@ -37,9 +39,10 @@ class component extends PureComponent {
   _handleSelectTiles() {
     const {
       dispatch,
+      history,
     } = this.props;
 
-    dispatch(selectTilesets());
+    dispatch(selectTilesets(history));
   }
 
   _renderGrid(tileset, index) {
@@ -64,6 +67,7 @@ class component extends PureComponent {
           data={data}
           grid={grid}
           tileAction={selectTile}
+          simpleTiles
         />
       </div>
     );
@@ -117,12 +121,13 @@ const _getGridData = memoize(function(tileset, rows, columns, index) {
   ];
 });
 
-export default connect(
-  (state) => ({
+export default compose(
+  connect(state => ({
     name: state.app.name,
     tilesets: state.app.tilesets,
     layers: state.app.layers,
     selectedLayer: state.app.selectedLayer,
     basepath: state.app.basepath,
-  }),
+  })),
+  withRouter,
 )(component);

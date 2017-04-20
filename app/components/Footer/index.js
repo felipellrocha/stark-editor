@@ -77,10 +77,13 @@ class component extends PureComponent {
       ],
       zoom,
       selectedAction,
+      className,
     } = this.props;
 
+    const classes = classnames(styles.component, className);
+
     return (
-      <div className={styles.component}>
+      <div className={classes}>
         <div className="left">
           <Tile setIndex={setIndex} tileIndex={tileIndex} className={styles.tile} />
           <div className="clear" onClick={this._handleClear}>
@@ -120,7 +123,7 @@ class component extends PureComponent {
 export default connect(
   (state) => ({
     selectedTile: state.app.selectedTile,
-    zoom: state.app.zoom,
-    selectedAction: state.app.selectedAction,
+    selectedAction: state.global.selectedAction,
+    zoom: state.global.zoom,
   }),
 )(component);

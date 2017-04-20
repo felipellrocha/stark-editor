@@ -14,12 +14,23 @@ export function flood(x, y, replacementTile, prevTile, data, grid, visited = new
   if (!visited.has(XYToIndex(x - 1, y, grid))) flood(x - 1, y, replacementTile, prevTile, data, grid, visited);
 }
 
+export function areCoordinatesInside(x, y, grid) {
+  return (x >= 0 && x < grid.columns && y >= 0 && y < grid.rows);
+}
+
 export function XYToIndex(x, y, grid) {
   return y * grid.columns + x;
 }
 
 export function IndexToXY(index, grid) {
-  return [Math.floor(index / grid.columns), index % grid.columns];
+
+  return [index % grid.columns, Math.floor(index / grid.columns)];
+}
+
+export function compareCoordinates(c1, c2, data, grid) {
+  const t1 = data[XYToIndex(c1[0], c1[1], grid)]
+  const t2 = data[XYToIndex(c2[0], c2[1], grid)]
+  return compareTiles(t1, t2)
 }
 
 export function compareTiles(t1, t2) {

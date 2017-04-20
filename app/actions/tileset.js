@@ -45,6 +45,26 @@ export function putDownTile(tile) {
   }
 }
 
+export const CHANGE_TILESET_TYPE = 'CHANGE_TILESET_TYPE'
+
+export function changeTilesetType(index, tilesetType) {
+  return {
+    type: CHANGE_TILESET_TYPE,
+    index,
+    tilesetType,
+  }
+}
+
+export const CHANGE_TILESET_NAME = 'CHANGE_TILESET_NAME'
+
+export function changeTilesetName(index, name) {
+  return {
+    type: CHANGE_TILESET_NAME,
+    index,
+    name,
+  }
+}
+
 export const CHANGE_TILING_METHOD = 'CHANGE_TILING_METHOD'
 
 export function changeTilingMethod(method) {

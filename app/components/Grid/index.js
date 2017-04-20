@@ -16,6 +16,7 @@ class component extends PureComponent {
       grid,
       data,
       className,
+      simpleTiles,
     } = this.props;
 
     const rows = [...Array(grid.rows)]
@@ -44,6 +45,8 @@ class component extends PureComponent {
                     tileAction={this.props.tileAction}
                     x={x}
                     y={y}
+                    simpleTile={simpleTiles}
+                    data={data}
                   />
                 )
               })}

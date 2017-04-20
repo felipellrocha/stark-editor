@@ -1,13 +1,14 @@
 import React from 'react';
 import { Provider } from 'react-redux';
+import { HashRouter } from 'react-router-dom';
 import { render } from 'react-dom';
-import { Router, hashHistory } from 'react-router';
 import { AppContainer } from 'react-hot-loader';
 import { syncHistoryWithStore } from 'react-router-redux';
 import configureStore from './store/configureStore';
 
 import {
-  TileSelectorPage,
+  Routes,
+  App,
 } from './components';
 
 const store = configureStore();
@@ -15,7 +16,9 @@ const store = configureStore();
 render(
   <AppContainer>
     <Provider store={store}>
-      <TileSelectorPage />
+      <HashRouter>
+        <App />
+      </HashRouter>
     </Provider>
   </AppContainer>,
   document.getElementById('root')

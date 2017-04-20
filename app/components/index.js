@@ -1,5 +1,6 @@
 // HOC
 export App from './App'
+export Routes from './Routes'
 
 // Regular components
 export Grid from './Grid'
@@ -13,3 +14,4 @@ export Footer from './Footer'
 
 // Pages
 export TileSelectorPage from './TileSelectorPage'
+export TileImportPage from './TileImportPage'

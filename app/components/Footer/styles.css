@@ -84,3 +84,7 @@
     stroke: #D33E43;
   }
 }
+
+:local(.fullLength) {
+  left: 0;
+}

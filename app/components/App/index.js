@@ -1,22 +1,31 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
+import { Route } from 'react-router-dom';
 import styles from './styles.css';
 
 import {
+  TileSelectorPage,
+  TileImportPage,
+
   Sidebar,
   Footer,
 } from 'components';
 
-export default function() {
-  return (Component) => (props) => {
+class component extends PureComponent {
+  render() {
     return (
-      <div>
-        <Sidebar />
-        <div className={styles.component}>
-          <Component {...props} />
-        </div>
-        <Footer />
+      <div className={styles.component}>
+
+        <Route exact path="/" component={TileSelectorPage} />
+        <Route path="/import" component={TileImportPage} />
+
       </div>
     );
-  }
+  };
 };
+
+export default compose(
+  withRouter,
+)(component);

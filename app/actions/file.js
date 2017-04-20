@@ -5,7 +5,7 @@ import path from 'path';
 
 export const RECEIVE_TILESETS = 'RECEIVE_TILESETS';
 
-export function selectTilesets() {
+export function selectTilesets(history) {
   return (dispatch, getState) => {
     const {
       app: {
@@ -23,7 +23,8 @@ export function selectTilesets() {
       ],
     })
 
-    if (tilesets)
+    if (!tilesets) return;
+
     dispatch(receiveTilesets(tilesets.map(tileset => {
       const image = nativeImage.createFromPath(tileset);
       const size = image.getSize();
@@ -33,14 +34,18 @@ export function selectTilesets() {
 
       const src = path.relative(basepath, tileset);
       const name = path.basename(tileset);
+      const type = 'tile';
 
       return {
         src,
         name,
         rows,
         columns,
+        type,
       };
     })));
+
+    history.push('/import');
   }
 }
 
@@ -70,14 +75,14 @@ export function writeFile(saveAs = false) {
           ],
         })
       } else {
-        return state.global.filename;
+        return globalFilename;
       }
     })();
     const newBasepath = path.dirname(filename);
     
     dispatch(saveFilename(filename, oldBasepath, newBasepath));
 
-    fs.writeFileSync(filename, JSON.stringify(app));
+    fs.writeFileSync(filename, JSON.stringify(getState().app));
   }
 }
 
@@ -94,25 +99,36 @@ export function saveFilename(filename, oldBasepath, newBasepath) {
 
 export function openFile() {
   return dispatch => {
-
-    const gameFile = electron.remote.dialog.showOpenDialog({
+    const filename = electron.remote.dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
         {name: 'Game Files', extensions: ['targ']},
       ],
-    })
+    })[0];
 
-    const game = fs.readFileSync(gameFile[0]);
+    const game = fs.readFileSync(filename);
+    const basepath = path.dirname(filename);
 
+    dispatch(updatePaths(filename, basepath));
     dispatch(loadStage(JSON.parse(game)));
   }
 }
 
 export const LOAD_STAGE = 'LOAD_STAGE';
 
-export function loadStage(data) {
+export function loadStage(data, filename, basepath) {
   return {
     type: LOAD_STAGE,
     data,
+  }
+}
+
+export const UPDATE_PATHS = 'UPDATE_PATHS';
+
+export function updatePaths(filename, basepath) {
+  return {
+    type: UPDATE_PATHS,
+    filename,
+    basepath,
   }
 }

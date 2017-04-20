@@ -6,12 +6,11 @@ import path from 'path';
 
 import {
   RECEIVE_TILESETS,
+  CHANGE_TILESET_NAME,
   PAINT_TILE,
   SELECT_TILE,
   SELECT_LAYER,
   LOAD_STAGE,
-  CHANGE_ZOOM,
-  CHANGE_TILING_METHOD,
   SAVE_FILENAME,
 } from 'actions';
 
@@ -21,9 +20,8 @@ import {
 
 const initialState = {
   name: 'Game Editor',
-  zoom: .5,
   grid: {
-    columns: 20,
+    columns: 10,
     rows: 10,
   },
   tile: {
@@ -34,26 +32,45 @@ const initialState = {
   tilesets: [ ],
   selectedTile: [-1, 0],
   selectedLayer: 0,
-  selectedAction: 'put',
 };
 
-initialState.layers = ['background', 'foreground'].map(name => ({
+initialState.layers = ['background', 'middleground', 'foreground'].map(name => ({
   type: 'tile',
   name: name,
   data: [...Array(initialState.grid.rows * initialState.grid.columns)].map((_, i) => [-1, 0]),
 }));
 
 export default handleActions({
-  CHANGE_TILING_METHOD: (state, action) => {
-    return Object.assign({}, state, { selectedAction: action.method });
-  },
-  CHANGE_ZOOM: (state, action) => {
-    return Object.assign({}, state, { zoom: action.zoom });
-  },
   RECEIVE_TILESETS: (state, action) => {
     const tilesets = [...state.tilesets, ...action.tilesets];
 
     return Object.assign({}, state, { tilesets: tilesets });
+  },
+  CHANGE_TILESET_TYPE: (state, action) => {
+    const {
+      index,
+      tilesetType: type,
+    } = action;
+
+    const tileset = state.tilesets[index];
+    
+    const newTileset = Object.assign({}, tileset, { type });
+    const newTilesets = arrayReplace(state.tilesets, newTileset, index);
+
+    return Object.assign({}, state, { tilesets: newTilesets });
+  },
+  CHANGE_TILESET_NAME: (state, action) => {
+    const {
+      index,
+      name,
+    } = action;
+
+    const tileset = state.tilesets[index];
+    
+    const newTileset = Object.assign({}, tileset, { name });
+    const newTilesets = arrayReplace(state.tilesets, newTileset, index);
+
+    return Object.assign({}, state, { tilesets: newTilesets });
   },
   SAVE_FILENAME: (state, action) => {
     const tilesets = state.tilesets.map(tileset => {

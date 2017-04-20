@@ -111,6 +111,6 @@ export default connect(
   (state) => ({
     grid: state.app.grid,
     tile: state.app.tile,
-    method: state.app.selectedAction,
+    method: state.global.selectedAction,
   }),
 )(component);
