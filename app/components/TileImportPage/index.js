@@ -12,6 +12,7 @@ import {
 import {
   changeTilesetName,
   changeTilesetType,
+  addTerrain,
 } from 'actions';
 
 import styles from './styles.css';
@@ -24,6 +25,7 @@ class component extends PureComponent {
     this._handleGoBack = this._handleGoBack.bind(this);
     this._handleChangeTilesetName = this._handleChangeTilesetName.bind(this);
     this._handleChangeTilesetType = this._handleChangeTilesetType.bind(this);
+    this._handleCreateTerrain = this._handleCreateTerrain.bind(this);
   }
 
   _handleGoBack() {
@@ -32,6 +34,33 @@ class component extends PureComponent {
     } = this.props;
 
     history.goBack();
+  }
+
+  _handleCreateTerrain(e, index) {
+    const {
+      offsetX,
+      offsetY,
+    } = e.nativeEvent;
+
+    const {
+      tile,
+      dispatch,
+      tilesets,
+    } = this.props;
+
+    const tileset = tilesets[index];
+
+    const tileWidth = (1 / tileset.columns) * e.nativeEvent.target.width;
+    const tileHeight = (1 / tileset.rows) * e.nativeEvent.target.height;
+
+    const x = Math.floor(offsetX / tileWidth);
+    const y = Math.floor(offsetY / tileHeight);
+
+    dispatch(addTerrain(
+      index,
+      (y * tileset.columns + x),
+      '6-tile',
+    ));
   }
 
   _handleChangeTilesetName(event, index) {
@@ -52,7 +81,9 @@ class component extends PureComponent {
 
   render() {
     const {
+      tile,
       tilesets,
+      terrains,
       basepath,
     } = this.props;
 
@@ -66,9 +97,34 @@ class component extends PureComponent {
           const src = path.resolve(basepath, tileset.src)
 
           return (
-            <div className='card'>
+            <div key={`setIndex`} className='card'>
               <div className="left">
-                <img src={src} />
+                <img src={src} onClick={event => this._handleCreateTerrain(event, i)} />
+                {terrains.map(terrain => {
+                  const {
+                    setIndex,
+                    tileIndex,
+                  } = terrain;
+
+                  const x = Math.floor(tileIndex % tileset.columns);
+                  const y = Math.floor(tileIndex / tileset.columns);
+
+                  const tileWidth = (1 / tileset.columns) * 100;
+                  const tileHeight = (1 / tileset.rows) * 100;
+
+                  const style = (function() {
+                    if (terrain.type === '6-tile') return {
+                      width: `${2 * tileWidth}%`,
+                      height: `${3 * tileHeight}%`,
+                      left: `${x * tileWidth}%`,
+                      top: `${y * tileHeight}%`,
+                    };
+                  })();
+
+                  return (
+                    <div key={`${setIndex}_${tileIndex}`} className="terrain" style={style} />
+                  )
+                })}
               </div>
               <div className="right">
                 <div>Path: <strong>{tileset.src}</strong></div>
@@ -94,6 +150,8 @@ class component extends PureComponent {
 export default compose(
   connect(state => ({
     tilesets: state.app.tilesets,
+    terrains: state.app.terrains,
+    tile: state.app.tile,
     basepath: state.global.basepath,
   })),
 )(component);

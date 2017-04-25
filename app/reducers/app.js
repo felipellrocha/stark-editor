@@ -5,6 +5,7 @@ import { arrayReplace } from 'utils';
 import path from 'path';
 
 import {
+  ADD_TERRAIN,
   RECEIVE_TILESETS,
   CHANGE_TILESET_NAME,
   PAINT_TILE,
@@ -28,8 +29,9 @@ const initialState = {
     width: 48,
     height: 48,
   },
-  layers: [],
+  layers: [ ],
   tilesets: [ ],
+  terrains: [ ],
   selectedTile: [-1, 0],
   selectedLayer: 0,
 };
@@ -41,6 +43,21 @@ initialState.layers = ['background', 'middleground', 'foreground'].map(name => (
 }));
 
 export default handleActions({
+  ADD_TERRAIN: (state, action) => {
+    const {
+      setIndex,
+      tileIndex,
+      terrainType,
+    } = action;
+
+    const terrains = [...state.terrains, {
+      setIndex,
+      tileIndex,
+      type: terrainType,
+    }];
+
+    return Object.assign({}, state, { terrains });
+  },
   RECEIVE_TILESETS: (state, action) => {
     const tilesets = [...state.tilesets, ...action.tilesets];
 

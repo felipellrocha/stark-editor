@@ -10,6 +10,7 @@ import {
   selectTilesets,
   selectTile,
   selectLayer,
+  viewTilesetEditor,
 } from 'actions';
 
 import {
@@ -25,6 +26,7 @@ class component extends PureComponent {
 
     this._handleSelectTiles = this._handleSelectTiles.bind(this);
     this._handleSelectLayer = this._handleSelectLayer.bind(this);
+    this._handleViewTilesetEditor = this._handleViewTilesetEditor.bind(this);
     this._renderGrid = this._renderGrid.bind(this);
   }
 
@@ -43,6 +45,15 @@ class component extends PureComponent {
     } = this.props;
 
     dispatch(selectTilesets(history));
+  }
+
+  _handleViewTilesetEditor() {
+    const {
+      dispatch,
+      history,
+    } = this.props;
+
+    dispatch(viewTilesetEditor(history));
   }
 
   _renderGrid(tileset, index) {
@@ -101,13 +112,18 @@ class component extends PureComponent {
             )
           })}
         </div>
-        <div className="tilesets separator">
-          { tilesets.map(this._renderGrid) }
-        </div>
         <div className="actions separator">
           <Button onClick={this._handleSelectTiles}>
             Add tilesets
           </Button>
+          <Button onClick={this._handleViewTilesetEditor}>
+            View Tileset Editor
+          </Button>
+        </div>
+        <div className="tilesets separator">
+          { tilesets.map(tileset => {
+            if (tileset.type !== 'aware') return this._renderGrid(tileset)
+          })}
         </div>
       </div>
     );

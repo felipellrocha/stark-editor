@@ -2,6 +2,23 @@ import electron from 'electron';
 
 export const CHANGE_ZOOM = 'CHANGE_ZOOM';
 
+export function viewTilesetEditor(history) {
+  return dispatch => {
+    history.push('/import');
+  }
+}
+
+export const ADD_TERRAIN = 'ADD_TERRAIN';
+
+export function addTerrain(setIndex, tileIndex, terrainType) {
+  return {
+    type: ADD_TERRAIN,
+    setIndex,
+    tileIndex,
+    terrainType,
+  }
+}
+
 export function changeZoom(zoom) {
   return {
     type: CHANGE_ZOOM,
