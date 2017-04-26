@@ -6,8 +6,8 @@ import { Route } from 'react-router-dom';
 import styles from './styles.css';
 
 import {
-  TileSelectorPage,
-  TileImportPage,
+  SelectorPage,
+  ImportPage,
 
   Sidebar,
   Footer,
@@ -18,8 +18,8 @@ class component extends PureComponent {
     return (
       <div className={styles.component}>
 
-        <Route exact path="/" component={TileSelectorPage} />
-        <Route path="/import" component={TileImportPage} />
+        <Route exact path="/" component={SelectorPage} />
+        <Route path="/import" component={ImportPage} />
 
       </div>
     );

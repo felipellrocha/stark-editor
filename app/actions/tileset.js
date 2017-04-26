@@ -8,6 +8,15 @@ export function viewTilesetEditor(history) {
   }
 }
 
+export const CHANGE_TERRAIN = 'CHANGE_TERRAIN';
+
+export function changeTerrain(terrainType) {
+  return {
+    type: CHANGE_TERRAIN,
+    terrainType,
+  }
+}
+
 export const ADD_TERRAIN = 'ADD_TERRAIN';
 
 export function addTerrain(setIndex, tileIndex, terrainType) {

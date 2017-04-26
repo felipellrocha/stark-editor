@@ -6,8 +6,10 @@ import {
   Grid,
   Workspace,
   Sidebar,
-  Footer,
 } from 'components';
+
+
+import Footer from './Footer'
 
 import {
   putDownTile,

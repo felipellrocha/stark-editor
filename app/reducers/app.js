@@ -50,13 +50,20 @@ export default handleActions({
       terrainType,
     } = action;
 
-    const terrains = [...state.terrains, {
-      setIndex,
-      tileIndex,
-      type: terrainType,
-    }];
+    const {
+      tilesets,
+    } = state;
 
-    return Object.assign({}, state, { terrains });
+    const tileset = tilesets[setIndex];
+
+    const terrains = Object.assign({}, tileset.terrains, { [tileIndex]: {
+      type: terrainType,
+    }});
+
+    const newTileset = Object.assign({}, tileset, { terrains });
+    const newTilesets = arrayReplace(state.tilesets, newTileset, setIndex);
+
+    return Object.assign({}, state, { tilesets: newTilesets });
   },
   RECEIVE_TILESETS: (state, action) => {
     const tilesets = [...state.tilesets, ...action.tilesets];

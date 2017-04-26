@@ -42,6 +42,7 @@ export function selectTilesets(history) {
         rows,
         columns,
         type,
+        terrains: {},
       };
     })));
 

@@ -34,7 +34,11 @@ class component extends PureComponent {
           return (
             <div className="row" key={y}>
               {columns.map((_, x) => {
-                const [ setIndex, tileIndex ] = data[y * grid.columns + x];
+                const cell = data[y * grid.columns + x];
+
+                if (!cell) return null;
+
+                const [ setIndex, tileIndex ] = cell;
                 
                 return (
                   <Tile

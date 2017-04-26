@@ -27,7 +27,8 @@ class component extends PureComponent {
     this._handleSelectTiles = this._handleSelectTiles.bind(this);
     this._handleSelectLayer = this._handleSelectLayer.bind(this);
     this._handleViewTilesetEditor = this._handleViewTilesetEditor.bind(this);
-    this._renderGrid = this._renderGrid.bind(this);
+    this._renderSimpleGrid = this._renderSimpleGrid.bind(this);
+    this._renderTerrainGrid = this._renderTerrainGrid.bind(this);
   }
 
   _handleSelectLayer(layer) {
@@ -56,7 +57,7 @@ class component extends PureComponent {
     dispatch(viewTilesetEditor(history));
   }
 
-  _renderGrid(tileset, index) {
+  _renderSimpleGrid(tileset, index) {
     const {
       rows,
       columns,
@@ -68,6 +69,34 @@ class component extends PureComponent {
       data,
       grid,
     ] = _getGridData(tileset, rows, columns, index);
+
+    const key = `${rows}_${columns}_${index}`
+
+    return (
+      <div key={key}>
+        <h3>{ name }</h3>
+        <Grid
+          data={data}
+          grid={grid}
+          tileAction={selectTile}
+          simpleTiles
+        />
+      </div>
+    );
+  }
+
+  _renderTerrainGrid(tileset, index) {
+    const {
+      rows,
+      columns,
+      src,
+      name,
+    } = tileset;
+
+    const [
+      data,
+      grid,
+    ] = _getTerrainData(tileset, 4, index);
 
     const key = `${rows}_${columns}_${index}`
 
@@ -121,8 +150,13 @@ class component extends PureComponent {
           </Button>
         </div>
         <div className="tilesets separator">
-          { tilesets.map(tileset => {
-            if (tileset.type !== 'aware') return this._renderGrid(tileset)
+          { tilesets.map((tileset, index) => {
+            if (tileset.type !== 'aware') return this._renderSimpleGrid(tileset, index)
+          })}
+        </div>
+        <div className="terrains separator">
+          { tilesets.map((tileset, index) => {
+            if (tileset.type === 'aware') return this._renderTerrainGrid(tileset, index)
           })}
         </div>
       </div>
@@ -133,6 +167,16 @@ class component extends PureComponent {
 const _getGridData = memoize(function(tileset, rows, columns, index) {
   return [
     [...Array(rows * columns)].map((_, i) => [index, i]),
+    { rows, columns },
+  ];
+});
+
+const _getTerrainData = memoize(function(tileset, columns, setIndex) {
+  const terrains = Object.keys(tileset.terrains);
+  const rows = Math.ceil(terrains.length / columns);
+
+  return [
+    [...Array(terrains.length)].map((_, i) => [setIndex, terrains[i]]),
     { rows, columns },
   ];
 });

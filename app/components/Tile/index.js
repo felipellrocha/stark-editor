@@ -59,6 +59,7 @@ class component extends PureComponent {
     const classes = classnames(styles.component, className);
 
     const tileset = tilesets[setIndex];
+    const terrain = tileset.terrains[tileIndex];
 
     const left = (tileIndex % tileset.columns) * tile.width;
     const top = Math.floor(tileIndex / tileset.columns) * tile.height;
@@ -84,10 +85,10 @@ class component extends PureComponent {
     
     return (
       <div className={classes} style={style} onClick={this._dispatchAction}>
-        { this.renderSubTile(left, top, src, northWestOffset(directions)) }
-        { this.renderSubTile(left, top, src, northEastOffset(directions)) }
-        { this.renderSubTile(left, top, src, southWestOffset(directions)) }
-        { this.renderSubTile(left, top, src, southEastOffset(directions)) }
+        { this.renderSubTile(left, top, src, northWestOffset(directions, terrain)) }
+        { this.renderSubTile(left, top, src, northEastOffset(directions, terrain)) }
+        { this.renderSubTile(left, top, src, southWestOffset(directions, terrain)) }
+        { this.renderSubTile(left, top, src, southEastOffset(directions, terrain)) }
       </div>
     )
   }
@@ -180,12 +181,12 @@ class component extends PureComponent {
 
     const tileset = tilesets[setIndex];
 
-    if (tileset.type === 'tile' || simpleTile) return this.renderSimpleTile();
+    if (simpleTile || tileset.type === 'tile') return this.renderSimpleTile();
     if (tileset.type === 'aware') return this.renderAwareTile();
   }
 }
 
-function southWestOffset(directions) {
+function southWestOffset(directions, terrain) {
   const {
     isNorth,
     isSouth,
@@ -206,7 +207,7 @@ function southWestOffset(directions) {
   if (!isSouth && !isWest) return [0, 5];
 }
 
-function southEastOffset(directions) {
+function southEastOffset(directions, terrain) {
   const {
     isNorth,
     isSouth,
@@ -227,7 +228,7 @@ function southEastOffset(directions) {
   if (!isSouth && !isEast) return [3, 5];
 }
 
-function northWestOffset(directions) {
+function northWestOffset(directions, terrain) {
   const {
     isNorth,
     isSouth,
@@ -248,7 +249,7 @@ function northWestOffset(directions) {
   if (!isNorth && !isWest) return [0, 2];
 }
 
-function northEastOffset(directions) {
+function northEastOffset(directions, terrain) {
   const {
     isNorth,
     isSouth,

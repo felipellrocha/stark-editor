@@ -10,8 +10,7 @@ export Button from './Button'
 export InlineSVG from './InlineSVG'
 
 export Sidebar from './Sidebar'
-export Footer from './Footer'
 
 // Pages
-export TileSelectorPage from './TileSelectorPage'
-export TileImportPage from './TileImportPage'
+export SelectorPage from './SelectorPage'
+export ImportPage from './ImportPage'
