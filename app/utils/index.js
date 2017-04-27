@@ -1,3 +1,5 @@
 export * from './immutable.js'
 export * from './tile.js'
 export * from './file.js'
+export sixTile from './sixTile.js'
+export fourTile from './fourTile.js'

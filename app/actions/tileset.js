@@ -35,6 +35,15 @@ export function changeZoom(zoom) {
   }
 }
 
+export const TOGGLE_LAYER_VISIBILITY = 'TOGGLE_LAYER_VISIBILITY';
+
+export function toggleLayerVisibility(layer) {
+  return {
+    type: TOGGLE_LAYER_VISIBILITY,
+    layer,
+  }
+}
+
 export const SELECT_LAYER = 'SELECT_LAYER';
 
 export function selectLayer(layer) {

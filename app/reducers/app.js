@@ -13,6 +13,7 @@ import {
   SELECT_LAYER,
   LOAD_STAGE,
   SAVE_FILENAME,
+  TOGGLE_LAYER_VISIBILITY,
 } from 'actions';
 
 import {
@@ -39,6 +40,7 @@ const initialState = {
 initialState.layers = ['background', 'middleground', 'foreground'].map(name => ({
   type: 'tile',
   name: name,
+  visible: true,
   data: [...Array(initialState.grid.rows * initialState.grid.columns)].map((_, i) => [-1, 0]),
 }));
 
@@ -107,6 +109,13 @@ export default handleActions({
     });
 
     return Object.assign({}, state, { tilesets: tilesets });
+  },
+  TOGGLE_LAYER_VISIBILITY: (state, action) => {
+    const layer = state.layers[action.layer];
+    const newLayer = Object.assign({}, layer, { visible: !layer.visible });
+    const newLayers = arrayReplace(state.layers, newLayer, action.layer);
+
+    return Object.assign({}, state, { layers: newLayers });
   },
   SELECT_LAYER: (state, action) => {
     return Object.assign({}, state, { selectedLayer: action.layer });

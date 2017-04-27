@@ -10,10 +10,12 @@ import {
   selectTilesets,
   selectTile,
   selectLayer,
+  toggleLayerVisibility,
   viewTilesetEditor,
 } from 'actions';
 
 import {
+  InlineSVG,
   Button,
   Grid,
 } from 'components';
@@ -29,6 +31,7 @@ class component extends PureComponent {
     this._handleViewTilesetEditor = this._handleViewTilesetEditor.bind(this);
     this._renderSimpleGrid = this._renderSimpleGrid.bind(this);
     this._renderTerrainGrid = this._renderTerrainGrid.bind(this);
+    this._handleToggleVisibility = this._handleToggleVisibility.bind(this);
   }
 
   _handleSelectLayer(layer) {
@@ -37,6 +40,14 @@ class component extends PureComponent {
     } = this.props;
 
     dispatch(selectLayer(layer));
+  }
+
+  _handleToggleVisibility(layer) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(toggleLayerVisibility(layer));
   }
 
   _handleSelectTiles() {
@@ -128,6 +139,7 @@ class component extends PureComponent {
           {layers.map((layer, i) => {
             const classes = classnames('layer', {
               'selected': selectedLayer === i,
+              'not-visible': !layer.visible,
             });
 
             return (
@@ -136,7 +148,11 @@ class component extends PureComponent {
                 className={classes}
                 onClick={() => this._handleSelectLayer(i)}
               >
-                { layer.name }
+                <div>{ layer.name }</div>
+                <div className="actions">
+                  <InlineSVG icon='cog' />
+                  <InlineSVG icon='eye' onClick={() => this._handleToggleVisibility(i)} />
+                </div>
               </div>
             )
           })}
@@ -150,14 +166,16 @@ class component extends PureComponent {
           </Button>
         </div>
         <div className="tilesets separator">
-          { tilesets.map((tileset, index) => {
-            if (tileset.type !== 'aware') return this._renderSimpleGrid(tileset, index)
-          })}
-        </div>
-        <div className="terrains separator">
-          { tilesets.map((tileset, index) => {
-            if (tileset.type === 'aware') return this._renderTerrainGrid(tileset, index)
-          })}
+          <div className="simple">
+            { tilesets.map((tileset, index) => {
+              if (tileset.type !== 'aware') return this._renderSimpleGrid(tileset, index)
+            })}
+          </div>
+          <div className="terrains">
+            { tilesets.map((tileset, index) => {
+              if (tileset.type === 'aware') return this._renderTerrainGrid(tileset, index)
+            })}
+          </div>
         </div>
       </div>
     );

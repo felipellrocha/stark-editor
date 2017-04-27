@@ -10,6 +10,8 @@ import {
   IndexToXY,
   areCoordinatesInside,
   compareCoordinates,
+  sixTile,
+  fourTile,
 } from 'utils';
 
 import styles from './styles.css';
@@ -82,13 +84,15 @@ class component extends PureComponent {
       isWest: areCoordinatesInside(x - 1, y, grid) && compareCoordinates([x, y], [x - 1, y], data, grid),
       isNorthWest: areCoordinatesInside(x - 1, y - 1, grid) && compareCoordinates([x, y], [x - 1, y - 1], data, grid),
     };
+
+    const tilingPackage = (terrain.type === '6-tile') ? sixTile : fourTile;
     
     return (
       <div className={classes} style={style} onClick={this._dispatchAction}>
-        { this.renderSubTile(left, top, src, northWestOffset(directions, terrain)) }
-        { this.renderSubTile(left, top, src, northEastOffset(directions, terrain)) }
-        { this.renderSubTile(left, top, src, southWestOffset(directions, terrain)) }
-        { this.renderSubTile(left, top, src, southEastOffset(directions, terrain)) }
+        { this.renderSubTile(left, top, src, tilingPackage.northWestOffset(directions)) }
+        { this.renderSubTile(left, top, src, tilingPackage.northEastOffset(directions)) }
+        { this.renderSubTile(left, top, src, tilingPackage.southWestOffset(directions)) }
+        { this.renderSubTile(left, top, src, tilingPackage.southEastOffset(directions)) }
       </div>
     )
   }
@@ -109,7 +113,6 @@ class component extends PureComponent {
       height: tile.height / 2,
       width: tile.width / 2,
       backgroundImage: `url('file://${src}')`,
-      backgroundPosition: `-${left}px -${top + y}px`,
       backgroundPosition: `-${left + x}px -${top + y}px`,
     };
 
@@ -184,90 +187,6 @@ class component extends PureComponent {
     if (simpleTile || tileset.type === 'tile') return this.renderSimpleTile();
     if (tileset.type === 'aware') return this.renderAwareTile();
   }
-}
-
-function southWestOffset(directions, terrain) {
-  const {
-    isNorth,
-    isSouth,
-    isWest,
-    isEast,
-
-    isSouthWest,
-  } = directions;
-
-  if (isSouth && isWest) {
-    if (!isSouthWest) return [2, 1];
-    else return [1, 4];
-  }
-
-  if (isSouth && !isWest) return [0, 4];
-  if (!isSouth && isWest) return [1, 5];
-
-  if (!isSouth && !isWest) return [0, 5];
-}
-
-function southEastOffset(directions, terrain) {
-  const {
-    isNorth,
-    isSouth,
-    isWest,
-    isEast,
-
-    isSouthEast,
-  } = directions;
-
-  if (isSouth && isEast) {
-    if (!isSouthEast) return [3, 1];
-    else return [2, 4];
-  }
-
-  if (isSouth && !isEast) return [3, 4];
-  if (!isSouth && isEast) return [2, 5];
-
-  if (!isSouth && !isEast) return [3, 5];
-}
-
-function northWestOffset(directions, terrain) {
-  const {
-    isNorth,
-    isSouth,
-    isWest,
-    isEast,
-    
-    isNorthWest,
-  } = directions;
-
-  if (isNorth && isWest) {
-    if (!isNorthWest) return [2, 0];
-    else return [1, 3];
-  }
-
-  if (isNorth && !isWest) return [0, 3];
-  if (!isNorth && isWest) return [1, 2];
-
-  if (!isNorth && !isWest) return [0, 2];
-}
-
-function northEastOffset(directions, terrain) {
-  const {
-    isNorth,
-    isSouth,
-    isWest,
-    isEast,
-
-    isNorthEast,
-  } = directions;
-
-  if (isNorth && isEast) {
-    if (!isNorthEast) return [3, 0];
-    else return [2, 3];
-  }
-
-  if (isNorth && !isEast) return [3, 3];
-  if (!isNorth && isEast) return [2, 2];
-
-  if (!isNorth && !isEast) return [3, 2];
 }
 
 export default connect(

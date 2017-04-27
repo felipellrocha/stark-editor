@@ -93,6 +93,7 @@ class component extends PureComponent {
         style={style}
       > 
         {layers.map(layer => {
+          if (layer.visible)
           return (
             <Grid
               key={layer.name}
