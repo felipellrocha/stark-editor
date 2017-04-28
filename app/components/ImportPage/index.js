@@ -6,9 +6,8 @@ import { compose } from 'recompose';
 
 import {
   InlineSVG,
+  ImportFooter,
 } from 'components';
-
-import Footer from './Footer';
 
 import {
   changeTilesetName,
@@ -126,7 +125,7 @@ class component extends PureComponent {
             </div>
           );
         })}
-        <Footer />
+        <ImportFooter />
       </div>
     );
   }

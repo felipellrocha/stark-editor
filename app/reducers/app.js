@@ -5,12 +5,13 @@ import { arrayReplace } from 'utils';
 import path from 'path';
 
 import {
+  CHANGE_GAME_NAME,
   ADD_TERRAIN,
   RECEIVE_TILESETS,
   CHANGE_TILESET_NAME,
+  CHANGE_TILE_WIDTH,
+  CHANGE_TILE_HEIGHT,
   PAINT_TILE,
-  SELECT_TILE,
-  SELECT_LAYER,
   LOAD_STAGE,
   SAVE_FILENAME,
   TOGGLE_LAYER_VISIBILITY,
@@ -21,7 +22,7 @@ import {
 } from 'utils';
 
 const initialState = {
-  name: 'Game Editor',
+  name: 'Untitled',
   grid: {
     columns: 10,
     rows: 10,
@@ -33,8 +34,6 @@ const initialState = {
   layers: [ ],
   tilesets: [ ],
   terrains: [ ],
-  selectedTile: [-1, 0],
-  selectedLayer: 0,
 };
 
 initialState.layers = ['background', 'middleground', 'foreground'].map(name => ({
@@ -45,6 +44,17 @@ initialState.layers = ['background', 'middleground', 'foreground'].map(name => (
 }));
 
 export default handleActions({
+  CHANGE_TILE_WIDTH: (state, action) => {
+    const newTile = Object.assign({}, state.tile, { width: action.value });
+    return Object.assign({}, state, { tile: newTile});
+  },
+  CHANGE_TILE_HEIGHT: (state, action) => {
+    const newTile = Object.assign({}, state.tile, { height: action.value });
+    return Object.assign({}, state, { tile: newTile});
+  },
+  CHANGE_GAME_NAME: (state, action) => {
+    return Object.assign({}, state, { name: action.name });
+  },
   ADD_TERRAIN: (state, action) => {
     const {
       setIndex,
@@ -116,12 +126,6 @@ export default handleActions({
     const newLayers = arrayReplace(state.layers, newLayer, action.layer);
 
     return Object.assign({}, state, { layers: newLayers });
-  },
-  SELECT_LAYER: (state, action) => {
-    return Object.assign({}, state, { selectedLayer: action.layer });
-  },
-  SELECT_TILE: (state, action) => {
-    return Object.assign({}, state, { selectedTile: action.tile });
   },
   PAINT_TILE: (state, action) => {
     const {

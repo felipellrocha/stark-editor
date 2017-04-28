@@ -6,10 +6,9 @@ import {
   Grid,
   Workspace,
   Sidebar,
+  SelectorFooter,
 } from 'components';
 
-
-import Footer from './Footer'
 
 import {
   putDownTile,
@@ -39,7 +38,7 @@ class component extends PureComponent {
             layers={layers}
           />
         </div>
-        <Footer />
+        <SelectorFooter />
       </div>
     );
   }

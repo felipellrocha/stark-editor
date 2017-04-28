@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom'
 
 import {
   Tile,
@@ -22,11 +24,20 @@ class component extends PureComponent {
   constructor(props) {
     super(props);
 
+    this._handleSettings = this._handleSettings.bind(this);
     this._handleWrite = this._handleWrite.bind(this);
     this._handleOpen = this._handleOpen.bind(this);
     this._handleClear = this._handleClear.bind(this);
     this._handleChangeZoom = this._handleChangeZoom.bind(this);
     this._handleChangeTileMethod = this._handleChangeTileMethod.bind(this);
+  }
+
+  _handleSettings() {
+    const {
+      history,
+    } = this.props;
+
+    history.push('/settings');
   }
 
   _handleChangeTileMethod(value) {
@@ -111,7 +122,7 @@ class component extends PureComponent {
           <Button onClick={this._handleWrite} className={styles.button}>
             <InlineSVG className={styles.buttonIcon} icon="download" /> Save
           </Button>
-          <Button className={styles.button}>
+          <Button onClick={this._handleSettings} className={styles.button}>
             <InlineSVG className={styles.buttonIcon} icon="cog" />
           </Button>
         </div>
@@ -120,10 +131,11 @@ class component extends PureComponent {
   }
 }
 
-export default connect(
-  (state) => ({
-    selectedTile: state.app.selectedTile,
+export default compose(
+  connect(state => ({
+    selectedTile: state.global.selectedTile,
     selectedAction: state.global.selectedAction,
     zoom: state.global.zoom,
-  }),
+  })),
+  withRouter,
 )(component);

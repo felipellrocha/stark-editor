@@ -8,6 +8,7 @@ import styles from './styles.css';
 import {
   SelectorPage,
   ImportPage,
+  SettingsPage,
 
   Sidebar,
   Footer,
@@ -20,6 +21,7 @@ class component extends PureComponent {
 
         <Route exact path="/" component={SelectorPage} />
         <Route path="/import" component={ImportPage} />
+        <Route path="/settings" component={SettingsPage} />
 
       </div>
     );

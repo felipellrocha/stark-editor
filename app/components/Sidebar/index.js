@@ -204,7 +204,7 @@ export default compose(
     name: state.app.name,
     tilesets: state.app.tilesets,
     layers: state.app.layers,
-    selectedLayer: state.app.selectedLayer,
+    selectedLayer: state.global.selectedLayer,
     basepath: state.app.basepath,
   })),
   withRouter,
