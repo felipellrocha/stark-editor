@@ -11,6 +11,7 @@ import {
   selectTile,
   selectLayer,
   toggleLayerVisibility,
+  removeLayer,
   viewTilesetEditor,
 } from 'actions';
 
@@ -32,6 +33,7 @@ class component extends PureComponent {
     this._renderSimpleGrid = this._renderSimpleGrid.bind(this);
     this._renderTerrainGrid = this._renderTerrainGrid.bind(this);
     this._handleToggleVisibility = this._handleToggleVisibility.bind(this);
+    this._handleRemoveLayer = this._handleRemoveLayer.bind(this);
   }
 
   _handleSelectLayer(layer) {
@@ -40,6 +42,14 @@ class component extends PureComponent {
     } = this.props;
 
     dispatch(selectLayer(layer));
+  }
+
+  _handleRemoveLayer(layer) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(removeLayer(layer));
   }
 
   _handleToggleVisibility(layer) {
@@ -152,6 +162,7 @@ class component extends PureComponent {
                 <div className="actions">
                   <InlineSVG icon='cog' />
                   <InlineSVG icon='eye' onClick={() => this._handleToggleVisibility(i)} />
+                  <InlineSVG icon='cross' onClick={() => this._handleRemoveLayer(i)} />
                 </div>
               </div>
             )

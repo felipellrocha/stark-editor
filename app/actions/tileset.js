@@ -44,6 +44,15 @@ export function toggleLayerVisibility(layer) {
   }
 }
 
+export const REMOVE_LAYER = 'REMOVE_LAYER';
+
+export function removeLayer(layer) {
+  return {
+    type: REMOVE_LAYER,
+    layer,
+  }
+}
+
 export const SELECT_LAYER = 'SELECT_LAYER';
 
 export function selectLayer(layer) {
@@ -64,19 +73,23 @@ export function selectTile(tile) {
 
 export const PAINT_TILE = 'PAINT_TILE';
 
-export function paintTile(tile) {
+export function paintTile(tile, layer, selectedTile) {
   return {
     type: PAINT_TILE,
     tile,
+    layer,
+    selectedTile,
   }
 }
 
 export const PUT_DOWN_TILE = 'PUT_DOWN_TILE';
 
-export function putDownTile(tile) {
+export function putDownTile(tile, layer, selectedTile) {
   return {
     type: PUT_DOWN_TILE,
     tile,
+    layer,
+    selectedTile,
   }
 }
 

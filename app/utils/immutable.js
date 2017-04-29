@@ -5,3 +5,10 @@ export function arrayReplace(data, value, index) {
       ...data.slice(index + 1, data.length)
     ];
 };
+
+export function arrayRemove(data, index) {
+    return [
+      ...data.slice(0, index),
+      ...data.slice(index + 1, data.length)
+    ];
+};

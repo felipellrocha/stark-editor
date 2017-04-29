@@ -39,19 +39,17 @@ class component extends PureComponent {
       dispatch,
       tile,
       method,
+      selectedLayer,
+      selectedTile,
     } = this.props;
 
-    if (method === 'put') { 
-      dispatch(putDownTile({
-        x: Math.floor(x / (tile.width + 1)),
-        y: Math.floor(y / (tile.height + 1)),
-      }));
-    } else {
-      dispatch(paintTile({
-        x: Math.floor(x / (tile.width + 1)),
-        y: Math.floor(y / (tile.height + 1)),
-      }));
-    }
+    const xy = {
+      x: Math.floor(x / (tile.width + 1)),
+      y: Math.floor(y / (tile.height + 1)),
+    };
+
+    if (method === 'put') dispatch(putDownTile(xy, selectedLayer, selectedTile));
+    else dispatch(paintTile(xy, selectedLayer, selectedTile));
   }
 
   _executePutTile(x, y) {
@@ -112,6 +110,8 @@ export default connect(
   (state) => ({
     grid: state.app.grid,
     tile: state.app.tile,
+    selectedLayer: state.global.selectedLayer,
+    selectedTile: state.global.selectedTile,
     method: state.global.selectedAction,
   }),
 )(component);

@@ -1,7 +1,5 @@
 import { handleActions } from 'redux-actions';
 
-import { arrayReplace } from 'utils';
-
 import path from 'path';
 
 import {
@@ -15,9 +13,12 @@ import {
   LOAD_STAGE,
   SAVE_FILENAME,
   TOGGLE_LAYER_VISIBILITY,
+  REMOVE_LAYER,
 } from 'actions';
 
 import {
+  arrayReplace,
+  arrayRemove,
   flood,
 } from 'utils';
 
@@ -127,31 +128,36 @@ export default handleActions({
 
     return Object.assign({}, state, { layers: newLayers });
   },
+  REMOVE_LAYER: (state, action) => {
+    const newLayers = arrayRemove(state.layers, action.layer);
+    
+    return Object.assign({}, state, { layers: newLayers });
+  },
   PAINT_TILE: (state, action) => {
     const {
       tile: {
         x,
         y,
-      }
+      },
+      layer,
     } = action;
 
     const {
       layers,
       grid,
       selectedTile,
-      selectedLayer,
     } = state;
 
     const index = (grid.columns * y) + x;
 
-    const currentLayer = layers[selectedLayer];
+    const currentLayer = layers[layer];
     const currentTile = currentLayer.data[index];
 
     const newData = [...currentLayer.data];
     flood(x, y, selectedTile, currentTile, newData, grid);
 
     const newLayer = Object.assign({}, currentLayer, { data: newData });
-    const newLayers = arrayReplace(state.layers, newLayer, selectedLayer);
+    const newLayers = arrayReplace(state.layers, newLayer, layer);
 
     return Object.assign({}, state, { layers: newLayers });
   },
@@ -160,26 +166,26 @@ export default handleActions({
       tile: {
         x,
         y,
-      }
+      },
+      layer,
+      selectedTile,
     } = action;
 
     const {
       layers,
       grid,
-      selectedTile,
-      selectedLayer,
     } = state;
 
     const index = (grid.columns * y) + x;
 
-    const currentLayer = layers[selectedLayer];
+    const currentLayer = layers[layer];
     const currentTile = currentLayer.data[index];
 
     if (currentTile[0] === selectedTile[0] && currentTile[1] === selectedTile[1]) { return state };
 
     const newData = arrayReplace(currentLayer.data, selectedTile, index);
     const newLayer = Object.assign({}, currentLayer, { data: newData });
-    const newLayers = arrayReplace(state.layers, newLayer, selectedLayer);
+    const newLayers = arrayReplace(state.layers, newLayer, layer);
 
     return Object.assign({}, state, { layers: newLayers });
   },
