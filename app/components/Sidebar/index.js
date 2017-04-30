@@ -9,6 +9,10 @@ import { memoize } from 'lodash';
 import {
   selectTilesets,
   selectTile,
+  changeLayerName,
+  addLayer,
+  moveLayerUp,
+  moveLayerDown,
   selectLayer,
   toggleLayerVisibility,
   removeLayer,
@@ -27,6 +31,10 @@ class component extends PureComponent {
   constructor(props) {
     super(props);
 
+    this._handleMoveLayerUp = this._handleMoveLayerUp.bind(this);
+    this._handleMoveLayerDown = this._handleMoveLayerDown.bind(this);
+    this._handleAddLayer = this._handleAddLayer.bind(this);
+    this._handleChangeLayerName = this._handleChangeLayerName.bind(this);
     this._handleSelectTiles = this._handleSelectTiles.bind(this);
     this._handleSelectLayer = this._handleSelectLayer.bind(this);
     this._handleViewTilesetEditor = this._handleViewTilesetEditor.bind(this);
@@ -34,6 +42,38 @@ class component extends PureComponent {
     this._renderTerrainGrid = this._renderTerrainGrid.bind(this);
     this._handleToggleVisibility = this._handleToggleVisibility.bind(this);
     this._handleRemoveLayer = this._handleRemoveLayer.bind(this);
+  }
+
+  _handleAddLayer() {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(addLayer());
+  }
+
+  _handleMoveLayerUp(layer) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(moveLayerUp(layer));
+  }
+
+  _handleMoveLayerDown(layer) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(moveLayerDown(layer));
+  }
+
+  _handleChangeLayerName(layer, event) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(changeLayerName(layer, event.target.value));
   }
 
   _handleSelectLayer(layer) {
@@ -154,19 +194,31 @@ class component extends PureComponent {
 
             return (
               <div
-                key={ layer.name }
+                key={ i }
                 className={classes}
                 onClick={() => this._handleSelectLayer(i)}
               >
-                <div>{ layer.name }</div>
+                <input
+                  onChange={event => this._handleChangeLayerName(i, event)}
+                  value={ layer.name }
+                />
                 <div className="actions">
-                  <InlineSVG icon='cog' />
+                  {i !== 0
+                    ? <InlineSVG icon='arrow-up' className="small" onClick={() => this._handleMoveLayerUp(i)} />
+                    : <div />}
+                  {i !== layers.length - 1 
+                    ? <InlineSVG icon='arrow-down' className="small" onClick={() => this._handleMoveLayerDown(i)} />
+                    : <div />}
                   <InlineSVG icon='eye' onClick={() => this._handleToggleVisibility(i)} />
                   <InlineSVG icon='cross' onClick={() => this._handleRemoveLayer(i)} />
                 </div>
               </div>
             )
           })}
+          <div className="layer add" onClick={this._handleAddLayer}>
+            <div>Add another layer</div>
+            <InlineSVG icon="plus-circle" />
+          </div>
         </div>
         <div className="actions separator">
           <Button onClick={this._handleSelectTiles}>

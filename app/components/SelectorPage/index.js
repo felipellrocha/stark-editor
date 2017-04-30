@@ -4,19 +4,67 @@ import { compose } from 'recompose';
 
 import {
   Grid,
-  Workspace,
+  InlineSVG,
   Sidebar,
   SelectorFooter,
+  Workspace,
 } from 'components';
 
 
 import {
   putDownTile,
+  changeGridColumns,
+  changeGridRows,
 } from 'actions';
 
 import styles from './styles.css';
 
 class component extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this._handleRemoveRow = this._handleRemoveRow.bind(this);
+    this._handleAddRow = this._handleAddRow.bind(this);
+    this._handleRemoveColumn = this._handleRemoveColumn.bind(this);
+    this._handleAddColumn = this._handleAddColumn.bind(this);
+  }
+  
+  _handleRemoveRow() {
+    const {
+      dispatch,
+      grid,
+    } = this.props;
+
+    dispatch(changeGridRows(grid.rows - 1));
+  }
+
+  _handleAddRow() {
+    const {
+      dispatch,
+      grid,
+    } = this.props;
+
+    dispatch(changeGridRows(grid.rows + 1));
+  }
+
+  _handleRemoveColumn() {
+    const {
+      dispatch,
+      grid,
+    } = this.props;
+
+    dispatch(changeGridColumns(grid.columns - 1));
+  }
+
+  _handleAddColumn() {
+    const {
+      dispatch,
+      grid,
+    } = this.props;
+
+    dispatch(changeGridColumns(grid.columns + 1));
+  }
+
   render() {
     const {
       grid,
@@ -31,13 +79,17 @@ class component extends PureComponent {
     };
 
     return (
-      <div>
+      <div className={styles.component}>
         <Sidebar />
-        <div className={styles.component} style={style} >
+        <div className="work-area" style={style} >
           <Workspace
             layers={layers}
           />
         </div>
+        <InlineSVG className="action columns-remove" icon="minus" onClick={this._handleRemoveColumn} />
+        <InlineSVG className="action columns-add" icon="plus" onClick={this._handleAddColumn} />
+        <InlineSVG className="action rows-remove" icon="minus" onClick={this._handleRemoveRow} />
+        <InlineSVG className="action rows-add" icon="plus" onClick={this._handleAddRow} />
         <SelectorFooter />
       </div>
     );

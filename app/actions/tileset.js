@@ -1,7 +1,5 @@
 import electron from 'electron';
 
-export const CHANGE_ZOOM = 'CHANGE_ZOOM';
-
 export function viewTilesetEditor(history) {
   return dispatch => {
     history.push('/import');
@@ -28,10 +26,48 @@ export function addTerrain(setIndex, tileIndex, terrainType) {
   }
 }
 
+export const CHANGE_ZOOM = 'CHANGE_ZOOM';
+
 export function changeZoom(zoom) {
   return {
     type: CHANGE_ZOOM,
     zoom,
+  }
+}
+
+export const MOVE_LAYER_UP = 'MOVE_LAYER_UP';
+
+export function moveLayerUp(layer) {
+  return {
+    type: MOVE_LAYER_UP,
+    layer,
+  }
+}
+
+export const MOVE_LAYER_DOWN = 'MOVE_LAYER_DOWN';
+
+export function moveLayerDown(layer) {
+  return {
+    type: MOVE_LAYER_DOWN,
+    layer,
+  }
+}
+
+export const ADD_LAYER = 'ADD_LAYER';
+
+export function addLayer() {
+  return {
+    type: ADD_LAYER,
+  }
+}
+
+export const CHANGE_LAYER_NAME = 'CHANGE_LAYER_NAME';
+
+export function changeLayerName(layer, value) {
+  return {
+    type: CHANGE_LAYER_NAME,
+    layer,
+    value,
   }
 }
 

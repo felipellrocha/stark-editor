@@ -12,7 +12,7 @@ export const CHANGE_TILE_WIDTH = 'CHANGE_TILE_WIDTH';
 export function changeTileWidth(value) {
   return {
     type: CHANGE_TILE_WIDTH,
-    value,
+    value: parseInt(value),
   }
 }
 
@@ -21,6 +21,24 @@ export const CHANGE_TILE_HEIGHT = 'CHANGE_TILE_HEIGHT';
 export function changeTileHeight(value) {
   return {
     type: CHANGE_TILE_HEIGHT,
-    value,
+    value: parseInt(value),
+  }
+}
+
+export const CHANGE_GRID_COLUMNS = 'CHANGE_GRID_COLUMNS';
+
+export function changeGridColumns(value) {
+  return {
+    type: CHANGE_GRID_COLUMNS,
+    value: parseInt(value),
+  }
+}
+
+export const CHANGE_GRID_ROWS = 'CHANGE_GRID_ROWS';
+
+export function changeGridRows(value) {
+  return {
+    type: CHANGE_GRID_ROWS,
+    value: parseInt(value),
   }
 }

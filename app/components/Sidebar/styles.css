@@ -44,24 +44,42 @@
 
     .actions {
       display: flex;
+    }
 
-      .icon {
-        padding: 0 5px;
+    input {
+      background: transparent;
+      border: 0;
+      font-family: Helvetica Neue;
+    }
 
-        svg {
-          height: 16px;
-        }
+    .icon {
+      padding: 0 5px;
 
-        path {
-          fill: #000;
-        }
+      svg {
+        height: 16px;
       }
+
+      path {
+        fill: #000;
+      }
+    }
+  }
+
+  .add {
+    border-top: 1px dotted #aaa;
+
+    &:hover {
+      background: #f4cdce;
     }
   }
 
   .selected {
     background: #D33E43;
     color: #fff;
+
+    input {
+      color: #fff;
+    }
 
     .actions .icon path {
       fill: #fff;

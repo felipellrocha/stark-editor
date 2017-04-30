@@ -13,6 +13,8 @@ import {
   changeGameName,
   changeTileWidth,
   changeTileHeight,
+  changeGridColumns,
+  changeGridRows,
 } from 'actions';
 
 import styles from './styles.css';
@@ -25,6 +27,8 @@ class component extends PureComponent {
     this._handleChangeGameName = this._handleChangeGameName.bind(this);
     this._handleChangeTileWidth = this._handleChangeTileWidth.bind(this);
     this._handleChangeTileHeight = this._handleChangeTileHeight.bind(this);
+    this._handleChangeGridColumns = this._handleChangeGridColumns.bind(this);
+    this._handleChangeGridRows = this._handleChangeGridRows.bind(this);
   }
 
   _handleGoBack() {
@@ -59,10 +63,27 @@ class component extends PureComponent {
     dispatch(changeTileHeight(e.target.value));
   }
 
+  _handleChangeGridColumns(e) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(changeGridColumns(e.target.value));
+  }
+
+  _handleChangeGridRows(e) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(changeGridRows(e.target.value));
+  }
+
   render() {
     const {
       gameName,
       tile,
+      grid,
     } = this.props;
 
     return (
@@ -77,6 +98,19 @@ class component extends PureComponent {
             <div className="input">
               <label>Game Name</label>
               <input type="text" value={ gameName } onChange={this._handleChangeGameName} />
+            </div>
+            <div className="input">
+              <label>Grid (this is a destructive action)</label>
+            </div>
+            <div className="input-row">
+              <div className="input">
+                <label>Columns</label>
+                <input type="number" value={ grid.columns } onChange={this._handleChangeGridColumns} />
+              </div>
+              <div className="input">
+                <label>Rows</label>
+                <input type="number" value={ grid.rows } onChange={this._handleChangeGridRows} />
+              </div>
             </div>
             <div className="input">
               <label>Tiles</label>
@@ -103,6 +137,7 @@ export default compose(
   connect(state => ({
     gameName: state.app.name,
     tile: state.app.tile,
+    grid: state.app.grid,
   })),
   withRouter,
 )(component);
