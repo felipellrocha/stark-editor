@@ -236,12 +236,12 @@ export default handleActions({
         y,
       },
       layer,
+      selectedTile,
     } = action;
 
     const {
       layers,
       grid,
-      selectedTile,
     } = state;
 
     const index = (grid.columns * y) + x;
