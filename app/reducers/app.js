@@ -3,23 +3,37 @@ import { handleActions } from 'redux-actions';
 import path from 'path';
 
 import {
+  ADD_ANIMATION,
+  CHANGE_ANIMATION_NAME,
+  CHANGE_ANIMATION_FRAME_LENGTH,
+  MOVE_SPRITE,
+  CREATE_KEYFRAME,
+
   ADD_LAYER,
-  CHANGE_GAME_NAME,
-  CHANGE_GRID_COLUMNS,
-  CHANGE_GRID_ROWS,
-  ADD_TERRAIN,
-  RECEIVE_TILESETS,
-  CHANGE_TILESET_NAME,
-  CHANGE_TILE_WIDTH,
-  CHANGE_TILE_HEIGHT,
-  PAINT_TILE,
-  LOAD_STAGE,
-  SAVE_FILENAME,
   TOGGLE_LAYER_VISIBILITY,
   MOVE_LAYER_UP,
   MOVE_LAYER_DOWN,
   REMOVE_LAYER,
   CHANGE_LAYER_NAME,
+
+  CHANGE_GAME_NAME,
+  CHANGE_GRID_COLUMNS,
+  CHANGE_GRID_ROWS,
+  CHANGE_TILE_WIDTH,
+  CHANGE_TILE_HEIGHT,
+
+  ADD_TERRAIN,
+
+  RECEIVE_TILESETS,
+  CHANGE_TILESET_NAME,
+
+  PUT_DOWN_TILE,
+  PAINT_TILE,
+
+  LOAD_STAGE,
+  SAVE_FILENAME,
+
+  RECEIVE_SPRITE_SHEETS,
 } from 'actions';
 
 import {
@@ -28,6 +42,7 @@ import {
   arrayReplace,
   arrayRemove,
   flood,
+	UUID,
 } from 'utils';
 
 const initialState = {
@@ -43,9 +58,13 @@ const initialState = {
   layers: [ ],
   tilesets: [ ],
   terrains: [ ],
+  sheets: [ ],
+  animations: { },
+  entities: { },
 };
 
 initialState.layers = ['background', 'middleground', 'foreground'].map(name => ({
+	id: UUID(),
   type: 'tile',
   name: name,
   visible: true,
@@ -53,6 +72,112 @@ initialState.layers = ['background', 'middleground', 'foreground'].map(name => (
 }));
 
 export default handleActions({
+  ADD_ANIMATION: (state, action) => {
+    return {
+      ...state,
+      animations: {
+        ...state.animations,
+        [action.name]: {
+          id: UUID(),
+          numberOfFrames: 16,
+          sheet: 0,
+          spritesheet: 0,
+          keyframes: {
+            0: {
+              x: 0,
+              y: 0,
+              w: state.tile.width,
+              h: state.tile.height,
+            },
+          },
+        }
+      }
+    }
+  },
+  CHANGE_ANIMATION_FRAME_LENGTH: (state, action) => {
+    return {
+      ...state,
+      animations: {
+        ...state.animations,
+        [action.name]: {
+          ...state.animations[action.name],
+          numberOfFrames: parseInt(action.numberOfFrames),
+        }
+      },
+    }
+  },
+  CHANGE_ANIMATION_NAME: (state, action) => {
+    const {
+      animations: {
+        [action.name]: animation,
+        ...animations,
+      }
+    } = state;
+
+    return {
+      ...state,
+      animations: {
+        ...animations,
+        [action.newName]: animation,
+      },
+    }
+  },
+  CREATE_KEYFRAME: (state, action) => {
+    const {
+      selectedAnimation,
+      selectedFrame,
+      clone,
+    } = action;
+
+    return {
+      ...state,
+      animations: {
+        ...state.animations,
+        [selectedAnimation]: {
+          ...state.animations[selectedAnimation],
+          keyframes: {
+            ...state.animations[selectedAnimation].keyframes,
+            [selectedFrame]: clone,
+          }
+        }
+      }
+    }
+  },
+  MOVE_SPRITE: (state, action) => {
+    const {
+      selectedAnimation,
+      selectedFrame,
+      coord,
+    } = action;
+
+    const frame = state.animations[selectedAnimation].keyframes[selectedFrame];
+
+    let x = frame.x;
+    let y = frame.y;
+
+    if (coord === 'ArrowUp') y += 1;
+    if (coord === 'ArrowRight') x += 1;
+    if (coord === 'ArrowDown') y -= 1;
+    if (coord === 'ArrowLeft') x -= 1;
+    
+    return {
+      ...state,
+      animations: {
+        ...state.animations,
+        [selectedAnimation]: {
+          ...state.animations[selectedAnimation],
+          keyframes: {
+            ...state.animations[selectedAnimation].keyframes,
+            [selectedFrame]: {
+              ...state.animations[selectedAnimation].keyframes[selectedFrame],
+              x,
+              y,
+            }
+          }
+        }
+      }
+    }
+  },
   CHANGE_TILE_WIDTH: (state, action) => {
     const newTile = Object.assign({}, state.tile, { width: action.value });
     return Object.assign({}, state, { tile: newTile });
@@ -188,8 +313,16 @@ export default handleActions({
 
     return Object.assign({}, state, { tilesets: tilesets });
   },
+
+  RECEIVE_SPRITE_SHEETS: (state, action) => {
+    const sheets  = [...state.sheets, ...action.sheets];
+
+    return Object.assign({}, state, { sheets });
+  },
+
   ADD_LAYER: (state, action) => {
     const layer = {
+			id: UUID(),
       type: 'tile',
       name: 'untitled',
       visible: true,
@@ -286,6 +419,22 @@ export default handleActions({
     return Object.assign({}, state, { layers: newLayers });
   },
   LOAD_STAGE: (state, action) => {
-    return Object.assign({}, state, action.data);
+    const layers = action.data.layers.map(layer => {
+      const data = layer.data.map(tile => {
+        const [setIndex, tileIndex] = tile;
+        
+        return [
+          parseInt(setIndex),
+          parseInt(tileIndex),
+        ];
+      });
+
+      return Object.assign({}, layer, {
+        data,
+      });
+    });
+
+    const newData = Object.assign({}, action.data, { layers });
+    return Object.assign({}, state, newData);
   },
 }, initialState);

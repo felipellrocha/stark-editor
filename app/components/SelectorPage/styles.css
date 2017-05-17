@@ -1,10 +1,11 @@
 :local(.component) {
   .work-area {
     font-family: Helvetica Neue;
-    margin: 15px 15px 100px 315px;
+    margin: 15px 100px 100px 315px;
+    display: inline-block;
   }
 
-  .action {
+  > .action {
     position: fixed;
     width: 16px;
 
@@ -18,12 +19,12 @@
   }
 
   .rows-remove {
-    bottom: 90px;
+    top: 15px;
     right: 15px;
   }
 
   .rows-add {
-    top: 15px;
+    bottom: 90px;
     right: 15px;
   }
 

@@ -44,6 +44,11 @@
 
     .actions {
       display: flex;
+      width: 50%;
+
+      .action {
+        flex: 0 1 25%;
+      }
     }
 
     input {

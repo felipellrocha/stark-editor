@@ -83,7 +83,24 @@ export function writeFile(saveAs = false) {
     
     dispatch(saveFilename(filename, oldBasepath, newBasepath));
 
-    fs.writeFileSync(filename, JSON.stringify(getState().app));
+    const layers = app.layers.map(layer => {
+      const data = layer.data.map(tile => {
+        const [setIndex, tileIndex] = tile;
+        
+        return [
+          parseInt(setIndex),
+          parseInt(tileIndex),
+        ];
+      });
+
+      return Object.assign({}, layer, {
+        data,
+      });
+    });
+
+    const newData = Object.assign({}, app, { layers });
+
+    fs.writeFileSync(filename, JSON.stringify(newData));
   }
 }
 

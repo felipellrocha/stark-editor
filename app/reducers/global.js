@@ -12,6 +12,8 @@ import {
   CHANGE_TERRAIN,
   SELECT_TILE,
   SELECT_LAYER,
+  SELECT_ANIMATION,
+  SELECT_FRAME,
 } from 'actions';
 
 const initialState = {
@@ -22,9 +24,23 @@ const initialState = {
   selectedTerrainType: '6-tile',
   selectedTile: [-1, 0],
   selectedLayer: 0,
+  selectedAnimation: null,
+  selectedFrame: 0,
 };
 
 export default handleActions({
+  SELECT_FRAME: (state, action) => {
+    return {
+      ...state,
+      selectedFrame: action.index
+    };
+  },
+  SELECT_ANIMATION: (state, action) => {
+    return {
+      ...state,
+      selectedAnimation: action.name
+    };
+  },
   SELECT_LAYER: (state, action) => {
     return Object.assign({}, state, { selectedLayer: action.layer });
   },

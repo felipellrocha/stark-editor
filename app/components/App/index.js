@@ -10,6 +10,8 @@ import {
   ImportPage,
   SettingsPage,
 
+  AnimationPage,
+
   Sidebar,
   Footer,
 } from 'components';
@@ -19,7 +21,8 @@ class component extends PureComponent {
     return (
       <div className={styles.component}>
 
-        <Route exact path="/" component={SelectorPage} />
+        <Route exact path="/" component={AnimationPage} />
+        <Route path="/selector" component={SelectorPage} />
         <Route path="/import" component={ImportPage} />
         <Route path="/settings" component={SettingsPage} />
 

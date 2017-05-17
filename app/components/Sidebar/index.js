@@ -194,7 +194,7 @@ class component extends PureComponent {
 
             return (
               <div
-                key={ i }
+                key={ layer.id }
                 className={classes}
                 onClick={() => this._handleSelectLayer(i)}
               >
@@ -204,13 +204,13 @@ class component extends PureComponent {
                 />
                 <div className="actions">
                   {i !== 0
-                    ? <InlineSVG icon='arrow-up' className="small" onClick={() => this._handleMoveLayerUp(i)} />
-                    : <div />}
+                    ? <InlineSVG icon='arrow-up' className="action" onClick={() => this._handleMoveLayerUp(i)} />
+                    : <div className="action" />}
                   {i !== layers.length - 1 
-                    ? <InlineSVG icon='arrow-down' className="small" onClick={() => this._handleMoveLayerDown(i)} />
-                    : <div />}
-                  <InlineSVG icon='eye' onClick={() => this._handleToggleVisibility(i)} />
-                  <InlineSVG icon='cross' onClick={() => this._handleRemoveLayer(i)} />
+                    ? <InlineSVG icon='arrow-down' className="action" onClick={() => this._handleMoveLayerDown(i)} />
+                    : <div className="action" />}
+                  <InlineSVG icon='eye' className="action" onClick={() => this._handleToggleVisibility(i)} />
+                  <InlineSVG icon='cross' className="action" onClick={() => this._handleRemoveLayer(i)} />
                 </div>
               </div>
             )

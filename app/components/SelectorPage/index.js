@@ -88,8 +88,8 @@ class component extends PureComponent {
         </div>
         <InlineSVG className="action columns-remove" icon="minus" onClick={this._handleRemoveColumn} />
         <InlineSVG className="action columns-add" icon="plus" onClick={this._handleAddColumn} />
-        <InlineSVG className="action rows-remove" icon="minus" onClick={this._handleRemoveRow} />
         <InlineSVG className="action rows-add" icon="plus" onClick={this._handleAddRow} />
+        <InlineSVG className="action rows-remove" icon="minus" onClick={this._handleRemoveRow} />
         <SelectorFooter />
       </div>
     );
