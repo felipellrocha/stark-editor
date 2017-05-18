@@ -111,20 +111,8 @@ class component extends PureComponent {
     return (
       <div className={styles.component}>
         <h1>Animations</h1>
-        <div className="sheets">
-          <h3>Import Sprite sheets</h3>
-          <Button onClick={this.addSpriteSheet}>
-            Add sprite sheet
-          </Button>
-          {sheets.map(sheet => {
-            return (
-              <div>
-                <img src={sheet} />
-              </div>
-            )
-          })}
-        </div>
         <div className="animations separator">
+          <h3>Animations</h3>
           {Object.keys(animations).map((key, i) => {
             const animation = animations[key];
 
@@ -170,13 +158,26 @@ class component extends PureComponent {
             <InlineSVG icon="plus-circle" />
           </div>
         </div>
+        <div className="sheets">
+          <h3>Import Sprite sheets</h3>
+          <Button onClick={this.addSpriteSheet}>
+            Add sprite sheet
+          </Button>
+          {sheets.map(sheet => {
+            return (
+              <div>
+                <img src={sheet} />
+              </div>
+            )
+          })}
+        </div>
         <Dialog
           visible={this.state.dialogIsOpen}
           onContinue={this.addAnimation}
           onCancel={this.toggleDialog}
         >
           What is the name of the animation?
-          <input type="text" ref={input => { this.animationName = input; }} />
+          <input type="text" autoFocus ref={input => { this.animationName = input; }} />
         </Dialog>
       </div>
     );

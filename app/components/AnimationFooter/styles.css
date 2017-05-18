@@ -47,8 +47,17 @@
     &.selected {
       background: #666370;
     }
-    &:last-child {
+
+    &:last-of-type {
       border-right: 1px solid #ddd;
     }
+  }
+
+  .animating path {
+    fill: #D33E43;
+  }
+
+  .menu {
+    margin: 0 0 15px;
   }
 }

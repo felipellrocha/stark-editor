@@ -8,6 +8,7 @@ import {
   CHANGE_ANIMATION_FRAME_LENGTH,
   MOVE_SPRITE,
   CREATE_KEYFRAME,
+  DELETE_KEYFRAME,
 
   ADD_LAYER,
   TOGGLE_LAYER_VISIBILITY,
@@ -79,7 +80,7 @@ export default handleActions({
         ...state.animations,
         [action.name]: {
           id: UUID(),
-          numberOfFrames: 16,
+          numberOfFrames: 32,
           sheet: 0,
           spritesheet: 0,
           keyframes: {
@@ -120,6 +121,37 @@ export default handleActions({
         ...animations,
         [action.newName]: animation,
       },
+    }
+  },
+  DELETE_KEYFRAME: (state, action) => {
+    const {
+      selectedAnimation,
+      selectedFrame,
+    } = action;
+
+    if (!state.animations[selectedAnimation].keyframes[selectedFrame]) return state;
+    if (selectedFrame === 0) return state;
+
+    const {
+      animations: {
+        [selectedAnimation]: {
+          keyframes
+        }
+      }
+    } = state;
+
+    const newFrames = Object.assign({}, keyframes);
+    delete newFrames[selectedFrame];
+
+    return {
+      ...state,
+      animations: {
+        ...state.animations,
+        [selectedAnimation]: {
+          ...state.animations[selectedAnimation],
+          keyframes: newFrames,
+        }
+      }
     }
   },
   CREATE_KEYFRAME: (state, action) => {

@@ -54,7 +54,7 @@ class component extends PureComponent {
     const frame = animation.keyframes[selectedFrame];
 
     if (!frame) {
-      const clone = getFrame(animation, selectedFrame);
+      const clone = getFrame(animation.keyframes, selectedFrame);
       dispatch(createKeyframe(selectedAnimation, selectedFrame, clone));
     }
 
@@ -77,7 +77,7 @@ class component extends PureComponent {
 
     if (!animation) return null;
 
-    const frame = getFrame(animation, selectedFrame);
+    const frame = getFrame(animation.keyframes, selectedFrame);
 
     if (!frame) return null;
 
@@ -87,7 +87,7 @@ class component extends PureComponent {
       width: frame.w,
       height: frame.h,
       background: `url(${sheet})`,
-      backgroundPosition: `-${frame.x}px -${frame.y}px`,
+      backgroundPosition: `${-frame.x}px ${-frame.y}px`,
       border: '1px dotted #aaa',
     };
 
@@ -109,15 +109,15 @@ class component extends PureComponent {
   }
 }
 
-const getFrame = memoize(function(animation, frameIndex) {
+const getFrame = function(keyframes, frameIndex) {
   for (let i = frameIndex; i >= 0; i--) {
-    const frame = animation.keyframes[i];
+    const frame = keyframes[i];
 
     if (frame) return frame;
   }
 
   return null;
-});
+};
 
 export default compose(
   connect(state => ({

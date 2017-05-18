@@ -72,6 +72,16 @@ export function selectFrame(index) {
   }
 }
 
+export const DELETE_KEYFRAME = 'DELETE_KEYFRAME';
+
+export function deleteKeyframe(selectedAnimation, selectedFrame) {
+  return {
+    type: DELETE_KEYFRAME,
+    selectedAnimation,
+    selectedFrame,
+  }
+}
+
 export const CREATE_KEYFRAME = 'CREATE_KEYFRAME';
 
 export function createKeyframe(selectedAnimation, selectedFrame, clone) {
@@ -82,6 +92,7 @@ export function createKeyframe(selectedAnimation, selectedFrame, clone) {
     clone,
   }
 }
+
 export const MOVE_SPRITE = 'MOVE_SPRITE';
 
 export function moveSprite(selectedAnimation, selectedFrame, coord) {

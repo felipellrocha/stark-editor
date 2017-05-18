@@ -26,10 +26,12 @@ class component extends PureComponent {
           <div className="main">
             {this.props.children}
           </div>
-          <div className="actions">
-            <Button onClick={onContinue}>Continue</Button>
-            <Button onClick={onCancel}>Cancel</Button>
-          </div>
+          {(onContinue || onCancel) &&
+            <div className="actions">
+              {onContinue && <Button onClick={event => onContinue(event)}>Continue</Button>}
+              {onCancel && <Button onClick={event => onCancel(event)}>Cancel</Button>}
+            </div>
+          }
         </div>
       </div>
     );
@@ -38,8 +40,8 @@ class component extends PureComponent {
 
 component.defaultProps = {
   visible: false,
-  onContinue: () => { },
-  onCancel: () => { },
+  onContinue: null,
+  onCancel: null,
 }
 
 export default component;
