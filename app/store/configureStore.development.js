@@ -4,11 +4,18 @@ import { routerMiddleware, push } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import thunk from 'redux-thunk';
+import { IPCMiddleware } from 'utils';
 
-export default (initialState: ?counterStateType) => {
+import actions from '../ipc';
+
+export default (initialState) => {
   // Redux Configuration
   const middleware = [];
   const enhancers = [];
+
+  // IPC Middleware
+  const ipc = IPCMiddleware(actions);
+  middleware.push(ipc);
 
   // Thunk Middleware
   middleware.push(thunk);
@@ -26,7 +33,6 @@ export default (initialState: ?counterStateType) => {
 
   // Redux DevTools Configuration
   const actionCreators = {
-
     push,
   };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose

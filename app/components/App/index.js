@@ -21,10 +21,11 @@ class component extends PureComponent {
     return (
       <div className={styles.component}>
 
-        <Route exact path="/" component={AnimationPage} />
+        <Route exact path="/" component={SelectorPage} />
         <Route path="/selector" component={SelectorPage} />
         <Route path="/import" component={ImportPage} />
         <Route path="/settings" component={SettingsPage} />
+        <Route path="/animations" component={AnimationPage} />
 
       </div>
     );

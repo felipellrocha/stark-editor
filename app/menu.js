@@ -1,4 +1,9 @@
-import { app, Menu, shell, BrowserWindow } from 'electron';
+import { ipcMain, app, Menu, shell, BrowserWindow } from 'electron';
+
+import {
+  writeFile,
+  openFile,
+} from './actions';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -12,7 +17,7 @@ export default class MenuBuilder {
       this.setupDevelopmentEnvironment();
     }
 
-    let template = this.buildDarwinTemplate();
+    let template = this.buildTemplate();
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 
@@ -24,6 +29,8 @@ export default class MenuBuilder {
     this.mainWindow.webContents.on('context-menu', (e, props) => {
       const { x, y } = props;
 
+      console.log(e, props);
+
       Menu.buildFromTemplate([{
         label: 'Inspect element',
         click: () => {
@@ -33,13 +40,16 @@ export default class MenuBuilder {
     });
   }
 
-  buildDarwinTemplate() {
+  buildTemplate() {
     const subMenuAbout = {
       label: 'Stark Editor',
       submenu: [
         { label: 'About Stark Editor', selector: 'orderFrontStandardAboutPanel:' },
         { type: 'separator' },
-        { label: 'Services', submenu: [] },
+        { label: 'Open', accelerator: 'Command+O', click: () => { this.mainWindow.send('open'); } },
+        { type: 'separator' },
+        { label: 'Save', accelerator: 'Command+S', click: () => { this.mainWindow.send('save'); } },
+        { label: 'Save As', accelerator: 'Command+Alt+S', click: () => { this.mainWindow.send('save-as'); } },
         { type: 'separator' },
         { label: 'Hide Stark Editor', accelerator: 'Command+H', selector: 'hide:' },
         { label: 'Hide Others', accelerator: 'Command+Shift+H', selector: 'hideOtherApplications:' },
@@ -48,20 +58,23 @@ export default class MenuBuilder {
         { label: 'Quit', accelerator: 'Command+Q', click: () => { app.quit(); } }
       ]
     };
-    /*
     const subMenuEdit = {
       label: 'Edit',
       submenu: [
-        { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
-        { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
-        { type: 'separator' },
-        { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
-        { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
-        { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
-        { label: 'Select All', accelerator: 'Command+A', selector: 'selectAll:' }
+        { label: 'Undo', accelerator: 'Command+Z', click: () => { this.mainWindow.send('undo'); } },
+        { label: 'Redo', accelerator: 'Shift+Command+Z', click: () => { this.mainWindow.send('redo'); } },
       ]
     };
-    const subMenuViewDev = {
+    const subMenuGame = {
+      label: 'Game',
+      submenu: [
+        { label: 'Tiling', accelerator: 'Command+T', click: () => { this.mainWindow.send('tiling-screen'); } },
+        { label: 'Animations', accelerator: 'Command+Y', click: () => { this.mainWindow.send('animations-screen') } },
+        { type: 'separator' },
+        { label: 'Settings', accelerator: 'Command+G', click: () => { this.mainWindow.send('settings-screen') } },
+      ]
+    };
+    const subMenuView = {
       label: 'View',
       submenu: [
         { label: 'Reload', accelerator: 'Command+R', click: () => { this.mainWindow.webContents.reload(); } },
@@ -70,40 +83,11 @@ export default class MenuBuilder {
       ]
     };
 
-    const subMenuHelp = {
-      label: 'Help',
-      submenu: [
-        { label: 'Learn More', click() { shell.openExternal('http://electron.atom.io'); } },
-        { label: 'Documentation', click() { shell.openExternal('https://github.com/atom/electron/tree/master/docs#readme'); } },
-        { label: 'Community Discussions', click() { shell.openExternal('https://discuss.atom.io/c/electron'); } },
-        { label: 'Search Issues', click() { shell.openExternal('https://github.com/atom/electron/issues'); } }
-      ]
-    };
-    */
-    const subMenuViewProd = {
-      label: 'View',
-      submenu: [
-        { label: 'Toggle Full Screen', accelerator: 'Ctrl+Command+F', click: () => { this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen()); } }
-      ]
-    };
-    const subMenuWindow = {
-      label: 'Window',
-      submenu: [
-        { label: 'Minimize', accelerator: 'Command+M', selector: 'performMiniaturize:' },
-        { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
-        { type: 'separator' },
-        { label: 'Bring All to Front', selector: 'arrangeInFront:' }
-      ]
-    };
-
-    const subMenuView = process.env.NODE_ENV === 'development' ? subMenuViewDev : subMenuViewProd;
-
     return [
       subMenuAbout,
       subMenuEdit,
       subMenuView,
-      subMenuWindow,
-      subMenuHelp
+      subMenuGame,
     ];
   }
 }

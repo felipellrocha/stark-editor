@@ -139,7 +139,7 @@ export default merge(baseConfig, {
       multiStep: true
     }),
 
-    new webpack.NoEmitOnErrorsPlugin(),
+    //new webpack.NoEmitOnErrorsPlugin(),
 
     /**
      * Create global constants which can be configured at compile time.
@@ -172,7 +172,7 @@ export default merge(baseConfig, {
     port,
     publicPath,
     compress: true,
-    noInfo: true,
+    //noInfo: true,
     stats: 'errors-only',
     inline: true,
     lazy: false,
