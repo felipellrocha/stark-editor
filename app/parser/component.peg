@@ -1,0 +1,61 @@
+Components
+	= Component+
+
+Component
+	= !_ component:(ComponentDef) _*
+	{
+		 return component
+	}
+
+ComponentDef
+	= "struct" name:($(!':'.)*) ": public Component {" _*
+		 "static CID cid;" _*
+			members:((!'};') memberList _*)*
+		"};"
+	{
+			return {
+					name: name,
+					members: members
+							.map(_ => _[1])
+							.filter(member => { return member.type !== "IGNORE" }),
+			}
+	}
+
+memberList
+	= (property / comment / method)
+
+property
+	= property:("int" / "TileLayer" / "string" / "SDL_Texture" / "EID" / "bool" )
+		" "
+		pointer:"*"?
+		name:($(!(';' / ' = ').)*)
+		value:(' = ' ($(!';'.)*))?
+		';'
+	{
+		 return {
+				 type: property,
+				pointer: !!(pointer),
+				value: value ? value[1] : null,
+				name: name,
+		}
+	}
+
+comment
+	= "//" comment:($(!';'.)*) ';'?
+	{
+		 return {
+				type: "IGNORE",
+				line: comment,
+		}
+	}
+
+method
+	= line:($(!'}'.)*) '}' ';'?
+	{
+		 return {
+				type: "IGNORE",
+				line: line,
+		}
+	}
+
+_ = ' ' / '\n' / '\t'

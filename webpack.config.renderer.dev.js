@@ -94,6 +94,13 @@ export default merge(baseConfig, {
           }
         }
       },
+      // PEG parser
+      {
+        test: /\.peg(\?v=\d+\.\d+\.\d+)?$/,
+        use: {
+          loader: 'peg-loader',
+        },
+      },
       // TTF Font
       {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,

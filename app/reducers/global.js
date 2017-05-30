@@ -20,6 +20,7 @@ const initialState = {
   filename: '',
   basepath: electron.remote.app.getPath('home'),
   zoom: .5,
+  selectedMap: 'start',
   selectedAction: 'put',
   selectedTerrainType: '6-tile',
   selectedTile: [-1, 0],

@@ -63,14 +63,16 @@ export function writeFile(saveAs = false) {
       global: {
         filename: globalFilename,
         basepath: oldBasepath,
+        selectedMap,
       },
       app,
+      tilemap,
     } = getState();
 
-    const filename = (() => {
+    const savePath = (() => {
       if (globalFilename === '' || saveAs) {
         return electron.remote.dialog.showSaveDialog({
-          properties: ['openFile'],
+          properties: ['openDirectories'],
           filters: [
             {name: 'Game Files', extensions: ['targ']},
           ],
@@ -79,28 +81,19 @@ export function writeFile(saveAs = false) {
         return globalFilename;
       }
     })();
-    const newBasepath = path.dirname(filename);
+    const newBasepath = path.dirname(savePath);
     
-    dispatch(saveFilename(filename, oldBasepath, newBasepath));
+    // write filename to memory
+    dispatch(saveFilename(savePath, oldBasepath, newBasepath));
 
-    const layers = app.layers.map(layer => {
-      const data = layer.data.map(tile => {
-        const [setIndex, tileIndex] = tile;
-        
-        return [
-          parseInt(setIndex),
-          parseInt(tileIndex),
-        ];
-      });
+    const appFile = `${savePath}/app.json`;
+    const mapsPath = `${savePath}/maps`;
+    const mapFile = `${savePath}/maps/${selectedMap}.json`;
 
-      return Object.assign({}, layer, {
-        data,
-      });
-    });
-
-    const newData = Object.assign({}, app, { layers });
-
-    fs.writeFileSync(filename, JSON.stringify(newData));
+    if (!fs.existsSync(savePath)) fs.mkdirSync(savePath);
+    if (!fs.existsSync(mapsPath)) fs.mkdirSync(mapsPath);
+    fs.writeFileSync(appFile, JSON.stringify(getState().app));
+    fs.writeFileSync(mapFile, JSON.stringify(getState().tilemap));
   }
 }
 
@@ -116,28 +109,41 @@ export function saveFilename(filename, oldBasepath, newBasepath) {
 }
 
 export function openFile() {
-  return dispatch => {
-    const filename = electron.remote.dialog.showOpenDialog({
+  return (dispatch, getState) => {
+    const {
+      global: {
+        selectedMap,
+      },
+    } = getState();
+
+    const appPath = electron.remote.dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
         {name: 'Game Files', extensions: ['targ']},
       ],
     })[0];
 
-    const game = fs.readFileSync(filename);
-    const basepath = path.dirname(filename);
+    const appFile = `${appPath}/app.json`;
+    const mapsPath = `${appPath}/maps`;
+    const mapFile = `${appPath}/maps/${selectedMap}.json`;
 
-    dispatch(updatePaths(filename, basepath));
-    dispatch(loadStage(JSON.parse(game)));
+
+    const app = fs.readFileSync(appFile);
+    const tilemap = fs.readFileSync(mapFile);
+    const basepath = path.dirname(appPath);
+
+    dispatch(updatePaths(appPath, basepath));
+    dispatch(loadStage(JSON.parse(app), JSON.parse(tilemap)));
   }
 }
 
 export const LOAD_STAGE = 'LOAD_STAGE';
 
-export function loadStage(data, filename, basepath) {
+export function loadStage(app, tilemap) {
   return {
     type: LOAD_STAGE,
-    data,
+    app,
+    tilemap,
   }
 }
 

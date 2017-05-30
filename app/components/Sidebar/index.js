@@ -185,6 +185,7 @@ class component extends PureComponent {
     return (
       <div className={styles.component}>
         <h1>{ name }</h1>
+        <h2></h2>
         <div className="separator">
           {layers.map((layer, i) => {
             const classes = classnames('layer', {
@@ -266,7 +267,7 @@ export default compose(
   connect(state => ({
     name: state.app.name,
     tilesets: state.app.tilesets,
-    layers: state.app.layers,
+    layers: state.tilemap.layers,
     selectedLayer: state.global.selectedLayer,
     basepath: state.app.basepath,
   })),

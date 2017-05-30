@@ -108,7 +108,7 @@ class component extends PureComponent {
 
 export default connect(
   (state) => ({
-    grid: state.app.grid,
+    grid: state.tilemap.grid,
     tile: state.app.tile,
     selectedLayer: state.global.selectedLayer,
     selectedTile: state.global.selectedTile,

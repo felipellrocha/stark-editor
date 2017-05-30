@@ -98,10 +98,10 @@ class component extends PureComponent {
 
 export default compose(
   connect(state => ({
-    grid: state.app.grid,
     tile: state.app.tile,
     data: state.app.data,
-    layers: state.app.layers,
     zoom: state.global.zoom,
+    layers: state.tilemap.layers,
+    grid: state.tilemap.grid,
   })),
 )(component);

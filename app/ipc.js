@@ -6,6 +6,7 @@ import {
 
 export default {
   'save': writeFile, 
+  'save-as': () => () => writeFile(true), 
   'open': openFile,
   'tiling-screen': () => () => { 
     window.location.hash = '/selector';

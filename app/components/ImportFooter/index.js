@@ -20,17 +20,7 @@ class component extends PureComponent {
   constructor(props) {
     super(props);
 
-    this._handleWrite = this._handleWrite.bind(this);
-    this._handleOpen = this._handleOpen.bind(this);
     this._handleChangeTerrainType = this._handleChangeTerrainType.bind(this);
-  }
-
-  _handleOpen() {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(openFile());
   }
 
   _handleChangeTerrainType(event) {
@@ -39,14 +29,6 @@ class component extends PureComponent {
     } = this.props;
 
     dispatch(changeTerrain(event.target.value));
-  }
-
-  _handleWrite() {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(writeFile());
   }
 
   render() {
@@ -66,17 +48,6 @@ class component extends PureComponent {
               <option value='4-tile'>4 Type</option>
             </select>
           </div>
-        </div>
-        <div className="right">
-          <Button onClick={this._handleOpen} className={styles.button}>
-            <InlineSVG className={styles.buttonIcon} icon="upload" /> Open
-          </Button>
-          <Button onClick={this._handleWrite} className={styles.button}>
-            <InlineSVG className={styles.buttonIcon} icon="download" /> Save
-          </Button>
-          <Button className={styles.button}>
-            <InlineSVG className={styles.buttonIcon} icon="cog" />
-          </Button>
         </div>
       </div>
     );

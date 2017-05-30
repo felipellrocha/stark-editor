@@ -1,10 +1,5 @@
 import { ipcMain, app, Menu, shell, BrowserWindow } from 'electron';
 
-import {
-  writeFile,
-  openFile,
-} from './actions';
-
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 

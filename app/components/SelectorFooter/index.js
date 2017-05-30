@@ -24,20 +24,9 @@ class component extends PureComponent {
   constructor(props) {
     super(props);
 
-    this._handleSettings = this._handleSettings.bind(this);
-    this._handleWrite = this._handleWrite.bind(this);
-    this._handleOpen = this._handleOpen.bind(this);
     this._handleClear = this._handleClear.bind(this);
     this._handleChangeZoom = this._handleChangeZoom.bind(this);
     this._handleChangeTileMethod = this._handleChangeTileMethod.bind(this);
-  }
-
-  _handleSettings() {
-    const {
-      history,
-    } = this.props;
-
-    history.push('/settings');
   }
 
   _handleChangeTileMethod(value) {
@@ -54,22 +43,6 @@ class component extends PureComponent {
     } = this.props;
 
     dispatch(changeZoom(e.target.value));
-  }
-
-  _handleOpen() {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(openFile());
-  }
-
-  _handleWrite() {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(writeFile());
   }
 
   _handleClear() {
@@ -101,14 +74,6 @@ class component extends PureComponent {
             <InlineSVG className={styles.icon} icon="cross" /> Clear tile selection
           </div>
         </div>
-        <div className="tiling">
-          <a onClick={() => this._handleChangeTileMethod('put')}>
-            <InlineSVG icon="pencil" className={ selectedAction === 'put' && styles.selectedIcon } />
-          </a>
-          <a onClick={() => this._handleChangeTileMethod('paint')}>
-            <InlineSVG icon="drop" className={ selectedAction === 'paint' && styles.selectedIcon } />
-          </a>
-        </div>
         <div className="middle">
           <div>
             <div>Zoom</div>
@@ -116,15 +81,12 @@ class component extends PureComponent {
           </div>
         </div>
         <div className="right">
-          <Button onClick={this._handleOpen} className={styles.button}>
-            <InlineSVG className={styles.buttonIcon} icon="upload" /> Open
-          </Button>
-          <Button onClick={this._handleWrite} className={styles.button}>
-            <InlineSVG className={styles.buttonIcon} icon="download" /> Save
-          </Button>
-          <Button onClick={this._handleSettings} className={styles.button}>
-            <InlineSVG className={styles.buttonIcon} icon="cog" />
-          </Button>
+          <a onClick={() => this._handleChangeTileMethod('put')}>
+            <InlineSVG icon="pencil" className={ selectedAction === 'put' && styles.selectedIcon } />
+          </a>
+          <a onClick={() => this._handleChangeTileMethod('paint')}>
+            <InlineSVG icon="drop" className={ selectedAction === 'paint' && styles.selectedIcon } />
+          </a>
         </div>
       </div>
     );
