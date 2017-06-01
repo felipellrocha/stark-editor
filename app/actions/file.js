@@ -3,6 +3,14 @@ import { nativeImage } from 'electron';
 import fs from 'fs';
 import path from 'path';
 
+import {
+  initialState as tilemapInitialState,
+} from 'reducers/tilemap'
+
+import {
+	UUID,
+} from 'utils';
+
 export const RECEIVE_TILESETS = 'RECEIVE_TILESETS';
 
 export function selectTilesets(history) {
@@ -100,8 +108,6 @@ export function writeFile(saveAs = false) {
         basepath: oldBasepath,
         selectedMap,
       },
-      app,
-      tilemap,
     } = getState();
 
     const savePath = (() => {
@@ -124,14 +130,21 @@ export function writeFile(saveAs = false) {
     // write filename to memory
     dispatch(saveFilename(savePath, oldBasepath, newBasepath));
 
+    const map = getState().app.maps[selectedMap];
+
     const appFile = `${savePath}/app.json`;
     const mapsPath = `${savePath}/maps`;
-    const mapFile = `${savePath}/maps/${selectedMap}.json`;
+    const mapFile = `${savePath}/maps/${map.id}.json`;
+
+    const {
+      app,
+      tilemap,
+    } = getState();
 
     if (!fs.existsSync(savePath)) fs.mkdirSync(savePath);
     if (!fs.existsSync(mapsPath)) fs.mkdirSync(mapsPath);
-    fs.writeFileSync(appFile, JSON.stringify(getState().app));
-    fs.writeFileSync(mapFile, JSON.stringify(getState().tilemap));
+    fs.writeFileSync(appFile, JSON.stringify(app));
+    fs.writeFileSync(mapFile, JSON.stringify(tilemap));
   }
 }
 
@@ -228,10 +241,46 @@ export function changeMap(index) {
   }
 }
 
+export function createMap() {
+  return (dispatch, getState) => {
+    const {
+      global: {
+        filename,
+      },
+    } = getState();
+
+    const id = UUID();
+    const name = 'untitled';
+    const mapFile = `${filename}/maps/${id}.json`;
+
+    fs.writeFileSync(mapFile, JSON.stringify(tilemapInitialState));
+
+    dispatch(receiveNewMap(id, name))
+  }
+}
+
+export const RECEIVE_NEW_MAP = 'RECEIVE_NEW_MAP';
+export function receiveNewMap(id, name) {
+  return {
+    type: RECEIVE_NEW_MAP,
+    id,
+    name,
+  }
+}
+
+export const UPDATE_MAP_NAME = 'UPDATE_MAP_NAME';
+export function updateMapName(index, name) {
+  return {
+    type: UPDATE_MAP_NAME,
+    index,
+    name,
+  }
+}
+
 export const SELECT_MAP = 'SELECT_MAP';
 export function selectMap(index) {
   return {
     type: SELECT_MAP,
     index,
-  }
+ }
 }

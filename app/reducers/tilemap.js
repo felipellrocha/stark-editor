@@ -27,7 +27,7 @@ import {
   SAVE_FILENAME,
 } from 'actions';
 
-const initialState = {
+export const initialState = {
   grid: {
     columns: 10,
     rows: 10,

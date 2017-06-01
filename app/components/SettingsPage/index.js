@@ -17,6 +17,8 @@ import {
   changeGridColumns,
   changeGridRows,
   changeMap,
+  createMap,
+  updateMapName,
 } from 'actions';
 
 import styles from './styles.css';
@@ -30,6 +32,24 @@ class component extends PureComponent {
     this.changeTileWidth = this.changeTileWidth.bind(this);
     this.changeTileHeight = this.changeTileHeight.bind(this);
     this.selectMap = this.selectMap.bind(this);
+    this.createNewMap = this.createNewMap.bind(this);
+    this.updateMapName = this.updateMapName.bind(this);
+  }
+
+  updateMapName(i, event) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(updateMapName(i, event.target.value));
+  }
+
+  createNewMap() {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(createMap());
   }
 
   selectMap(index) {
@@ -119,11 +139,11 @@ class component extends PureComponent {
 
                   return (
                     <div key={m.id} className={classes} onClick={() => this.selectMap(i)}>
-                      {m.name}
+                      <input value={m.name} onChange={event => this.updateMapName(i, event)} />
                     </div>
                   );
                 })}
-                <div className="map add">
+                <div className="map add" onClick={this.createNewMap}>
                   <div>Add another map</div>
                   <InlineSVG icon="plus-circle" />
                 </div>

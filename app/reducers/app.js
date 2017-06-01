@@ -27,6 +27,9 @@ import {
   SAVE_FILENAME,
   LOAD_STAGE,
 
+  RECEIVE_NEW_MAP,
+  UPDATE_MAP_NAME,
+
   RECEIVE_SPRITE_SHEETS,
 } from 'actions';
 
@@ -49,6 +52,38 @@ initialState.maps = ['start', 'inside'].map(name => ({
 }));
 
 export default handleActions({
+  RECEIVE_NEW_MAP: (state, action) => {
+    const {
+      id,
+      name,
+    } = action;
+
+    return {
+      ...state,
+      maps: [
+        ...state.maps,
+        {
+          id,
+          name,
+        }
+      ]
+    }
+  },
+  UPDATE_MAP_NAME: (state, action) => {
+    const {
+      index,
+      name,
+    } = action;
+
+    const map = state.maps[index];
+    return {
+      ...state,
+      maps: arrayReplace(state.maps, {
+        ...map,
+        name,
+      }, index),
+    }
+  },
   ADD_ANIMATION: (state, action) => {
     return {
       ...state,
