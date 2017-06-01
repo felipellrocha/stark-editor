@@ -40,4 +40,32 @@
       width: 100%;
     }
   }
+
+  .list {
+    background: #fff;
+    display: block;
+    width: 75%;
+    border-left: 1px dotted #aaa;
+    font-weight: 200;
+
+    .map {
+      padding: 5px;
+
+      &.add {
+        border-top: 1px dotted #aaa;
+        font-size: 11px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      &:hover {
+        background: #f4cdce;
+      }
+
+      &.selected {
+        background: #d33e43;
+        color: #fff;
+      }
+    }
+  }
 }

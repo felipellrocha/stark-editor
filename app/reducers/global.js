@@ -14,13 +14,14 @@ import {
   SELECT_LAYER,
   SELECT_ANIMATION,
   SELECT_FRAME,
+  SELECT_MAP,
 } from 'actions';
 
 const initialState = {
   filename: '',
   basepath: electron.remote.app.getPath('home'),
   zoom: .5,
-  selectedMap: 'start',
+  selectedMap: 0,
   selectedAction: 'put',
   selectedTerrainType: '6-tile',
   selectedTile: [-1, 0],
@@ -30,16 +31,22 @@ const initialState = {
 };
 
 export default handleActions({
+  SELECT_MAP: (state, action) => {
+    return {
+      ...state,
+      selectedMap: action.index,
+    };
+  },
   SELECT_FRAME: (state, action) => {
     return {
       ...state,
-      selectedFrame: action.index
+      selectedFrame: action.index,
     };
   },
   SELECT_ANIMATION: (state, action) => {
     return {
       ...state,
-      selectedAnimation: action.name
+      selectedAnimation: action.name,
     };
   },
   SELECT_LAYER: (state, action) => {

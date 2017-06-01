@@ -5,6 +5,7 @@
   color: #fff;
   font-size: 12px;
   box-sizing: border-box;
+  cursor: pointer;
 
   &.disabled {
     background: #ddd;
@@ -49,9 +50,19 @@
 }
 
 :local(.frame) {
-  background: #fff;
-  border: 1px solid #333;
+  background: rgba(255, 255, 255, .5);
+  border: 1px solid #aaa;
   color: #333;
+
+  & + & {
+    background: #ddd;
+    border: 1px solid #aaa;
+
+    &:hover {
+      color: #fff;
+      background: #D33E43;
+    }
+  }
 
   &:hover {
     border: 1px solid #D33E43;

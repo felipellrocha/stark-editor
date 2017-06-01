@@ -1,0 +1,10 @@
+:local(.component) {
+  font-family: Helvetica Neue;
+  margin: 15px;
+  display: flex;
+  //background: url('http://localhost:1212/dist/images/stark.jpg');
+
+  .column {
+    width: 25%;
+  }
+}

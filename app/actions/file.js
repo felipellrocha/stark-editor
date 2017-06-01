@@ -1,4 +1,4 @@
-import electron from 'electron';
+import electron, { ipcRenderer as ipc } from 'electron';
 import { nativeImage } from 'electron';
 import fs from 'fs';
 import path from 'path';
@@ -45,8 +45,6 @@ export function selectTilesets(history) {
         terrains: {},
       };
     })));
-
-    history.push('/import');
   }
 }
 
@@ -54,6 +52,43 @@ export function receiveTilesets(tilesets) {
   return {
     type: RECEIVE_TILESETS,
     tilesets,
+  }
+}
+
+export function newGame() {
+  return (dispatch, getState) => {
+    const savePath =  electron.remote.dialog.showSaveDialog({
+      properties: ['openDirectories'],
+      filters: [
+        {name: 'Game Files', extensions: ['targ']},
+      ],
+    });
+    const newBasepath = path.dirname(savePath);
+    
+    // write filename to memory
+    dispatch(saveFilename(savePath));
+
+    const {
+      app,
+      tilemap,
+    } = getState();
+
+    const appFile = `${savePath}/app.json`;
+    const mapsPath = `${savePath}/maps`;
+
+    if (!fs.existsSync(savePath)) fs.mkdirSync(savePath);
+    if (!fs.existsSync(mapsPath)) fs.mkdirSync(mapsPath);
+
+    fs.writeFileSync(appFile, JSON.stringify(app));
+    app.maps.forEach(m => {
+      const mapFile = `${savePath}/maps/${m.id}.json`;
+      fs.writeFileSync(mapFile, JSON.stringify(tilemap));
+    });
+
+    /*
+    electron.remote.getCurrentWindow().show();
+    electron.remote.getCurrentWindow().focus();
+    */
   }
 }
 
@@ -70,7 +105,7 @@ export function writeFile(saveAs = false) {
     } = getState();
 
     const savePath = (() => {
-      if (globalFilename === '' || saveAs) {
+      if (saveAs) {
         return electron.remote.dialog.showSaveDialog({
           properties: ['openDirectories'],
           filters: [
@@ -81,6 +116,9 @@ export function writeFile(saveAs = false) {
         return globalFilename;
       }
     })();
+
+    if (savePath === '' || !savePath) return;
+
     const newBasepath = path.dirname(savePath);
     
     // write filename to memory
@@ -124,16 +162,24 @@ export function openFile() {
     })[0];
 
     const appFile = `${appPath}/app.json`;
+    const app = JSON.parse(fs.readFileSync(appFile));
+
+    const map = app.maps[selectedMap];
+
     const mapsPath = `${appPath}/maps`;
-    const mapFile = `${appPath}/maps/${selectedMap}.json`;
+    const mapFile = `${appPath}/maps/${map.id}.json`;
 
 
-    const app = fs.readFileSync(appFile);
-    const tilemap = fs.readFileSync(mapFile);
+    const tilemap = JSON.parse(fs.readFileSync(mapFile));
     const basepath = path.dirname(appPath);
 
     dispatch(updatePaths(appPath, basepath));
-    dispatch(loadStage(JSON.parse(app), JSON.parse(tilemap)));
+    dispatch(loadStage(app, tilemap));
+
+    /*
+    electron.remote.getCurrentWindow().show();
+    electron.remote.getCurrentWindow().focus();
+    */
   }
 }
 
@@ -154,5 +200,38 @@ export function updatePaths(filename, basepath) {
     type: UPDATE_PATHS,
     filename,
     basepath,
+  }
+}
+
+export function changeMap(index) {
+  return (dispatch, getState) => {
+    const {
+      global: {
+        filename,
+      },
+      app,
+    } = getState();
+
+    const map = app.maps[index];
+
+    const appFile = `${filename}/app.json`;
+    const mapsPath = `${filename}/maps`;
+    const mapFile = `${filename}/maps/${map.id}.json`;
+
+    const tilemap = (function() {
+      if (fs.existsSync(mapFile)) return JSON.parse(fs.readFileSync(mapFile));
+      else return null;
+    })();
+
+    dispatch(selectMap(index));
+    dispatch(loadStage(null, tilemap));
+  }
+}
+
+export const SELECT_MAP = 'SELECT_MAP';
+export function selectMap(index) {
+  return {
+    type: SELECT_MAP,
+    index,
   }
 }

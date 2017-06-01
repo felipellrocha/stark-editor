@@ -269,6 +269,8 @@ export default handleActions({
       newBasepath,
     } = action;
 
+    if (!oldBasepath || !newBasepath) return state;
+
     const tilesets = state.tilesets.map(tileset => {
       const resolve = path.resolve(oldBasepath, tileset.src);
       const src = path.relative(newBasepath, resolve);
@@ -277,8 +279,6 @@ export default handleActions({
         src,
       });
     });
-
-    debugger;
 
     return Object.assign({}, state, { tilesets: tilesets });
   },
@@ -290,6 +290,8 @@ export default handleActions({
   },
 
   LOAD_STAGE: (state, action) => {
+    if (!action.app) return state;
+
     return Object.assign({}, state, action.app);
   },
 }, initialState);

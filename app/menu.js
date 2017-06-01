@@ -41,21 +41,29 @@ export default class MenuBuilder {
       submenu: [
         { label: 'About Stark Editor', selector: 'orderFrontStandardAboutPanel:' },
         { type: 'separator' },
-        { label: 'Open', accelerator: 'Command+O', click: () => { this.mainWindow.send('open'); } },
-        { type: 'separator' },
-        { label: 'Save', accelerator: 'Command+S', click: () => { this.mainWindow.send('save'); } },
-        { label: 'Save As', accelerator: 'Command+Alt+S', click: () => { this.mainWindow.send('save-as'); } },
+        { label: 'Settings', accelerator: 'Command+G', click: () => { this.mainWindow.send('settings-screen') } },
         { type: 'separator' },
         { label: 'Hide Stark Editor', accelerator: 'Command+H', selector: 'hide:' },
         { label: 'Hide Others', accelerator: 'Command+Shift+H', selector: 'hideOtherApplications:' },
         { label: 'Show All', selector: 'unhideAllApplications:' },
         { type: 'separator' },
-        { label: 'Quit', accelerator: 'Command+Q', click: () => { app.quit(); } }
+        { label: 'Quit', accelerator: 'Command+Q', click: () => {
+          app.quit();
+        } }
       ]
     };
     const subMenuEdit = {
       label: 'Edit',
       submenu: [
+        { label: 'New Game', accelerator: 'Command+N', click: () => {
+          this.mainWindow.send('new');
+        } },
+        { type: 'separator' },
+        { label: 'Open', accelerator: 'Command+O', click: () => { this.mainWindow.send('open'); } },
+        { type: 'separator' },
+        { label: 'Save', accelerator: 'Command+S', click: () => { this.mainWindow.send('save'); } },
+        { label: 'Save As', accelerator: 'Command+Shift+S', click: () => { this.mainWindow.send('save-as'); } },
+        { type: 'separator' },
         { label: 'Undo', accelerator: 'Command+Z', click: () => { this.mainWindow.send('undo'); } },
         { label: 'Redo', accelerator: 'Shift+Command+Z', click: () => { this.mainWindow.send('redo'); } },
       ]
@@ -65,8 +73,6 @@ export default class MenuBuilder {
       submenu: [
         { label: 'Tiling', accelerator: 'Command+T', click: () => { this.mainWindow.send('tiling-screen'); } },
         { label: 'Animations', accelerator: 'Command+Y', click: () => { this.mainWindow.send('animations-screen') } },
-        { type: 'separator' },
-        { label: 'Settings', accelerator: 'Command+G', click: () => { this.mainWindow.send('settings-screen') } },
       ]
     };
     const subMenuView = {

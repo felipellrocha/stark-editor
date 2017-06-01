@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom'
+import classnames from 'classnames';
 
 import {
   Sidebar,
@@ -15,6 +16,7 @@ import {
   changeTileHeight,
   changeGridColumns,
   changeGridRows,
+  changeMap,
 } from 'actions';
 
 import styles from './styles.css';
@@ -23,15 +25,22 @@ class component extends PureComponent {
   constructor(props) {
     super(props);
 
-    this._handleGoBack = this._handleGoBack.bind(this);
-    this._handleChangeGameName = this._handleChangeGameName.bind(this);
-    this._handleChangeTileWidth = this._handleChangeTileWidth.bind(this);
-    this._handleChangeTileHeight = this._handleChangeTileHeight.bind(this);
-    this._handleChangeGridColumns = this._handleChangeGridColumns.bind(this);
-    this._handleChangeGridRows = this._handleChangeGridRows.bind(this);
+    this.goBack = this.goBack.bind(this);
+    this.changeGameName = this.changeGameName.bind(this);
+    this.changeTileWidth = this.changeTileWidth.bind(this);
+    this.changeTileHeight = this.changeTileHeight.bind(this);
+    this.selectMap = this.selectMap.bind(this);
   }
 
-  _handleGoBack() {
+  selectMap(index) {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(changeMap(index));
+  }
+
+  goBack() {
     const {
       history,
     } = this.props;
@@ -39,7 +48,7 @@ class component extends PureComponent {
     history.goBack();
   }
 
-  _handleChangeGameName(e) {
+  changeGameName(e) {
     const {
       dispatch,
     } = this.props;
@@ -47,7 +56,7 @@ class component extends PureComponent {
     dispatch(changeGameName(e.target.value));
   }
 
-  _handleChangeTileWidth(e) {
+  changeTileWidth(e) {
     const {
       dispatch,
     } = this.props;
@@ -55,7 +64,7 @@ class component extends PureComponent {
     dispatch(changeTileWidth(e.target.value));
   }
 
-  _handleChangeTileHeight(e) {
+  changeTileHeight(e) {
     const {
       dispatch,
     } = this.props;
@@ -63,27 +72,13 @@ class component extends PureComponent {
     dispatch(changeTileHeight(e.target.value));
   }
 
-  _handleChangeGridColumns(e) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(changeGridColumns(e.target.value));
-  }
-
-  _handleChangeGridRows(e) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(changeGridRows(e.target.value));
-  }
-
   render() {
     const {
       gameName,
       tile,
       grid,
+      maps,
+      selectedMap,
     } = this.props;
 
     return (
@@ -92,25 +87,12 @@ class component extends PureComponent {
         <div className={styles.component} >
           <h3>
             <span>Settings</span>
-            <InlineSVG className="close" icon="cross" onClick={this._handleGoBack} />
+            <InlineSVG className="close" icon="cross" onClick={this.goBack} />
           </h3>
           <div className="form">
             <div className="input">
               <label>Game Name</label>
-              <input type="text" value={ gameName } onChange={this._handleChangeGameName} />
-            </div>
-            <div className="input">
-              <label>Grid (this is a destructive action)</label>
-            </div>
-            <div className="input-row">
-              <div className="input">
-                <label>Columns</label>
-                <input type="number" value={ grid.columns } onChange={this._handleChangeGridColumns} />
-              </div>
-              <div className="input">
-                <label>Rows</label>
-                <input type="number" value={ grid.rows } onChange={this._handleChangeGridRows} />
-              </div>
+              <input type="text" value={ gameName } onChange={this.changeGameName} />
             </div>
             <div className="input">
               <label>Tiles</label>
@@ -118,16 +100,37 @@ class component extends PureComponent {
             <div className="input-row">
               <div className="input">
                 <label>Width</label>
-                <input type="number" value={ tile.width } onChange={this._handleChangeTileWidth} />
+                <input type="number" value={ tile.width } onChange={this.changeTileWidth} />
               </div>
               <div className="input">
                 <label>Height</label>
-                <input type="number" value={ tile.height } onChange={this._handleChangeTileHeight} />
+                <input type="number" value={ tile.height } onChange={this.changeTileHeight} />
+              </div>
+            </div>
+            <div className="input-row">
+              <div className="input">
+                <label>Maps</label>
+              </div>
+              <div className="input list">
+                {maps.map((m, i) => {
+                  const classes = classnames('map', {
+                    'selected': selectedMap === i,
+                  });
+
+                  return (
+                    <div key={m.id} className={classes} onClick={() => this.selectMap(i)}>
+                      {m.name}
+                    </div>
+                  );
+                })}
+                <div className="map add">
+                  <div>Add another map</div>
+                  <InlineSVG icon="plus-circle" />
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <SelectorFooter />
       </div>
     );
   }
@@ -137,7 +140,8 @@ export default compose(
   connect(state => ({
     gameName: state.app.name,
     tile: state.app.tile,
-    grid: state.app.grid,
+    maps: state.app.maps,
+    selectedMap: state.global.selectedMap,
   })),
   withRouter,
 )(component);

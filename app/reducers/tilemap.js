@@ -206,6 +206,8 @@ export default handleActions({
     return Object.assign({}, state, { layers: newLayers });
   },
   LOAD_STAGE: (state, action) => {
+    if (!action.tilemap) return initialState;
+
     // clean up integers
     const layers = action.tilemap.layers.map(layer => {
       const data = layer.data.map(tile => {

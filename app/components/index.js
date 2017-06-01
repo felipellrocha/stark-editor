@@ -19,6 +19,7 @@ export Sidebar from './Sidebar'
 export AnimationSidebar from './AnimationSidebar'
 
 // Pages
+export InitialPage from './InitialPage'
 export SelectorPage from './SelectorPage'
 export ImportPage from './ImportPage'
 export SettingsPage from './SettingsPage'

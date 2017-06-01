@@ -177,15 +177,19 @@ class component extends PureComponent {
   render() {
     const {
       name,
+      maps,
       tilesets,
       layers,
       selectedLayer,
+      selectedMap,
     } = this.props;
+
+    const map = maps[selectedMap];
 
     return (
       <div className={styles.component}>
         <h1>{ name }</h1>
-        <h2></h2>
+        <h2>{ map.name }</h2>
         <div className="separator">
           {layers.map((layer, i) => {
             const classes = classnames('layer', {
@@ -266,10 +270,12 @@ const _getTerrainData = memoize(function(tileset, columns, setIndex) {
 export default compose(
   connect(state => ({
     name: state.app.name,
+    maps: state.app.maps,
     tilesets: state.app.tilesets,
+    basepath: state.app.basepath,
     layers: state.tilemap.layers,
     selectedLayer: state.global.selectedLayer,
-    basepath: state.app.basepath,
+    selectedMap: state.global.selectedMap,
   })),
   withRouter,
 )(component);

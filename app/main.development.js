@@ -18,10 +18,11 @@ if (process.env.NODE_ENV === 'development') {
   require('module').globalPaths.push(p);
 }
 
+/*
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
-
+*/
 
 const installExtensions = async () => {
   if (process.env.NODE_ENV === 'development') {
@@ -62,8 +63,10 @@ app.on('ready', async () => {
     mainWindow.focus();
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  mainWindow.on('close', event => {
+    //event.preventDefault();
+
+    //mainWindow.hide();
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
