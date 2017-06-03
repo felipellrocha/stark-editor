@@ -8,6 +8,9 @@ import {
 } from 'utils';
 
 import {
+  ADD_ENTITY,
+  CHANGE_ENTITY_NAME,
+
   ADD_ANIMATION,
   CHANGE_ANIMATION_NAME,
   CHANGE_ANIMATION_FRAME_LENGTH,
@@ -52,6 +55,76 @@ initialState.maps = ['start', 'inside'].map(name => ({
 }));
 
 export default handleActions({
+  ADD_ENTITY: (state, action) => {
+    return {
+      ...state,
+      entities: {
+        ...state.entities,
+        [UUID()]: {
+          name: 'untitled',
+          avatar: null,
+          components: [ ],
+        },
+      },
+    }
+  },
+  RECEIVE_COMPONENT: (state, action) => {
+    return {
+      ...state,
+      entities: {
+        ...state.entities,
+        [action.id]: {
+          ...state.entities[action.id],
+          components: [
+            ...state.entities[action.id].components,
+            action.component,
+          ],
+        }
+      }
+    }
+  },
+  CHANGE_ENTITY_NAME: (state, action) => {
+    return {
+      ...state,
+      entities: {
+        ...state.entities,
+        [action.id]: {
+          ...state.entities[action.id],
+          name: action.name,
+        }
+      }
+    }
+  },
+  CHANGE_COMPONENT_VALUE: (state, action) => {
+    const components = state.entities[action.id].components;
+    const component = components[action.componentIndex];
+    const members = component.members;
+    const member = members[action.memberIndex];
+    return {
+      ...state,
+      entities: {
+        ...state.entities,
+        [action.id]: {
+          ...state.entities[action.id],
+          components: [
+            ...components.slice(0, action.componentIndex),
+            {
+              ...component,
+              members: [
+                ...members.slice(0, action.memberIndex),
+                {
+                  ...member,
+                  value: action.value,
+                },
+                ...members.slice(action.memberIndex + 1, members.length),
+              ],
+            },
+            ...components.slice(action.componentIndex + 1, components.length),
+          ]
+        }
+      }
+    }
+  },
   RECEIVE_NEW_MAP: (state, action) => {
     const {
       id,

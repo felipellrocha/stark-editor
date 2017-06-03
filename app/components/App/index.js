@@ -9,10 +9,10 @@ import styles from './styles.css';
 import {
   InitialPage,
 
+  EntityPage,
   SelectorPage,
   ImportPage,
   SettingsPage,
-
   AnimationPage,
 
   Sidebar,
@@ -40,6 +40,7 @@ class component extends PureComponent {
       <div className={styles.component}>
 
         <Route exact path="/" component={this.ensureFileIsLoaded(SelectorPage)} />
+        <Route path="/entity" component={this.ensureFileIsLoaded(EntityPage)} />
         <Route path="/selector" component={this.ensureFileIsLoaded(SelectorPage)} />
         <Route path="/import" component={this.ensureFileIsLoaded(ImportPage)} />
         <Route path="/settings" component={this.ensureFileIsLoaded(SettingsPage)} />

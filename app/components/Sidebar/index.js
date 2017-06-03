@@ -178,6 +178,7 @@ class component extends PureComponent {
     const {
       name,
       maps,
+      entities,
       tilesets,
       layers,
       selectedLayer,
@@ -234,12 +235,24 @@ class component extends PureComponent {
           </Button>
         </div>
         <div className="tilesets separator">
+          <div className="entities">
+            <h2>Entities</h2>
+            { Object.keys(entities).map((id) => {
+              const entity = entities[id];
+              
+              return (
+                <div>{entity.name}</div>
+              );
+            })}
+          </div>
           <div className="simple">
+            <h2>Tile</h2>
             { tilesets.map((tileset, index) => {
               if (tileset.type !== 'aware') return this._renderSimpleGrid(tileset, index)
             })}
           </div>
           <div className="terrains">
+            <h2>Terrains</h2>
             { tilesets.map((tileset, index) => {
               if (tileset.type === 'aware') return this._renderTerrainGrid(tileset, index)
             })}
@@ -271,9 +284,12 @@ export default compose(
   connect(state => ({
     name: state.app.name,
     maps: state.app.maps,
+    entities: state.app.entities,
     tilesets: state.app.tilesets,
     basepath: state.app.basepath,
+
     layers: state.tilemap.layers,
+
     selectedLayer: state.global.selectedLayer,
     selectedMap: state.global.selectedMap,
   })),

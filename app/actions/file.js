@@ -3,6 +3,8 @@ import { nativeImage } from 'electron';
 import fs from 'fs';
 import path from 'path';
 
+import components from 'parser/component.peg';
+
 import {
   initialState as tilemapInitialState,
 } from 'reducers/tilemap'
@@ -10,8 +12,6 @@ import {
 import {
 	UUID,
 } from 'utils';
-
-export const RECEIVE_TILESETS = 'RECEIVE_TILESETS';
 
 export function selectTilesets(history) {
   return (dispatch, getState) => {
@@ -55,6 +55,8 @@ export function selectTilesets(history) {
     })));
   }
 }
+
+export const RECEIVE_TILESETS = 'RECEIVE_TILESETS';
 
 export function receiveTilesets(tilesets) {
   return {
@@ -283,4 +285,30 @@ export function selectMap(index) {
     type: SELECT_MAP,
     index,
  }
+}
+
+export function loadComponents() {
+  return (dispatch, getState) => {
+
+    const component = electron.remote.dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [
+        {name: 'Header file', extensions: ['h']},
+      ],
+    })[0];
+
+    if (!component) return;
+
+    const data = fs.readFileSync(component).toString();
+    dispatch(receiveComponents(components.parse(data)));
+
+  }
+}
+
+export const RECEIVE_COMPONENTS = 'RECEIVE_COMPONENTS';
+export function receiveComponents(components) {
+  return {
+    type: RECEIVE_COMPONENTS,
+    components,
+  }
 }

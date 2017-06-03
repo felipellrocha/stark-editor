@@ -1,61 +1,79 @@
 Components
-	= Component+
+    = (preprocessorLine / __ )+
+      components:Component+
+      (__)*
+      '#endif'
+      _?
+    {
+        return components
+    }
+    
 
 Component
-	= !_ component:(ComponentDef) _*
-	{
-		 return component
-	}
+    = !__ component:(ComponentDef) __*
+    {
+         return component
+    }
 
 ComponentDef
-	= "struct" name:($(!':'.)*) ": public Component {" _*
-		 "static CID cid;" _*
-			members:((!'};') memberList _*)*
-		"};"
-	{
-			return {
-					name: name,
-					members: members
-							.map(_ => _[1])
-							.filter(member => { return member.type !== "IGNORE" }),
-			}
-	}
+    = "struct" name:($(!':'.)*) ": public Component {" _*
+         "static CID cid;" _*
+            members:((!'};') memberList _*)*
+        "};"
+    {
+            return {
+                    name: name,
+                    members: members
+                            .map(_ => _[1])
+                            .filter(member => { return member.type !== "IGNORE" }),
+            }
+    }
+
+preprocessorLine
+    = '#' (!__.)* __
+    {
+        return {
+            type: 'IGNORE',
+        }
+    }    
 
 memberList
-	= (property / comment / method)
+    = (property / comment / method)
 
 property
-	= property:("int" / "TileLayer" / "string" / "SDL_Texture" / "EID" / "bool" )
-		" "
-		pointer:"*"?
-		name:($(!(';' / ' = ').)*)
-		value:(' = ' ($(!';'.)*))?
-		';'
-	{
-		 return {
-				 type: property,
-				pointer: !!(pointer),
-				value: value ? value[1] : null,
-				name: name,
-		}
-	}
+    = property:("int" / "TileLayer" / "string" / "SDL_Texture" / "EID" / "bool" )
+        " "
+        pointer:"*"?
+        name:($(!(';' / ' = ').)*)
+        value:(' = ' ($(!';'.)*))?
+        ';'
+    {
+         return {
+                 type: property,
+                pointer: !!(pointer),
+                value: value ? value[1] : null,
+                name: name,
+        }
+    }
 
 comment
-	= "//" comment:($(!';'.)*) ';'?
-	{
-		 return {
-				type: "IGNORE",
-				line: comment,
-		}
-	}
+    = "//" comment:($(!';'.)*) ';'?
+    {
+         return {
+                type: "IGNORE",
+                line: comment,
+        }
+    }
 
 method
-	= line:($(!'}'.)*) '}' ';'?
-	{
-		 return {
-				type: "IGNORE",
-				line: line,
-		}
-	}
+    = line:($(!'}'.)*) '}' ';'?
+    {
+         return {
+                type: "IGNORE",
+                line: line,
+        }
+    }
 
-_ = ' ' / '\n' / '\t'
+_ = ' ' / __
+
+__ = '\n' / '\t'

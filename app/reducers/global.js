@@ -28,9 +28,19 @@ const initialState = {
   selectedLayer: 0,
   selectedAnimation: null,
   selectedFrame: 0,
+  components: [ ],
 };
 
 export default handleActions({
+  RECEIVE_COMPONENTS: (state, action) => {
+    return {
+      ...state,
+      components: [
+        ...state.components,
+        ...action.components,
+      ],
+    }
+  },
   SELECT_MAP: (state, action) => {
     return {
       ...state,
