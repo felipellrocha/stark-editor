@@ -5,6 +5,10 @@ import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom'
 
 import {
+  EMPTY,
+} from 'utils/constants';
+
+import {
   Tile,
   InlineSVG,
   Button,
@@ -50,7 +54,7 @@ class component extends PureComponent {
       dispatch,
     } = this.props;
 
-    dispatch(selectTile({setIndex: -1, tileIndex: 0}));
+    dispatch(selectTile({setIndex: EMPTY, tileIndex: 0}));
   }
 
   render() {

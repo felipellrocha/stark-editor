@@ -7,6 +7,11 @@ import { withRouter } from 'react-router-dom'
 import { memoize } from 'lodash';
 
 import {
+  EMPTY,
+  ENTITY,
+} from 'utils/constants';
+
+import {
   selectTilesets,
   selectTile,
   changeLayerName,
@@ -39,6 +44,7 @@ class component extends PureComponent {
     this._handleSelectLayer = this._handleSelectLayer.bind(this);
     this._handleViewTilesetEditor = this._handleViewTilesetEditor.bind(this);
     this._renderSimpleGrid = this._renderSimpleGrid.bind(this);
+    this._renderEntityGrid = this._renderEntityGrid.bind(this);
     this._renderTerrainGrid = this._renderTerrainGrid.bind(this);
     this._handleToggleVisibility = this._handleToggleVisibility.bind(this);
     this._handleRemoveLayer = this._handleRemoveLayer.bind(this);
@@ -146,6 +152,27 @@ class component extends PureComponent {
     );
   }
 
+  _renderEntityGrid() {
+    const {
+      entities,
+    } = this.props;
+
+    const [
+      data,
+      grid,
+    ] = _getEntityData(entities, 4);
+
+    return (
+      <div>
+        <Grid
+          data={data}
+          grid={grid}
+          tileAction={selectTile}
+        />
+      </div>
+    );
+  }
+
   _renderTerrainGrid(tileset, index) {
     const {
       rows,
@@ -178,6 +205,7 @@ class component extends PureComponent {
     const {
       name,
       maps,
+      tile,
       entities,
       tilesets,
       layers,
@@ -236,23 +264,17 @@ class component extends PureComponent {
         </div>
         <div className="tilesets separator">
           <div className="entities">
-            <h2>Entities</h2>
-            { Object.keys(entities).map((id) => {
-              const entity = entities[id];
-              
-              return (
-                <div>{entity.name}</div>
-              );
-            })}
+            <h4>Entities</h4>
+            {this._renderEntityGrid()}
           </div>
           <div className="simple">
-            <h2>Tile</h2>
+            <h4>Tile</h4>
             { tilesets.map((tileset, index) => {
               if (tileset.type !== 'aware') return this._renderSimpleGrid(tileset, index)
             })}
           </div>
           <div className="terrains">
-            <h2>Terrains</h2>
+            <h4>Terrains</h4>
             { tilesets.map((tileset, index) => {
               if (tileset.type === 'aware') return this._renderTerrainGrid(tileset, index)
             })}
@@ -266,6 +288,16 @@ class component extends PureComponent {
 const _getGridData = memoize(function(tileset, rows, columns, index) {
   return [
     [...Array(rows * columns)].map((_, i) => [index, i]),
+    { rows, columns },
+  ];
+});
+
+const _getEntityData = memoize(function(entities, columns) {
+  const keys = Object.keys(entities);
+  const rows = Math.ceil(keys.length / columns);
+
+  return [
+    keys.map(id => [ENTITY, id]),
     { rows, columns },
   ];
 });
@@ -284,6 +316,7 @@ export default compose(
   connect(state => ({
     name: state.app.name,
     maps: state.app.maps,
+    tile: state.app.tile,
     entities: state.app.entities,
     tilesets: state.app.tilesets,
     basepath: state.app.basepath,

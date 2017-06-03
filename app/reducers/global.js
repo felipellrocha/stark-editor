@@ -1,5 +1,9 @@
 import { handleActions } from 'redux-actions';
 
+import {
+  EMPTY,
+} from 'utils/constants';
+
 import path from 'path';
 import electron from 'electron';
 
@@ -18,13 +22,14 @@ import {
 } from 'actions';
 
 const initialState = {
-  filename: '',
-  basepath: electron.remote.app.getPath('home'),
+  filename: '/Users/fllr/game/!!woot.targ',
+  basepath: '/Users/fllr/game/',
+  //basepath: electron.remote.app.getPath('home'),
   zoom: .5,
   selectedMap: 0,
   selectedAction: 'put',
   selectedTerrainType: '6-tile',
-  selectedTile: [-1, 0],
+  selectedTile: [EMPTY, 0],
   selectedLayer: 0,
   selectedAnimation: null,
   selectedFrame: 0,

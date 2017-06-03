@@ -1,4 +1,5 @@
 export * from './immutable.js'
+export * from './constants.js'
 export * from './tile.js'
 export * from './uuids.js'
 export * from './middleware.js'

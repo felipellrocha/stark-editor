@@ -1,9 +1,15 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { memoize } from 'lodash';
 
 import path from 'path';
 
 import classnames from 'classnames';
+
+import {
+  EMPTY,
+  ENTITY,
+} from 'utils/constants';
 
 import {
   XYToIndex,
@@ -16,12 +22,20 @@ import {
 
 import styles from './styles.css';
 
+const COLORS = [
+  '#333',
+  '#f00',
+  '#0f0',
+  '#00f',
+];
+
 class component extends PureComponent {
   constructor(props) {
     super(props);
 
     this._dispatchAction = this._dispatchAction.bind(this);
     this.renderEmptyTile = this.renderEmptyTile.bind(this);
+    this.renderEntityTile = this.renderEntityTile.bind(this);
     this.renderSimpleTile = this.renderSimpleTile.bind(this);
     this.renderSubTile = this.renderSubTile.bind(this);
   }
@@ -122,6 +136,36 @@ class component extends PureComponent {
   }
 
 
+  renderEntityTile() {
+    console.log(this.props);
+    const {
+      tile,
+      tileIndex: id,
+      entities,
+      className,
+    } = this.props;
+
+    const classes = classnames(
+      styles.component,
+      styles.entity,
+      className,
+    );
+
+    const style = {
+      height: tile.height,
+      width: tile.width,
+      backgroundColor: getColor(id),
+    };
+
+    const entity = entities[id];
+    
+    return (
+      <div className={classes} style={style} onClick={this._dispatchAction}>
+        {entity.name}
+      </div>
+    )
+  }
+
   renderSimpleTile() {
     const {
       tile,
@@ -180,7 +224,8 @@ class component extends PureComponent {
       simpleTile,
     } = this.props;
 
-    if (setIndex == -1) return this.renderEmptyTile();
+    if (setIndex === EMPTY) return this.renderEmptyTile();
+    if (setIndex === ENTITY) return this.renderEntityTile();
 
     const tileset = tilesets[setIndex];
 
@@ -189,10 +234,19 @@ class component extends PureComponent {
   }
 }
 
+const getColor = memoize(function(id) {
+
+  const str = Array.from(id);
+  const index = str.reduce((prev, c) => prev + c.charCodeAt(0), 0) % COLORS.length;
+
+  return COLORS[index];
+});
+
 export default connect(
   (state, props) => ({
     tile: state.app.tile,
     tilesets: state.app.tilesets,
+    entities: state.app.entities,
     basepath: state.global.basepath,
   }),
 )(component);

@@ -1,6 +1,10 @@
 import { handleActions } from 'redux-actions';
 
 import {
+  EMPTY,
+} from 'utils/constants';
+
+import {
 	UUID,
   arrayReplace,
   arrayMoveUp,
@@ -40,7 +44,7 @@ initialState.layers = ['background', 'middleground', 'foreground'].map(name => (
   type: 'tile',
   name: name,
   visible: true,
-  data: [...Array(initialState.grid.rows * initialState.grid.columns)].map((_, i) => [-1, 0]),
+  data: [...Array(initialState.grid.rows * initialState.grid.columns)].map((_, i) => [EMPTY, 0]),
 }));
 
 export default handleActions({
@@ -50,7 +54,7 @@ export default handleActions({
     const layers = (function() {
       if (action.value === state.grid.columns) return state.layers;
       else if (action.value > state.grid.columns) {
-        const newColumns = [...Array(action.value - state.grid.columns)].map((_, i) => [-1, 0]);
+        const newColumns = [...Array(action.value - state.grid.columns)].map((_, i) => [EMPTY, 0]);
         const rows = [...Array(state.grid.rows)];
 
         return state.layers.map(layer => {
@@ -88,7 +92,7 @@ export default handleActions({
       if (action.value === state.grid.rows) return state.layers;
       else if (action.value > state.grid.rows) {
         return state.layers.map(layer => {
-          const newRows = [...Array((action.value - state.grid.rows) * state.grid.columns)].map((_, i) => [-1, 0])
+          const newRows = [...Array((action.value - state.grid.rows) * state.grid.columns)].map((_, i) => [EMPTY, 0])
           const data = [...layer.data, ...newRows];
           return Object.assign({}, layer, { data });
         });
@@ -109,7 +113,7 @@ export default handleActions({
       type: 'tile',
       name: 'untitled',
       visible: true,
-      data: [...Array(state.grid.rows * state.grid.columns)].map((_, i) => [-1, 0]),
+      data: [...Array(state.grid.rows * state.grid.columns)].map((_, i) => [EMPTY, 0]),
     };
 
     const layers = [...state.layers, layer];

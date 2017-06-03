@@ -10,3 +10,12 @@
     background: #eee;
   }
 }
+
+:local(.entity) {
+  font-size: 9px;
+  opacity: .5;
+  text-shadow: 1px 1px 0 #fff, 1px -1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff;
+}
+
+:local(.selected) {
+}

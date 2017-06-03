@@ -39,9 +39,15 @@
 
     .field {
       display: flex;
+      padding: 3px 0;
+
+      label {
+        padding: 0 5px 0 0;
+      }
 
       input {
-        border-bottom: 1px solid #aaa;
+        border-radius: 2px;
+        background: #eee;
         width: 50%;
       }
     }
