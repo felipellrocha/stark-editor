@@ -213,7 +213,7 @@ export default handleActions({
     if (!action.tilemap) return initialState;
 
     // clean up integers
-    const layers = action.tilemap.layers.map(layer => {
+    action.tilemap.layers = action.tilemap.layers.map(layer => {
       const data = layer.data.map(tile => {
         const [setIndex, tileIndex] = tile;
         
@@ -227,11 +227,9 @@ export default handleActions({
         data,
       });
     });
-
-    const newTilemap = Object.assign({}, action.data, { layers });
     // clean up integers
 
-    return Object.assign({}, state, newTilemap);
+    return { ...action.tilemap };
   },
   SAVE_FILENAME: (state, action) => {
     // clean up integers

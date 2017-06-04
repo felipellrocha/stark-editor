@@ -17,6 +17,7 @@ import {
   changeGridColumns,
   changeGridRows,
   changeMap,
+  changeInitialMap,
   createMap,
   updateMapName,
 } from 'actions';
@@ -28,36 +29,6 @@ class component extends PureComponent {
     super(props);
 
     this.goBack = this.goBack.bind(this);
-    this.changeGameName = this.changeGameName.bind(this);
-    this.changeTileWidth = this.changeTileWidth.bind(this);
-    this.changeTileHeight = this.changeTileHeight.bind(this);
-    this.selectMap = this.selectMap.bind(this);
-    this.createNewMap = this.createNewMap.bind(this);
-    this.updateMapName = this.updateMapName.bind(this);
-  }
-
-  updateMapName(i, event) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(updateMapName(i, event.target.value));
-  }
-
-  createNewMap() {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(createMap());
-  }
-
-  selectMap(index) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(changeMap(index));
   }
 
   goBack() {
@@ -68,37 +39,21 @@ class component extends PureComponent {
     history.goBack();
   }
 
-  changeGameName(e) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(changeGameName(e.target.value));
-  }
-
-  changeTileWidth(e) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(changeTileWidth(e.target.value));
-  }
-
-  changeTileHeight(e) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(changeTileHeight(e.target.value));
-  }
-
   render() {
     const {
       gameName,
       tile,
       grid,
       maps,
+      initialMap,
       selectedMap,
+
+      selectMap,
+      createNewMap,
+      updateMapName,
+      changeInitialMap,
+      changeGameName,
+      changeTileWidth,
     } = this.props;
 
     return (
@@ -112,7 +67,7 @@ class component extends PureComponent {
           <div className="form">
             <div className="input">
               <label>Game Name</label>
-              <input type="text" value={ gameName } onChange={this.changeGameName} />
+              <input type="text" value={ gameName } onChange={event => changeGameName(event.target.value)} />
             </div>
             <div className="input">
               <label>Tiles</label>
@@ -120,11 +75,11 @@ class component extends PureComponent {
             <div className="input-row">
               <div className="input">
                 <label>Width</label>
-                <input type="number" value={ tile.width } onChange={this.changeTileWidth} />
+                <input type="number" value={ tile.width } onChange={event => changeTileWidth(event.target.value)} />
               </div>
               <div className="input">
                 <label>Height</label>
-                <input type="number" value={ tile.height } onChange={this.changeTileHeight} />
+                <input type="number" value={ tile.height } onChange={event => changeTileHeight(event.target.value)} />
               </div>
             </div>
             <div className="input-row">
@@ -138,15 +93,29 @@ class component extends PureComponent {
                   });
 
                   return (
-                    <div key={m.id} className={classes} onClick={() => this.selectMap(i)}>
-                      <input value={m.name} onChange={event => this.updateMapName(i, event)} />
+                    <div key={m.id} className={classes} onClick={() => selectMap(i)}>
+                      <input value={m.name} onChange={event => updateMapName(i, event.target.value)} />
                     </div>
                   );
                 })}
-                <div className="map add" onClick={this.createNewMap}>
+                <div className="map add" onClick={createNewMap}>
                   <div>Add another map</div>
                   <InlineSVG icon="plus-circle" />
                 </div>
+              </div>
+            </div>
+            <div className="input-row">
+              <div className="input">
+                <label>Initial map</label>
+                <select value={initialMap} onChange={event => changeInitialMap(event.target.value)}>
+                  {maps.map((m, i) => {
+                    const classes = classnames('map', {
+                      'selected': selectedMap === i,
+                    });
+
+                    return (<option value={i}>{m.name}</option>);
+                  })}
+                </select>
               </div>
             </div>
           </div>
@@ -157,11 +126,23 @@ class component extends PureComponent {
 }
 
 export default compose(
-  connect(state => ({
-    gameName: state.app.name,
-    tile: state.app.tile,
-    maps: state.app.maps,
-    selectedMap: state.global.selectedMap,
-  })),
+  connect(
+    state => ({
+      gameName: state.app.name,
+      tile: state.app.tile,
+      maps: state.app.maps,
+      initialMap: state.app.initialMap,
+      selectedMap: state.global.selectedMap,
+    }),
+    dispatch => ({
+      updateMapName: (index, value) => dispatch(updateMapName(index, value)),
+      createNewMap: () => dispatch(createMap()),
+      selectMap: (index) => dispatch(changeMap(index)),
+      changeInitialMap: (index) => dispatch(changeInitialMap(index)),
+      changeGameName: (value) => dispatch(changeGameName(value)),
+      changeTileWidth: (width) => dispatch(changeTileWidth(width)),
+      changeTileHeight: (height) => dispatch(changeTileHeight(height)),
+    })
+  ),
   withRouter,
 )(component);

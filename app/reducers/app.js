@@ -21,6 +21,7 @@ import {
   CHANGE_GAME_NAME,
   CHANGE_TILE_WIDTH,
   CHANGE_TILE_HEIGHT,
+  CHANGE_INITIAL_MAP,
 
   ADD_TERRAIN,
 
@@ -47,10 +48,11 @@ const initialState = {
   maps: [ ],
   animations: { },
   entities: { },
+  initialMap: 0,
 };
 
-initialState.maps = ['start', 'inside'].map(name => ({
-  id: UUID(),
+initialState.maps = ['start'].map(name => ({
+  id: name,
   name,
 }));
 
@@ -310,6 +312,12 @@ export default handleActions({
         ...state.tile,
         height: action.value,
       }
+    }
+  },
+  CHANGE_INITIAL_MAP: (state, action) => {
+    return {
+      ...state,
+      initialMap: action.index,
     }
   },
   CHANGE_GAME_NAME: (state, action) => {

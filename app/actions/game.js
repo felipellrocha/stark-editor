@@ -7,6 +7,15 @@ export function changeGameName(name) {
   }
 }
 
+export const CHANGE_INITIAL_MAP = 'CHANGE_INITIAL_MAP';
+
+export function changeInitialMap(index) {
+  return {
+    type: CHANGE_INITIAL_MAP,
+    index: parseInt(index),
+  }
+}
+
 export const CHANGE_TILE_WIDTH = 'CHANGE_TILE_WIDTH';
 
 export function changeTileWidth(value) {

@@ -22,9 +22,8 @@ import {
 } from 'actions';
 
 const initialState = {
-  filename: '/Users/fllr/game/!!woot.targ',
-  basepath: '/Users/fllr/game/',
-  //basepath: electron.remote.app.getPath('home'),
+  filename: '',
+  basepath: electron.remote.app.getPath('home'),
   zoom: .5,
   selectedMap: 0,
   selectedAction: 'put',
