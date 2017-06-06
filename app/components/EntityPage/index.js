@@ -66,7 +66,6 @@ class EntityComponent extends PureComponent {
       changeComponentValue,
     } = this.props;
 
-    //console.log('change', id, change)
     changeComponentValue(index, change.index, change.value);
   }
 

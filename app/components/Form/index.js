@@ -10,6 +10,8 @@ class component extends PureComponent {
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
+    this.renderArray = this.renderArray.bind(this);
+    this.renderObject = this.renderObject.bind(this);
   }
 
   handleChange(event, field, i) {
@@ -38,7 +40,7 @@ class component extends PureComponent {
     />);
   }
 
-  render() {
+  renderArray() {
     const {
       fields
     } = this.props;
@@ -57,6 +59,40 @@ class component extends PureComponent {
         })}
       </div>
     );
+  }
+
+  renderObject() {
+    const {
+      fields
+    } = this.props;
+
+    const fieldList = Object.keys(fields);
+
+    return (
+      <div
+        className={styles.component}
+      >
+        {fieldList.map(name => {
+          const field = fields[name];
+          return (
+            <div className="field" key={name}>
+              <label><strong>{field.type}</strong> {name}</label>
+              {this.renderInput(field, name)}
+            </div>
+          )
+        })}
+      </div>
+    );
+  }
+
+  render() {
+    const {
+      fields
+    } = this.props;
+
+    return Array.isArray(fields) ?
+      this.renderArray() :
+      this.renderObject();
   }
 }
 

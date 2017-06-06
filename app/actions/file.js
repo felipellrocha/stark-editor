@@ -81,24 +81,22 @@ export function newGame() {
     const {
       app,
       tilemap,
+      global,
     } = getState();
 
     const appFile = `${savePath}/app.json`;
+    const globalFile = `${savePath}/global.json`;
     const mapsPath = `${savePath}/maps`;
 
     if (!fs.existsSync(savePath)) fs.mkdirSync(savePath);
     if (!fs.existsSync(mapsPath)) fs.mkdirSync(mapsPath);
 
     fs.writeFileSync(appFile, JSON.stringify(app));
+    fs.writeFileSync(globalFile, JSON.stringify(global));
     app.maps.forEach(m => {
       const mapFile = `${savePath}/maps/${m.id}.json`;
       fs.writeFileSync(mapFile, JSON.stringify(tilemap));
     });
-
-    /*
-    electron.remote.getCurrentWindow().show();
-    electron.remote.getCurrentWindow().focus();
-    */
   }
 }
 
@@ -135,17 +133,20 @@ export function writeFile(saveAs = false) {
     const map = getState().app.maps[selectedMap];
 
     const appFile = `${savePath}/app.json`;
+    const globalFile = `${savePath}/app.json`;
     const mapsPath = `${savePath}/maps`;
     const mapFile = `${savePath}/maps/${map.id}.json`;
 
     const {
       app,
       tilemap,
+      global,
     } = getState();
 
     if (!fs.existsSync(savePath)) fs.mkdirSync(savePath);
     if (!fs.existsSync(mapsPath)) fs.mkdirSync(mapsPath);
     fs.writeFileSync(appFile, JSON.stringify(app));
+    fs.writeFileSync(globalFile, JSON.stringify(global));
     fs.writeFileSync(mapFile, JSON.stringify(tilemap));
   }
 }
@@ -177,7 +178,18 @@ export function openFile() {
     })[0];
 
     const appFile = `${appPath}/app.json`;
+    const globalFile = `${appPath}/global.json`;
+
     const app = JSON.parse(fs.readFileSync(appFile));
+    const global = (function() {
+      try {
+        return JSON.parse(fs.readFileSync(globalFile));
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          return null;
+        }
+      }
+    })();
 
     const map = app.maps[selectedMap];
 
@@ -189,7 +201,7 @@ export function openFile() {
     const basepath = path.dirname(appPath);
 
     dispatch(updatePaths(appPath, basepath));
-    dispatch(loadStage(app, tilemap));
+    dispatch(loadStage(app, tilemap, global));
 
     /*
     electron.remote.getCurrentWindow().show();
@@ -200,11 +212,12 @@ export function openFile() {
 
 export const LOAD_STAGE = 'LOAD_STAGE';
 
-export function loadStage(app, tilemap) {
+export function loadStage(app, tilemap, global) {
   return {
     type: LOAD_STAGE,
     app,
     tilemap,
+    global,
   }
 }
 

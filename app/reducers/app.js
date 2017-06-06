@@ -112,14 +112,13 @@ export default handleActions({
             ...components.slice(0, action.componentIndex),
             {
               ...component,
-              members: [
-                ...members.slice(0, action.memberIndex),
-                {
+              members: {
+                ...members,
+                [action.memberIndex]: {
                   ...member,
                   value: action.value,
-                },
-                ...members.slice(action.memberIndex + 1, members.length),
-              ],
+                }
+              },
             },
             ...components.slice(action.componentIndex + 1, components.length),
           ]
@@ -408,6 +407,6 @@ export default handleActions({
   LOAD_STAGE: (state, action) => {
     if (!action.app) return state;
 
-    return Object.assign({}, state, action.app);
+    return { ...action.app };
   },
 }, initialState);

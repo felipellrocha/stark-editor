@@ -42,6 +42,7 @@ class component extends PureComponent {
         <Button onClick={this.loadComponents}>Load Component file</Button>
         <div className="components">
           {components.map(component => {
+            const members = Object.keys(component.members);
             return (
               <div
                 className="component"
@@ -52,9 +53,11 @@ class component extends PureComponent {
                 draggable
               >
                 {component.name}
-                {component.members.length > 0 &&
+                {members.length > 0 &&
                   <div className="members">
-                    {component.members.map(member => {
+                    {members.map(name => {
+                      const member = component.members[name];
+
                       return (
                         <div className="member" key={ member.name }>
                           <strong>{ member.type }</strong>: { member.name }

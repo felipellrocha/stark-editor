@@ -85,9 +85,16 @@ export default handleActions({
     });
   },
   SAVE_FILENAME: (state, action) => {
+    if (state.filename == action.filename &&
+        state.basepath == action.newBasepath) return state;
     return Object.assign({}, state, {
       filename: action.filename,
       basepath: action.newBasepath,
     });
+  },
+  LOAD_STAGE: (state, action) => {
+    if (!action.global) return state;
+
+    return { ...action.global };
   },
 }, initialState);

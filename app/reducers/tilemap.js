@@ -214,13 +214,14 @@ export default handleActions({
 
     // clean up integers
     action.tilemap.layers = action.tilemap.layers.map(layer => {
-      const data = layer.data.map(tile => {
-        const [setIndex, tileIndex] = tile;
+      const data = layer.data.map(t => {
+        const [set, tile] = t;
+
+        const setIndex = parseInt(set);
+        const tileIndex = parseInt(tile);
         
-        return [
-          parseInt(setIndex),
-          parseInt(tileIndex),
-        ];
+        if (set !== -2) return [setIndex, tileIndex];
+        else return [setIndex, tile];
       });
 
       return Object.assign({}, layer, {
@@ -234,13 +235,14 @@ export default handleActions({
   SAVE_FILENAME: (state, action) => {
     // clean up integers
     const layers = state.layers.map(layer => {
-      const data = layer.data.map(tile => {
-        const [setIndex, tileIndex] = tile;
+      const data = layer.data.map(t => {
+        const [set, tile] = t;
+
+        const setIndex = parseInt(set);
+        const tileIndex = parseInt(tile);
         
-        return [
-          parseInt(setIndex),
-          parseInt(tileIndex),
-        ];
+        if (set !== -2) return [setIndex, tileIndex];
+        else return [setIndex, tile];
       });
 
       return Object.assign({}, layer, {

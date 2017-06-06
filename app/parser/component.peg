@@ -16,7 +16,7 @@ Component
     }
 
 ComponentDef
-    = "struct" name:($(!':'.)*) ": public Component {" _*
+    = "struct" _? name:($(!':'.)*) _? ": public Component {" _*
          "static CID cid;" _*
             members:((!'};') memberList _*)*
         "};"
@@ -25,7 +25,12 @@ ComponentDef
                     name: name,
                     members: members
                             .map(_ => _[1])
-                            .filter(member => { return member.type !== "IGNORE" }),
+                            .filter(member => { return member.type !== "IGNORE" })
+                            .reduce((prev, member) => {
+                              return Object.assign({}, prev, {
+                                [member.name]: member,
+                              });
+                            }, {}),
             }
     }
 
@@ -57,7 +62,7 @@ property
     }
 
 comment
-    = "//" comment:($(!';'.)*) ';'?
+    = "//" comment:($(!__.)*) __?
     {
          return {
                 type: "IGNORE",
