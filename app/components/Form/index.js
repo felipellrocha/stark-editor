@@ -14,29 +14,41 @@ class component extends PureComponent {
     this.renderObject = this.renderObject.bind(this);
   }
 
-  handleChange(event, field, i) {
+  handleChange(value, field, i) {
     const {
       onChange,
     } = this.props;
     
     if (onChange) onChange({
-      field: field,
-      value: event.target.value,
+      field,
+      value,
       index: i,
     });
   }
 
   renderInput(field, i) {
-    if (field.type === 'int') return (<input
-      type="number"
-      value={field.value || 0}
-      onChange={event => this.handleChange(event, field, i)}
-    />);
+    if (field.type === 'int') return (
+      <input
+        type="number"
+        value={field.value || 0}
+        onChange={event => this.handleChange(event.target.value, field, i)}
+      />
+    );
+
+    if (field.type === 'bool') {
+      return (
+        <input
+          type="checkbox"
+          checked={field.value}
+          onChange={event => this.handleChange(!field.value, field, i)}
+        />
+      );
+    }
 
     return (<input
       type="text"
       value={field.value || ''}
-      onChange={event => this.handleChange(event, field, i)}
+      onChange={event => this.handleChange(event.target.value, field, i)}
     />);
   }
 

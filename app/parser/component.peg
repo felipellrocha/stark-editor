@@ -53,10 +53,11 @@ property
         value:(' = ' ($(!';'.)*))?
         ';'
     {
+         const v = value? value[1] : null;
          return {
-                 type: property,
+                type: property,
                 pointer: !!(pointer),
-                value: value ? value[1] : null,
+                value: (property === 'bool') ? (v === 'true') : v,
                 name: name,
         }
     }
