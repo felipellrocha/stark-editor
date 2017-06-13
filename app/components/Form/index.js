@@ -18,10 +18,12 @@ class component extends PureComponent {
     const {
       onChange,
     } = this.props;
+
+    const v = (field.type == 'int') ? parseInt(value) : value;
     
     if (onChange) onChange({
       field,
-      value,
+      value: v,
       index: i,
     });
   }

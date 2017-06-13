@@ -10,6 +10,7 @@ export Button from './Button'
 export Form from './Form'
 export InlineSVG from './InlineSVG'
 export Dialog from './Dialog'
+export Entity from './Entity'
 
 // Footers
 export SelectorFooter from './SelectorFooter'

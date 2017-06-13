@@ -137,7 +137,6 @@ class component extends PureComponent {
 
 
   renderEntityTile() {
-    console.log(this.props);
     const {
       tile,
       tileIndex: id,

@@ -24,6 +24,7 @@ import {
 const initialState = {
   filename: '',
   basepath: electron.remote.app.getPath('home'),
+  componentFilename: '',
   zoom: .5,
   selectedMap: 0,
   selectedAction: 'put',
@@ -39,10 +40,8 @@ export default handleActions({
   RECEIVE_COMPONENTS: (state, action) => {
     return {
       ...state,
-      components: [
-        ...state.components,
-        ...action.components,
-      ],
+      componentFilename: action.filename,
+      components: action.components,
     }
   },
   SELECT_MAP: (state, action) => {

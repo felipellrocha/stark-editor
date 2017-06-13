@@ -2,60 +2,6 @@
   font-family: Helvetica Neue;
   margin: 15px 15px 15px 315px;
 
-  .entity {
-    padding: 40px;
-    border: 1px dashed #ddd;
-    background: #fff;
-    border-bottom: 0;
-
-    > .components {
-      display: flex;
-      flex-wrap: wrap;
-
-      .component {
-        flex: 0 0 32.999%;
-        padding: 10px 0;
-        border-top: 1px dotted #aaa;
-
-        .name {
-          font-weight: 200;
-          color: #d33e43;
-        }
-      }
-    }
-
-    &.over {
-      border: 1px solid #ddd;
-    }
-
-    .name {
-      font-size: 18px;
-      font-weight: 200;
-    }
-
-    input {
-      border: 0;
-    }
-
-    .field {
-      display: flex;
-      padding: 3px 0;
-
-      label {
-        padding: 0 5px 0 0;
-      }
-
-      input {
-        border-radius: 2px;
-        background: #eee;
-        width: 50%;
-      }
-    }
-
-    &:last-child {
-      border-bottom: 1px dashed #ddd;
-    }
-  }
 
   .add {
     text-align: center;

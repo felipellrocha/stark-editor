@@ -17,29 +17,19 @@ import {
 import styles from './styles.css';
 
 class component extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.loadComponents = this.loadComponents.bind(this);
-  }
-
-  loadComponents() {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(loadComponents());
-  }
-
   render() {
     const {
       components,
+      
+      loadComponents,
+      reloadComponents,
     } = this.props;
 
     return (
       <div className={styles.component}>
         <h1>Entities</h1>
-        <Button onClick={this.loadComponents}>Load Component file</Button>
+        <Button onClick={loadComponents}>Load Component file</Button>
+        <Button onClick={reloadComponents}>Reload Components</Button>
         <div className="components">
           {components.map(component => {
             const members = Object.keys(component.members);
@@ -76,8 +66,14 @@ class component extends PureComponent {
 }
 
 export default compose(
-  connect(state => ({
-    components: state.global.components,
-  })),
+  connect(
+    state => ({
+      components: state.global.components,
+    }),
+    dispatch => ({
+      loadComponents: () => dispatch(loadComponents()),
+      reloadComponents: () => dispatch(loadComponents(true)),
+    }),
+  ),
   withRouter,
 )(component);

@@ -91,11 +91,11 @@ export function newGame() {
     if (!fs.existsSync(savePath)) fs.mkdirSync(savePath);
     if (!fs.existsSync(mapsPath)) fs.mkdirSync(mapsPath);
 
-    fs.writeFileSync(appFile, JSON.stringify(app));
-    fs.writeFileSync(globalFile, JSON.stringify(global));
+    fs.writeFileSync(appFile, JSON.stringify(app, null, 2));
+    fs.writeFileSync(globalFile, JSON.stringify(global, null, 2));
     app.maps.forEach(m => {
       const mapFile = `${savePath}/maps/${m.id}.json`;
-      fs.writeFileSync(mapFile, JSON.stringify(tilemap));
+      fs.writeFileSync(mapFile, JSON.stringify(tilemap, null, 2));
     });
   }
 }
@@ -133,7 +133,7 @@ export function writeFile(saveAs = false) {
     const map = getState().app.maps[selectedMap];
 
     const appFile = `${savePath}/app.json`;
-    const globalFile = `${savePath}/app.json`;
+    const globalFile = `${savePath}/global.json`;
     const mapsPath = `${savePath}/maps`;
     const mapFile = `${savePath}/maps/${map.id}.json`;
 
@@ -145,9 +145,9 @@ export function writeFile(saveAs = false) {
 
     if (!fs.existsSync(savePath)) fs.mkdirSync(savePath);
     if (!fs.existsSync(mapsPath)) fs.mkdirSync(mapsPath);
-    fs.writeFileSync(appFile, JSON.stringify(app));
-    fs.writeFileSync(globalFile, JSON.stringify(global));
-    fs.writeFileSync(mapFile, JSON.stringify(tilemap));
+    fs.writeFileSync(appFile, JSON.stringify(app, null, 2));
+    fs.writeFileSync(globalFile, JSON.stringify(global, null, 2));
+    fs.writeFileSync(mapFile, JSON.stringify(tilemap, null, 2));
   }
 }
 
@@ -164,12 +164,6 @@ export function saveFilename(filename, oldBasepath, newBasepath) {
 
 export function openFile() {
   return (dispatch, getState) => {
-    const {
-      global: {
-        selectedMap,
-      },
-    } = getState();
-
     const appPath = electron.remote.dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
@@ -190,6 +184,8 @@ export function openFile() {
         }
       }
     })();
+
+    const selectedMap = (global.selectedMap) ? global.selectedMap : 0;
 
     const map = app.maps[selectedMap];
 
@@ -268,7 +264,7 @@ export function createMap() {
     const name = 'untitled';
     const mapFile = `${filename}/maps/${id}.json`;
 
-    fs.writeFileSync(mapFile, JSON.stringify(tilemapInitialState));
+    fs.writeFileSync(mapFile, JSON.stringify(tilemapInitialState, null, 2));
 
     dispatch(receiveNewMap(id, name))
   }
@@ -300,28 +296,35 @@ export function selectMap(index) {
  }
 }
 
-export function loadComponents() {
+export function loadComponents(reload = false) {
   return (dispatch, getState) => {
 
-    const component = electron.remote.dialog.showOpenDialog({
-      properties: ['openFile'],
-      filters: [
-        {name: 'Header file', extensions: ['h']},
-      ],
-    })[0];
+    const filename = (function() {
+      if (!reload) {
+        return electron.remote.dialog.showOpenDialog({
+          properties: ['openFile'],
+          filters: [
+            {name: 'Header file', extensions: ['h']},
+          ],
+        })[0];
+      } else {
+        return getState().global.componentFilename;
+      }
+    })();
 
-    if (!component) return;
+    if (!filename) return;
 
-    const data = fs.readFileSync(component).toString();
-    dispatch(receiveComponents(components.parse(data)));
+    const data = fs.readFileSync(filename).toString();
+    dispatch(receiveComponents(filename, components.parse(data)));
 
   }
 }
 
 export const RECEIVE_COMPONENTS = 'RECEIVE_COMPONENTS';
-export function receiveComponents(components) {
+export function receiveComponents(filename, components) {
   return {
     type: RECEIVE_COMPONENTS,
+    filename,
     components,
   }
 }

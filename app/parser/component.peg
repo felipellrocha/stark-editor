@@ -16,7 +16,7 @@ Component
     }
 
 ComponentDef
-    = "struct" _? name:($(!':'.)*) _? ": public Component {" _*
+    = "struct" _? name:($(!(':' / ' ').)*) _? ": public Component {" _*
          "static CID cid;" _*
             members:((!'};') memberList _*)*
         "};"
