@@ -163,7 +163,7 @@ class component extends PureComponent {
     ] = _getEntityData(entities, 4);
 
     return (
-      <div>
+      <div key='entity-grid'>
         <Grid
           data={data}
           grid={grid}

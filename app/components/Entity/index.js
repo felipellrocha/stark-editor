@@ -5,12 +5,14 @@ import classnames from 'classnames';
 
 import {
   Form,
+  InlineSVG,
 } from 'components';
 
 import {
   receiveComponent,
   changeEntityName,
   changeComponentValue,
+  removeComponent,
 } from 'actions';
 
 import styles from './styles.css';
@@ -19,13 +21,13 @@ class Entity extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.componentChange = this.componentChange.bind(this);
     this.dragEnter = this.dragEnter.bind(this);
     this.dragLeave = this.dragLeave.bind(this);
     this.drop = this.drop.bind(this);
 
     this.state = {
       dragOver: false,
+      open: false,
     };
   }
 
@@ -50,26 +52,22 @@ class Entity extends PureComponent {
       receiveComponent,
     } = this.props;
 
-    this.setState({dragOver: false})
+    this.setState({
+      dragOver: false,
+      open: true,
+    })
     const component = JSON.parse(event.nativeEvent.dataTransfer.getData('text/plain'));
     receiveComponent(component);
-  }
-
-  componentChange(change, index) {
-    const {
-      id,
-      dispatch,
-      changeComponentValue,
-    } = this.props;
-
-    changeComponentValue(index, change.index, change.value);
   }
 
   render() {
     const {
       id,
       entities,
+
+      changeComponentValue,
       changeEntityName,
+      removeComponent,
     } = this.props;
 
     const entity = entities[id];
@@ -87,28 +85,45 @@ class Entity extends PureComponent {
         onDragLeave={this.dragLeave}
         onDrop={this.drop} 
       >
-        <input
-          className="name"
-          value={ entity.name }
-          onChange={changeEntityName}
-        />
-        <div className="components">
-          {entity.components.map((component, i) => {
-            return (
-              <div key={component.name} className="component">
-                <div className="name">{ component.name }</div>
-                <Form
-                  fields={component.members}
-                  onChange={change => this.componentChange(change, i)}
-                />
-              </div>
-            )
-          })}
+        <div className="header" onClick={() => this.setState((state) => ({open: !state.open}))}>
+          <input
+            className="name"
+            value={ entity.name }
+            onChange={changeEntityName}
+          />
+          <div>
+            {this.state.open ? 
+              <InlineSVG icon="chevron-up" /> :
+              <InlineSVG icon="chevron-down" />
+            }
+          </div>
         </div>
+        {this.state.open &&
+          <div className="components">
+            {entity.components.map((component, i) => {
+              return (
+                <div key={component.name} className="component">
+                  <div className="header">
+                    <div className="name">{ component.name }</div>
+                    <InlineSVG icon="cross" onClick={() => removeComponent(i)} />
+                  </div>
+                  <Form
+                    fields={component.members}
+                    onChange={change => changeComponentValue(i, change.index, change.value)}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        }
       </div>
     )
   }
 }
+
+Entity.defaultProps = {
+  handleClose: () => { },
+};
 
 export default connect(
   state => ({
@@ -118,6 +133,7 @@ export default connect(
     changeEntityName: (event) => dispatch(changeEntityName(props.id, event.target.value)),
     receiveComponent: (component) => dispatch(receiveComponent(props.id, component)),
     changeComponentValue: (i, j, value) => dispatch(changeComponentValue(props.id, i, j, value)),
+    removeComponent: (i) => dispatch(removeComponent(props.id, i)),
   })
 )(Entity);
 

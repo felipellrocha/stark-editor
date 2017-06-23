@@ -4,8 +4,11 @@
 
 
   .add {
+    display: flex;
+    justify-content: space-between;
     text-align: center;
     cursor: pointer;
+    padding: 20px;
 
     &:hover {
       color: #d33e43;

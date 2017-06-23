@@ -34,3 +34,12 @@ export function changeComponentValue(id, componentIndex, memberIndex, value) {
     value,
   }
 }
+
+export const REMOVE_COMPONENT = 'REMOVE_COMPONENT';
+export function removeComponent(id, componentIndex) {
+  return {
+    type: REMOVE_COMPONENT,
+    id,
+    componentIndex,
+  }
+}

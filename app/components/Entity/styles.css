@@ -1,8 +1,13 @@
 :local(.component) {
-  padding: 40px;
+  padding: 20px;
   border: 1px dashed #ddd;
   background: #fff;
   border-bottom: 0;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+  }
 
   > .components {
     display: flex;

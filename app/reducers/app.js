@@ -4,12 +4,17 @@ import path from 'path';
 
 import {
   arrayReplace,
+  arrayRemove,
 	UUID,
 } from 'utils';
 
 import {
   ADD_ENTITY,
   CHANGE_ENTITY_NAME,
+
+  RECEIVE_COMPONENT,
+  CHANGE_COMPONENT_VALUE,
+  REMOVE_COMPONENT,
 
   ADD_ANIMATION,
   CHANGE_ANIMATION_NAME,
@@ -122,6 +127,18 @@ export default handleActions({
             },
             ...components.slice(action.componentIndex + 1, components.length),
           ]
+        }
+      }
+    }
+  },
+  REMOVE_COMPONENT: (state, action) => {
+    return {
+      ...state,
+      entities: {
+        ...state.entities,
+        [action.id]: {
+          ...state.entities[action.id],
+          components: arrayRemove(state.entities[action.id].components, action.componentIndex),
         }
       }
     }

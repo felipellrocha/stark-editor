@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom'
 import {
   Entity,
   EntitySidebar,
+  InlineSVG,
 } from 'components';
 
 import {
@@ -30,7 +31,8 @@ class component extends PureComponent {
             return (<Entity key={id} id={id} />)
           })}
           <div className="entity add" onClick={addEntity}>
-            Add a new entity
+            <div>Add a new entity</div>
+            <InlineSVG icon="plus" />
           </div>
         </div>
      </div>
