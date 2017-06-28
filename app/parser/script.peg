@@ -1,0 +1,48 @@
+expressions
+= expressions:expression+
+	ws*
+{
+	return expressions;
+}
+
+expression
+= name:$(!'(' .)*
+	openExpression
+	parameters:parameter+
+	closeExpression
+	ws*
+{
+	return {
+		name,
+		parameters,
+	};
+}
+
+parameter
+= !closeExpression
+	key:$(!'=' .)*
+	sp* '=' sp*
+	value:$(!(valueStopper / closeExpression) .)*
+	valueStopper?
+{
+	const v = (function() {
+		if (!isNaN(value)) return parseInt(value);
+		else if (value === 'true') return true;
+		else if (value === 'false') return false;
+		else return value;
+	})();
+
+	return {
+		key,
+		v,
+	};
+}
+
+openExpression = '('
+closeExpression = ')' (';')?
+valueStopper = ',' / ', '
+
+
+ws = sp / nl
+sp = ' ' / '\t'
+nl = '\n'
