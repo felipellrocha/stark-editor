@@ -30,7 +30,7 @@ const scriptDecorator = {
     const text = Array.from(block.getText()).fill(Decorations.UNSTYLED);
 
     try {
-      const data = parser.parse(block.getText());
+      const data = parser.parse(block.getText(), { includeLocation: true });
     
       data.forEach(command => {
         occupySlice(text, command.start, command.end, Decorations.COMMAND);

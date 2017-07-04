@@ -14,50 +14,67 @@ expression
 {
 	const p = parameters.reduce((prev, par) => {
 		prev[par.key] = par.value;
-    prev[par.key]['info'] = par.info;
-    prev[par.key]['info'].shift({
-      start: par.start,
-      end: par.end,
-      type: par.type,
-    });
+    if (options.includeLocation) {
+      prev[par.key]['info'] = par.info;
+      prev[par.key]['info'].shift({
+        start: par.start,
+        end: par.end,
+        type: par.type,
+      });
+    }
 		return prev;
 	}, {});
-  const loc = location();
-  const info = [
-    open,
-    close,
-  ];
-  return {
+
+  const data = {
     type: 'expression',
-    start: loc.start.offset,
-    end: loc.end.offset,
-    info,
 		name,
 		parameters: p,
-	};
+  };
+
+  if (options.includeLocation) {
+    const loc = location();
+    const info = [
+      open,
+      close,
+    ];
+    Object.assign(data, {
+      start: loc.start.offset,
+      end: loc.end.offset,
+      info,
+    });
+  }
+
+  return data;
 }
 
 parameter
 = !closeExpression
-	key:$(!'=' .)*
+	key:$(!(sp / equal) .)*
 	sp* equal:equal sp*
 	value:(bool / float / integer / string)
 	separator:valueStopper? sp?
 {
-  const loc = location();
-  const info = [
-    equal,
-  ];
-  if (separator) info.push(separator);
-
-  return {
+  const data = {
     type: 'parameter',
-    start: loc.start.offset,
-    end: loc.end.offset,
-    info,
 		key,
 		value,
 	};
+
+  if (options.includeLocation) {
+    const loc = location();
+    const info = [
+      equal,
+    ];
+    if (separator) info.push(separator);
+
+    Object.assign(data, {
+      start: loc.start.offset,
+      end: loc.end.offset,
+      info,
+    });
+  }
+
+  return data;
 }
 
 equal = '='
@@ -101,46 +118,77 @@ valueStopper = ','  (' ')?
 bool
 = value:("true" / "false")
 {
-  const loc = location();
-  return {
-    type: 'string',
-    start: loc.start.offset,
-    end: loc.end.offset,
+  const data = {
+    type: 'bool',
     value: value === "true",
+  };
+
+  if (options.includeLocation) {
+    const loc = location();
+    Object.assign(data, {
+      start: loc.start.offset,
+      end: loc.end.offset,
+    });
   }
+
+  return data;
 }
+
 string
 = quote value:$(!quote .)* quote
 {
-  const loc = location();
-  return {
+  const data = {
     type: 'string',
-    start: loc.start.offset,
-    end: loc.end.offset,
     value: value,
+  };
+
+  if (options.includeLocation) {
+    const loc = location();
+    Object.assign(data, {
+      start: loc.start.offset,
+      end: loc.end.offset,
+    });
   }
+
+  return data;
 }
+
 integer
 = [0-9]+
 {
-  const loc = location();
-  return {
+  const data = {
     type: 'int',
-    start: loc.start.offset,
-    end: loc.end.offset,
     value: parseInt(text(), 10),
+  };
+
+  if (options.includeLocation) {
+    const loc = location();
+    Object.assign(data, {
+      start: loc.start.offset,
+      end: loc.end.offset,
+    });
   }
+
+  return data;
 }
+
 float
 = value:($([0-9]+ "." [0-9]+)) "f"?
 { 
-  const loc = location();
-  return {
+  const data = {
     type: 'float',
-    start: loc.start.offset,
-    end: loc.end.offset,
     value: parseFloat(value, 10),
+  };
+
+  if (options.includeLocation) {
+    const loc = location();
+    Object.assign(data, {
+      start: loc.start.offset,
+      end: loc.end.offset,
+    });
   }
+
+  return data;
 }
 
 

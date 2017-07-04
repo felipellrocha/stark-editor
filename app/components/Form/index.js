@@ -41,7 +41,7 @@ class component extends PureComponent {
       return (
         <input
           type="number"
-          value={field.value || 0}
+          value={field.value ? field.value : 0}
           onChange={event => this.handleChange(event.target.value, field, i)}
         />
       );

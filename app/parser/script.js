@@ -9,8 +9,6 @@ export default function(data) {
     const par = Object.entries(parameters).map(parameter => {
       const [ key, value ] = parameter;
 
-      console.log(value);
-
       const v = (value.type === 'string') ? `"${value.value}"` : value.value;
 
       return `${key} = ${v}`;
