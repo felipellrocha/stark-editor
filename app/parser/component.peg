@@ -17,7 +17,6 @@ Component
 
 ComponentDef
     = "struct" _? name:($(!(':' / ' ').)*) _? ": public Component {" _*
-         "static CID cid;" _*
             members:((!'};') memberList _*)*
         "};"
     {
@@ -46,21 +45,25 @@ memberList
     = (property / comment / method)
 
 property
-    = property:("int" / "TileLayer" / "string" / "SDL_Texture" / "EID" / "bool" )
-        " "
-        pointer:"*"?
-        name:($(!(';' / ' = ').)*)
-        value:(' = ' ($(!';'.)*))?
-        ';'
-    {
-         const v = value? value[1] : null;
-         return {
-                type: property,
-                pointer: !!(pointer),
-                value: (property === 'bool') ? (v === 'true') : v,
-                name: name,
-        }
+= property:("int" / "json" / "TileLayer" / "string" / "SDL_Texture" / "EID" / "bool" )
+  subtype:("/*" $(!"*/" .)* "*/")?
+  " "
+  pointer:"*"?
+  name:($(!(';' / ' = ').)*)
+  value:(' = ' ($(!';'.)*))?
+  ';'
+{
+     const v = value? value[1] : null;
+     const s = subtype? subtype[1] : null;
+
+     return {
+            type: property,
+            subtype: s,
+            pointer: !!(pointer),
+            value: (property === 'bool') ? (v === 'true') : v,
+            name: name,
     }
+}
 
 comment
     = "//" comment:($(!__.)*) __?

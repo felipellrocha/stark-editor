@@ -7,42 +7,144 @@ expressions
 
 expression
 = name:$(!'(' .)*
-	openExpression
-	parameters:parameter+
-	closeExpression
+	open:openExpression
+	parameters:parameter*
+	close:closeExpression
 	ws*
 {
-	return {
+	const p = parameters.reduce((prev, par) => {
+		prev[par.key] = par.value;
+    prev[par.key]['info'] = par.info;
+    prev[par.key]['info'].shift({
+      start: par.start,
+      end: par.end,
+      type: par.type,
+    });
+		return prev;
+	}, {});
+  const loc = location();
+  const info = [
+    open,
+    close,
+  ];
+  return {
+    type: 'expression',
+    start: loc.start.offset,
+    end: loc.end.offset,
+    info,
 		name,
-		parameters,
+		parameters: p,
 	};
 }
 
 parameter
 = !closeExpression
 	key:$(!'=' .)*
-	sp* '=' sp*
-	value:$(!(valueStopper / closeExpression) .)*
-	valueStopper?
+	sp* equal:equal sp*
+	value:(bool / float / integer / string)
+	separator:valueStopper? sp?
 {
-	const v = (function() {
-		if (!isNaN(value)) return parseInt(value);
-		else if (value === 'true') return true;
-		else if (value === 'false') return false;
-		else return value;
-	})();
+  const loc = location();
+  const info = [
+    equal,
+  ];
+  if (separator) info.push(separator);
 
-	return {
+  return {
+    type: 'parameter',
+    start: loc.start.offset,
+    end: loc.end.offset,
+    info,
 		key,
-		v,
+		value,
 	};
 }
 
+equal = '='
+{
+  const loc = location();
+  return {
+    type: 'equal',
+    start: loc.start.offset,
+    end: loc.end.offset,
+  }
+}
+
 openExpression = '('
+{
+  const loc = location();
+  return {
+    type: 'open',
+    start: loc.start.offset,
+    end: loc.end.offset,
+  }
+}
 closeExpression = ')' (';')?
-valueStopper = ',' / ', '
+{
+  const loc = location();
+  return {
+    type: 'close',
+    start: loc.start.offset,
+    end: loc.end.offset,
+  }
+}
+valueStopper = ','  (' ')?
+{
+  const loc = location();
+  return {
+    type: 'separator',
+    start: loc.start.offset,
+    end: loc.end.offset,
+  }
+}
+
+bool
+= value:("true" / "false")
+{
+  const loc = location();
+  return {
+    type: 'string',
+    start: loc.start.offset,
+    end: loc.end.offset,
+    value: value === "true",
+  }
+}
+string
+= quote value:$(!quote .)* quote
+{
+  const loc = location();
+  return {
+    type: 'string',
+    start: loc.start.offset,
+    end: loc.end.offset,
+    value: value,
+  }
+}
+integer
+= [0-9]+
+{
+  const loc = location();
+  return {
+    type: 'int',
+    start: loc.start.offset,
+    end: loc.end.offset,
+    value: parseInt(text(), 10),
+  }
+}
+float
+= value:($([0-9]+ "." [0-9]+)) "f"?
+{ 
+  const loc = location();
+  return {
+    type: 'float',
+    start: loc.start.offset,
+    end: loc.end.offset,
+    value: parseFloat(value, 10),
+  }
+}
 
 
+quote = '"' / "'"
 ws = sp / nl
 sp = ' ' / '\t'
-nl = '\n'
+nl = '\n'      

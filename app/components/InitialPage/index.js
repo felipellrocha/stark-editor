@@ -9,6 +9,7 @@ import {
   Sidebar,
   InlineSVG,
   SelectorFooter,
+  ScriptDraft,
 } from 'components';
 
 import {

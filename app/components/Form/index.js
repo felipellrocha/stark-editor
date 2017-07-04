@@ -5,6 +5,14 @@ import classnames from 'classnames';
 
 import styles from './styles.css';
 
+import parser from 'parser/script.peg';
+import renderer from 'parser/script.js';
+
+import {
+  ScriptDraft,
+} from 'components';
+
+
 class component extends PureComponent {
   constructor(props) {
     super(props);
@@ -29,15 +37,16 @@ class component extends PureComponent {
   }
 
   renderInput(field, i) {
-    if (field.type === 'int') return (
-      <input
-        type="number"
-        value={field.value || 0}
-        onChange={event => this.handleChange(event.target.value, field, i)}
-      />
-    );
-
-    if (field.type === 'bool') {
+    if (field.type === 'int') {
+      return (
+        <input
+          type="number"
+          value={field.value || 0}
+          onChange={event => this.handleChange(event.target.value, field, i)}
+        />
+      );
+    }
+    else if (field.type === 'bool') {
       return (
         <input
           type="checkbox"
@@ -46,12 +55,28 @@ class component extends PureComponent {
         />
       );
     }
-
-    return (<input
-      type="text"
-      value={field.value || ''}
-      onChange={event => this.handleChange(event.target.value, field, i)}
-    />);
+    else if (field.type === 'json' && field.subtype === 'script') {
+      return (
+        <ScriptDraft
+          onChange={text => {
+            try {
+              const value = parser.parse(text);
+              this.handleChange(value, field, i);
+            } catch(e) {}
+          }}
+          value={renderer(field.value)}
+        />
+      );
+    }
+    else {
+      return (
+        <input
+          type="text"
+          value={field.value || ''}
+          onChange={event => this.handleChange(event.target.value, field, i)}
+        />
+      );
+    }
   }
 
   renderArray() {
