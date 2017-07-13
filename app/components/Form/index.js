@@ -38,43 +38,115 @@ class component extends PureComponent {
 
   renderInput(field, i) {
     if (field.type === 'int') {
+      const value = field.value ? field.value : 0;
       return (
-        <input
-          type="number"
-          value={field.value ? field.value : 0}
-          onChange={event => this.handleChange(event.target.value, field, i)}
-        />
+        <div className="value">
+          <input
+            type="number"
+            value={value}
+            onChange={event => this.handleChange(event.target.value, field, i)}
+          />
+        </div>
       );
     }
     else if (field.type === 'bool') {
+      const value = (field.value) ? field.value : false;
       return (
-        <input
-          type="checkbox"
-          checked={field.value}
-          onChange={event => this.handleChange(!field.value, field, i)}
-        />
+        <div className="value">
+          <input
+            type="checkbox"
+            checked={value}
+            onChange={event => this.handleChange(!field.value, field, i)}
+          />
+        </div>
       );
     }
-    else if (field.type === 'json' && field.subtype === 'script') {
+    else if (field.type === 'ResolverType') {
+      const value = field.value ? parseInt(field.value) : 0;
+      return (
+        <div className="value">
+          <div>
+            <span>character:</span>
+            <input type="checkbox" checked={field.value & 2} onChange={event => {
+              this.handleChange(toggleBit(field.value, 2), field, i)
+            }} />
+          </div>
+          <div>
+            <span>attack:</span>
+            <input type="checkbox" checked={field.value & 4} onChange={event => {
+              this.handleChange(toggleBit(field.value, 4), field, i)
+            }} />
+          </div>
+          <div>
+            <span>wall:</span>
+            <input type="checkbox" checked={field.value & 8} onChange={event => {
+              this.handleChange(toggleBit(field.value, 8), field, i)
+            }} />
+          </div>
+        </div>
+      )
+    }
+    else if (field.type === 'point') {
+      const value = field.value ? field.value : {
+        x: 0,
+        y: 0,
+      };
+      return (
+        <div className="value">
+          <div>
+            <span>X:</span>
+            <input
+              type="number"
+              value={ value.x }
+              onChange={event => {
+                this.handleChange({
+                  ...value,
+                  x: parseInt(event.target.value),
+                }, field, i)
+              }}
+            />
+          </div>
+          <div>
+            <span>Y:</span>
+            <input
+              type="number"
+              value={ value.y }
+              onChange={event => {
+                this.handleChange({
+                  ...value,
+                  y: parseInt(event.target.value),
+                }, field, i)
+              }}
+            />
+          </div>
+        </div>
+      );
+    }
+    else if (field.type === 'script') {
+      const value = (field.value === 'nullptr' || field.value === null) ?
+        [] :
+        field.value;
       return (
         <ScriptDraft
+          value={renderer(value)}
           onChange={text => {
             try {
               const value = parser.parse(text);
               this.handleChange(value, field, i);
             } catch(e) {}
           }}
-          value={renderer(field.value)}
         />
       );
     }
     else {
       return (
-        <input
-          type="text"
-          value={field.value || ''}
-          onChange={event => this.handleChange(event.target.value, field, i)}
-        />
+        <div className="value">
+          <input
+            type="text"
+            value={field.value || ''}
+            onChange={event => this.handleChange(event.target.value, field, i)}
+          />
+        </div>
       );
     }
   }
@@ -91,7 +163,10 @@ class component extends PureComponent {
         {fields.map((field, i) => {
           return (
             <div className="field" key={field.name}>
-              <label><strong>{field.type}</strong> {field.name}</label>
+              <label>
+                <div><strong>{field.type}</strong></div>
+                <div>{field.name}</div>
+              </label>
               {this.renderInput(field, i)}
             </div>
           )
@@ -115,7 +190,10 @@ class component extends PureComponent {
           const field = fields[name];
           return (
             <div className="field" key={name}>
-              <label><strong>{field.type}</strong> {name}</label>
+              <label>
+                <div><strong>{field.type}</strong></div>
+                <div>{field.name}</div>
+              </label>
               {this.renderInput(field, name)}
             </div>
           )
@@ -133,6 +211,11 @@ class component extends PureComponent {
       this.renderArray() :
       this.renderObject();
   }
+}
+
+const toggleBit = (value, bit) => {
+  const v = value ? parseInt(value) : 0;
+  return (v & bit) ? v - bit : v + bit;
 }
 
 export default component;

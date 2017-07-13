@@ -44,6 +44,7 @@ class component extends PureComponent {
         <div className="left">
           <div>Terrain type:
             <select value={selectedTerrainType} onChange={this._handleChangeTerrainType} >
+              <option value='6-animated'>6 Type:Animated</option>
               <option value='6-tile'>6 Type</option>
               <option value='4-tile'>4 Type</option>
             </select>

@@ -99,7 +99,10 @@ class component extends PureComponent {
       isNorthWest: areCoordinatesInside(x - 1, y - 1, grid) && compareCoordinates([x, y], [x - 1, y - 1], data, grid),
     };
 
-    const tilingPackage = (terrain.type === '6-tile') ? sixTile : fourTile;
+    const tilingPackage =
+      (terrain.type === '6-tile' || terrain.type === '6-animated') ?
+      sixTile :
+      fourTile;
     
     return (
       <div className={classes} style={style} onClick={this._dispatchAction}>

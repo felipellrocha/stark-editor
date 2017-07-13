@@ -138,6 +138,14 @@ function getTerrain(tileset, terrain, tileIndex) {
   const tileWidth = (1 / tileset.columns) * 100;
   const tileHeight = (1 / tileset.rows) * 100;
 
+  if (terrain.type === '6-animated') {
+    return {
+      width: `${(2 * tileWidth) * 3}%`,
+      height: `${3 * tileHeight}%`,
+      left: `${x * tileWidth}%`,
+      top: `${y * tileHeight}%`,
+    };
+  }
   if (terrain.type === '6-tile') {
     return {
       width: `${2 * tileWidth}%`,

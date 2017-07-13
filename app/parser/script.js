@@ -1,5 +1,4 @@
 export default function(data) {
-  if (!data) return '';
   const commands = data.map(command => {
     const {
       name,

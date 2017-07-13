@@ -34,7 +34,9 @@ ComponentDef
     }
 
 preprocessorLine
-    = '#' (!__.)* __
+    = ('#' (!__.)* __)
+    / ('typedef' (!';' .)* ';' __)
+    / ('using' (!';' .)* ';' __)
     {
         return {
             type: 'IGNORE',
@@ -44,25 +46,46 @@ preprocessorLine
 memberList
     = (property / comment / method)
 
+propertyTypes = 
+  "int" /
+  "script" /
+  "point" /
+  "ResolverType" /
+  "TileLayer" /
+  "string" /
+  "SDL_Texture" /
+  "EID" /
+  "bool"
+
 property
-= property:("int" / "json" / "TileLayer" / "string" / "SDL_Texture" / "EID" / "bool" )
-  subtype:("/*" $(!"*/" .)* "*/")?
+= property:propertyTypes
   " "
   pointer:"*"?
   name:($(!(';' / ' = ').)*)
   value:(' = ' ($(!';'.)*))?
   ';'
 {
-     const v = value? value[1] : null;
-     const s = subtype? subtype[1] : null;
-
-     return {
-            type: property,
-            subtype: s,
-            pointer: !!(pointer),
-            value: (property === 'bool') ? (v === 'true') : v,
-            name: name,
+  const v = (function() {
+    if (!value) {
+      if (['int', 'ResolverType'].includes(property)) return 0;
+      if (property === 'string') return '';
+      if (property === 'point') return {x: 0, y: 0};
+      if (property === 'bool') return false;
     }
+    else {
+      if (['int', 'ResolverType'].includes(property)) return parseInt(value[1]);
+      if (property === 'string') return value[1];
+      if (property === 'bool') return value[1] === 'true';
+    }
+    return null;
+  })();
+
+  return {
+    type: property,
+    pointer: !!(pointer),
+    value: v,
+    name: name,
+  }
 }
 
 comment
