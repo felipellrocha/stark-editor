@@ -216,21 +216,19 @@ class component extends PureComponent {
     return (
       <div key={key}>
         <h3>{ name }</h3>
-        <div
+        <Grid
+          data={data}
+          grid={grid}
+          className={styles.cancelEvents}
+          simpleTiles
+          selectorGrid
+
           onMouseMove={event => this.handleSelectTile(event, index, tileset)}
           onMouseDown={event => this.handleMouseDown(event, index, tileset)}
           onMouseUp={this.handleMouseUp}
           onDragStart={noop}
           onDrop={noop}
-        >
-          <Grid
-            data={data}
-            grid={grid}
-            className={styles.cancelEvents}
-            simpleTiles
-            selectorGrid
-          />
-        </div>
+        />
       </div>
     );
   }

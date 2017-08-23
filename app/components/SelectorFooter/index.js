@@ -20,6 +20,7 @@ import {
   openFile,
   changeZoom,
   changeTilingMethod,
+  toggleHideGrid,
 } from 'actions';
 
 import styles from './styles.css';
@@ -28,12 +29,21 @@ class component extends PureComponent {
   constructor(props) {
     super(props);
 
-    this._handleClear = this._handleClear.bind(this);
-    this._handleChangeZoom = this._handleChangeZoom.bind(this);
-    this._handleChangeTileMethod = this._handleChangeTileMethod.bind(this);
+    this.handleClear = this.handleClear.bind(this);
+    this.handleChangeZoom = this.handleChangeZoom.bind(this);
+    this.handleChangeTileMethod = this.handleChangeTileMethod.bind(this);
+    this.handleGrid = this.handleGrid.bind(this);
   }
 
-  _handleChangeTileMethod(value) {
+  handleGrid() {
+    const {
+      dispatch,
+    } = this.props;
+
+    dispatch(toggleHideGrid());
+  }
+
+  handleChangeTileMethod(value) {
     const {
       dispatch,
     } = this.props;
@@ -41,7 +51,7 @@ class component extends PureComponent {
     dispatch(changeTilingMethod(value));
   }
 
-  _handleChangeZoom(e) {
+  handleChangeZoom(e) {
     const {
       dispatch,
     } = this.props;
@@ -49,7 +59,7 @@ class component extends PureComponent {
     dispatch(changeZoom(e.target.value));
   }
 
-  _handleClear() {
+  handleClear() {
     const {
       dispatch,
     } = this.props;
@@ -63,6 +73,7 @@ class component extends PureComponent {
         setIndex,
         tileIndex,
       ],
+      hideGrid,
       zoom,
       selectedAction,
       className,
@@ -74,21 +85,25 @@ class component extends PureComponent {
       <div className={classes}>
         <div className="left">
           <Tile setIndex={setIndex} tileIndex={tileIndex} className={styles.tile} />
-          <div className="clear" onClick={this._handleClear}>
+          <div className="clear" onClick={this.handleClear}>
             <InlineSVG className={styles.icon} icon="cross" /> Clear tile selection
+          </div>
+          <div className="clear" onClick={this.handleGrid}>
+            <InlineSVG className={ hideGrid && styles.selectedIcon } icon="page-break" />
+            {hideGrid ? 'Show' : 'Hide' } grid
           </div>
         </div>
         <div className="middle">
           <div>
             <div>Zoom</div>
-            <input type="range" min="0" max="1" step="0.05" value={zoom} onChange={this._handleChangeZoom} />
+            <input type="range" min="0" max="1" step="0.05" value={zoom} onChange={this.handleChangeZoom} />
           </div>
         </div>
         <div className="right">
-          <a onClick={() => this._handleChangeTileMethod('put')}>
+          <a onClick={() => this.handleChangeTileMethod('put')}>
             <InlineSVG icon="pencil" className={ selectedAction === 'put' && styles.selectedIcon } />
           </a>
-          <a onClick={() => this._handleChangeTileMethod('paint')}>
+          <a onClick={() => this.handleChangeTileMethod('paint')}>
             <InlineSVG icon="drop" className={ selectedAction === 'paint' && styles.selectedIcon } />
           </a>
         </div>
@@ -102,6 +117,7 @@ export default compose(
     selectedTile: state.global.selectedTile,
     selectedAction: state.global.selectedAction,
     zoom: state.global.zoom,
+    hideGrid: state.global.hideGrid,
   })),
   withRouter,
 )(component);

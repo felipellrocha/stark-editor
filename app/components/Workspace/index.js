@@ -94,6 +94,7 @@ class component extends PureComponent {
               grid={grid}
               data={layer.data}
               className={styles.stack}
+              togglableGrid
             />
           )
         })}

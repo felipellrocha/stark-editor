@@ -106,6 +106,8 @@
 }
 
 :local(.cancelEvents) {
-  cursor: pointer;
-  pointer-events: none;
+  .row {
+    cursor: pointer;
+    pointer-events: none;
+  }
 }

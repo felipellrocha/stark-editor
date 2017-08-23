@@ -1,6 +1,4 @@
 :local(.component) {
-  border-right: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
   box-sizing: border-box;
 
   &:last-child {
@@ -11,6 +9,11 @@
   &:hover {
     background: #eee;
   }
+}
+
+:local(.grid) {
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
 }
 
 :local(.entity) {

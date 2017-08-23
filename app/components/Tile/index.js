@@ -72,9 +72,12 @@ class component extends PureComponent {
       className,
       basepath,
       data,
+      hideGrid,
     } = this.props;
 
-    const classes = classnames(styles.component, className);
+    const classes = classnames(styles.component, className, {
+      [styles.grid]: !(togglableGrid && hideGrid),
+    });
 
     const tileset = tilesets[setIndex];
     const terrain = tileset.terrains[tileIndex];
@@ -136,7 +139,7 @@ class component extends PureComponent {
     };
 
     return (
-      <div style={style} onDragStart={noop} onDrop={noop} />
+      <div style={style}/>
     )
   }
 
@@ -147,13 +150,16 @@ class component extends PureComponent {
       tileIndex: id,
       entities,
       className,
+      hideGrid,
+      togglableGrid,
     } = this.props;
 
     const classes = classnames(
       styles.component,
       styles.entity,
-      className,
-    );
+      className, {
+      [styles.grid]: !(togglableGrid && hideGrid),
+    });
 
     const style = {
       height: tile.height,
@@ -180,10 +186,13 @@ class component extends PureComponent {
       className,
       basepath,
       selected,
+      hideGrid,
+      togglableGrid,
     } = this.props;
 
     const classes = classnames(styles.component, className, {
       [styles.selected]: selected,
+      [styles.grid]: !(togglableGrid && hideGrid),
     });
 
     const tileset = tilesets[setIndex];
@@ -210,6 +219,8 @@ class component extends PureComponent {
       className,
       tile,
       selected,
+      hideGrid,
+      togglableGrid,
     } = this.props;
 
     const style = {
@@ -219,6 +230,7 @@ class component extends PureComponent {
 
     const classes = classnames(styles.component, className, {
       [styles.selected]: selected,
+      [styles.grid]: !(togglableGrid && hideGrid),
     });
 
     return (
@@ -258,5 +270,6 @@ export default connect(
     tilesets: state.app.tilesets,
     entities: state.app.entities,
     basepath: state.global.basepath,
+    hideGrid: state.global.hideGrid,
   }),
 )(component);

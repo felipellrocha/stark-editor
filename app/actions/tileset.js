@@ -10,6 +10,13 @@ export function viewTilesetEditor(history) {
   }
 }
 
+export const TOGGLE_HIDE_GRID = 'TOGGLE_HIDE_GRID';
+export function toggleHideGrid() {
+  return {
+    type: TOGGLE_HIDE_GRID,
+  }
+}
+
 export const CHANGE_TERRAIN = 'CHANGE_TERRAIN';
 
 export function changeTerrain(terrainType) {

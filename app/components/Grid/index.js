@@ -37,6 +37,10 @@ class component extends PureComponent {
       <div
         className={classes}
         style={{width: grid.columns * tile.width}}
+
+        onMouseMove={this.props.onMouseMove}
+        onMouseDown={this.props.onMouseDown}
+        onMouseUp={this.props.onMouseUp}
       >
         {rows.map((_, y) => {
           const columns = [...Array(grid.columns)]
@@ -62,6 +66,7 @@ class component extends PureComponent {
                     simpleTile={simpleTiles}
                     data={data}
                     selected={selectedIndexes[tileIndex]}
+                    togglableGrid={this.props.togglableGrid}
                   />
                 )
               })}

@@ -36,6 +36,7 @@ const initialState = {
   selectedAnimation: null,
   selectedFrame: 0,
   selectingShape: false,
+  hideGrid: false,
   components: [ ],
   selectedShape: {
     columns: 1,
@@ -44,6 +45,12 @@ const initialState = {
 };
 
 export default handleActions({
+  TOGGLE_HIDE_GRID: (state, action) => {
+    return {
+      ...state,
+      hideGrid: !state.hideGrid,
+    }
+  },
   RECEIVE_COMPONENTS: (state, action) => {
     return {
       ...state,
