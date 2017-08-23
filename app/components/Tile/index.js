@@ -29,6 +29,8 @@ const COLORS = [
   '#00f',
 ];
 
+function noop () { }
+
 class component extends PureComponent {
   constructor(props) {
     super(props);
@@ -40,7 +42,7 @@ class component extends PureComponent {
     this.renderSubTile = this.renderSubTile.bind(this);
   }
 
-  _dispatchAction() {
+  _dispatchAction(e) {
     const {
       setIndex,
       tileIndex,
@@ -105,7 +107,7 @@ class component extends PureComponent {
       fourTile;
     
     return (
-      <div className={classes} style={style} onClick={this._dispatchAction}>
+      <div className={classes} style={style} onClick={this._dispatchAction} onDragStart={noop} onDrop={noop}>
         { this.renderSubTile(left, top, src, tilingPackage.northWestOffset(directions)) }
         { this.renderSubTile(left, top, src, tilingPackage.northEastOffset(directions)) }
         { this.renderSubTile(left, top, src, tilingPackage.southWestOffset(directions)) }
@@ -134,7 +136,7 @@ class component extends PureComponent {
     };
 
     return (
-      <div style={style} />
+      <div style={style} onDragStart={noop} onDrop={noop} />
     )
   }
 
@@ -162,7 +164,7 @@ class component extends PureComponent {
     const entity = entities[id];
     
     return (
-      <div className={classes} style={style} onClick={this._dispatchAction}>
+      <div className={classes} style={style} onClick={this._dispatchAction} onDragStart={noop} onDrop={noop}>
         {entity.name}
       </div>
     )
@@ -177,9 +179,12 @@ class component extends PureComponent {
       grid,
       className,
       basepath,
+      selected,
     } = this.props;
 
-    const classes = classnames(styles.component, className);
+    const classes = classnames(styles.component, className, {
+      [styles.selected]: selected,
+    });
 
     const tileset = tilesets[setIndex];
 
@@ -196,7 +201,7 @@ class component extends PureComponent {
 
     
     return (
-      <div className={classes} style={style} onClick={this._dispatchAction} />
+      <div className={classes} style={style} onClick={this._dispatchAction} onDragStart={noop} onDrop={noop} />
     )
   }
 
@@ -204,6 +209,7 @@ class component extends PureComponent {
     const {
       className,
       tile,
+      selected,
     } = this.props;
 
     const style = {
@@ -211,10 +217,12 @@ class component extends PureComponent {
       width: tile.width,
     };
 
-    const classes = classnames(styles.component, className);
+    const classes = classnames(styles.component, className, {
+      [styles.selected]: selected,
+    });
 
     return (
-      <div className={classes} style={style} onClick={this._dispatchAction} />
+      <div className={classes} style={style} onClick={this._dispatchAction} onDragStart={noop} onDrop={noop} />
     )
   }
 

@@ -13,12 +13,12 @@ export default (initialState) => {
   const middleware = [];
   const enhancers = [];
 
+  // Thunk Middleware
+  middleware.push(thunk);
+
   // IPC Middleware
   const ipc = IPCMiddleware(actions);
   middleware.push(ipc);
-
-  // Thunk Middleware
-  middleware.push(thunk);
 
   // Logging Middleware
   const logger = createLogger({

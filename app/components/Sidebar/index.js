@@ -12,6 +12,11 @@ import {
 } from 'utils/constants';
 
 import {
+  IndexToXY,
+  XYToIndex,
+} from 'utils';
+
+import {
   selectTilesets,
   selectTile,
   changeLayerName,
@@ -22,6 +27,7 @@ import {
   toggleLayerVisibility,
   removeLayer,
   viewTilesetEditor,
+  receiveTileSelection,
 } from 'actions';
 
 import {
@@ -32,25 +38,36 @@ import {
 
 import styles from './styles.css';
 
+function noop () { }
+
 class component extends PureComponent {
   constructor(props) {
     super(props);
 
-    this._handleMoveLayerUp = this._handleMoveLayerUp.bind(this);
-    this._handleMoveLayerDown = this._handleMoveLayerDown.bind(this);
-    this._handleAddLayer = this._handleAddLayer.bind(this);
-    this._handleChangeLayerName = this._handleChangeLayerName.bind(this);
-    this._handleSelectTiles = this._handleSelectTiles.bind(this);
-    this._handleSelectLayer = this._handleSelectLayer.bind(this);
-    this._handleViewTilesetEditor = this._handleViewTilesetEditor.bind(this);
-    this._renderSimpleGrid = this._renderSimpleGrid.bind(this);
-    this._renderEntityGrid = this._renderEntityGrid.bind(this);
-    this._renderTerrainGrid = this._renderTerrainGrid.bind(this);
-    this._handleToggleVisibility = this._handleToggleVisibility.bind(this);
-    this._handleRemoveLayer = this._handleRemoveLayer.bind(this);
+    this.handleMoveLayerUp = this.handleMoveLayerUp.bind(this);
+    this.handleMoveLayerDown = this.handleMoveLayerDown.bind(this);
+    this.handleAddLayer = this.handleAddLayer.bind(this);
+    this.handleChangeLayerName = this.handleChangeLayerName.bind(this);
+    this.handleSelectTiles = this.handleSelectTiles.bind(this);
+    this.handleSelectLayer = this.handleSelectLayer.bind(this);
+    this.handleViewTilesetEditor = this.handleViewTilesetEditor.bind(this);
+    this.renderSimpleGrid = this.renderSimpleGrid.bind(this);
+    this.renderEntityGrid = this.renderEntityGrid.bind(this);
+    this.renderTerrainGrid = this.renderTerrainGrid.bind(this);
+    this.handleToggleVisibility = this.handleToggleVisibility.bind(this);
+    this.handleRemoveLayer = this.handleRemoveLayer.bind(this);
+
+    this.handleSelectTile = this.handleSelectTile.bind(this)
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+
+    this.state = {
+      initialIndex: 0,
+      selecting: false,
+    };
   }
 
-  _handleAddLayer() {
+  handleAddLayer() {
     const {
       dispatch,
     } = this.props;
@@ -58,7 +75,7 @@ class component extends PureComponent {
     dispatch(addLayer());
   }
 
-  _handleMoveLayerUp(layer) {
+  handleMoveLayerUp(layer) {
     const {
       dispatch,
     } = this.props;
@@ -66,7 +83,7 @@ class component extends PureComponent {
     dispatch(moveLayerUp(layer));
   }
 
-  _handleMoveLayerDown(layer) {
+  handleMoveLayerDown(layer) {
     const {
       dispatch,
     } = this.props;
@@ -74,7 +91,7 @@ class component extends PureComponent {
     dispatch(moveLayerDown(layer));
   }
 
-  _handleChangeLayerName(layer, event) {
+  handleChangeLayerName(layer, event) {
     const {
       dispatch,
     } = this.props;
@@ -82,7 +99,7 @@ class component extends PureComponent {
     dispatch(changeLayerName(layer, event.target.value));
   }
 
-  _handleSelectLayer(layer) {
+  handleSelectLayer(layer) {
     const {
       dispatch,
     } = this.props;
@@ -90,7 +107,7 @@ class component extends PureComponent {
     dispatch(selectLayer(layer));
   }
 
-  _handleRemoveLayer(layer) {
+  handleRemoveLayer(layer) {
     const {
       dispatch,
     } = this.props;
@@ -98,7 +115,7 @@ class component extends PureComponent {
     dispatch(removeLayer(layer));
   }
 
-  _handleToggleVisibility(layer) {
+  handleToggleVisibility(layer) {
     const {
       dispatch,
     } = this.props;
@@ -106,7 +123,7 @@ class component extends PureComponent {
     dispatch(toggleLayerVisibility(layer));
   }
 
-  _handleSelectTiles() {
+  handleSelectTiles() {
     const {
       dispatch,
       history,
@@ -115,7 +132,7 @@ class component extends PureComponent {
     dispatch(selectTilesets(history));
   }
 
-  _handleViewTilesetEditor() {
+  handleViewTilesetEditor() {
     const {
       dispatch,
       history,
@@ -124,7 +141,64 @@ class component extends PureComponent {
     dispatch(viewTilesetEditor(history));
   }
 
-  _renderSimpleGrid(tileset, index) {
+  handleMouseDown(e, layer, grid) {
+    const {
+      dispatch,
+      tile,
+    } = this.props;
+
+    const {
+      offsetX: x,
+      offsetY: y,
+    } = e.nativeEvent;
+
+    const index = XYToIndex(
+      Math.floor(x / tile.width),
+      Math.floor(y / tile.height),
+      grid
+    );
+
+    this.setState({
+      selecting: true,
+    });
+
+    dispatch(receiveTileSelection(index, layer, grid, index));
+  }
+
+  handleMouseUp() {
+    this.setState({
+      selecting: false,
+    });
+  }
+
+  handleSelectTile(e, layer, grid) {
+    if (!this.state.selecting && e.type !== 'click') { return }
+
+    const {
+      dispatch,
+      tile,
+    } = this.props;
+
+    const {
+      offsetX: x,
+      offsetY: y,
+    } = e.nativeEvent;
+
+    const index = XYToIndex(
+      Math.floor(x / tile.width),
+      Math.floor(y / tile.height),
+      grid
+    );
+
+    const selection = {
+      setIndex: layer,
+      tileIndex: index,
+    };
+
+    dispatch(receiveTileSelection(index, layer, grid));
+  }
+
+  renderSimpleGrid(tileset, index) {
     const {
       rows,
       columns,
@@ -142,17 +216,26 @@ class component extends PureComponent {
     return (
       <div key={key}>
         <h3>{ name }</h3>
-        <Grid
-          data={data}
-          grid={grid}
-          tileAction={selectTile}
-          simpleTiles
-        />
+        <div
+          onMouseMove={event => this.handleSelectTile(event, index, tileset)}
+          onMouseDown={event => this.handleMouseDown(event, index, tileset)}
+          onMouseUp={this.handleMouseUp}
+          onDragStart={noop}
+          onDrop={noop}
+        >
+          <Grid
+            data={data}
+            grid={grid}
+            className={styles.cancelEvents}
+            simpleTiles
+            selectorGrid
+          />
+        </div>
       </div>
     );
   }
 
-  _renderEntityGrid() {
+  renderEntityGrid() {
     const {
       entities,
     } = this.props;
@@ -173,7 +256,7 @@ class component extends PureComponent {
     );
   }
 
-  _renderTerrainGrid(tileset, index) {
+  renderTerrainGrid(tileset, index) {
     const {
       rows,
       columns,
@@ -230,53 +313,53 @@ class component extends PureComponent {
               <div
                 key={ layer.id }
                 className={classes}
-                onClick={() => this._handleSelectLayer(i)}
+                onClick={() => this.handleSelectLayer(i)}
               >
                 <input
-                  onChange={event => this._handleChangeLayerName(i, event)}
+                  onChange={event => this.handleChangeLayerName(i, event)}
                   value={ layer.name }
                 />
                 <div className="actions">
                   {i !== 0
-                    ? <InlineSVG icon='arrow-up' className="action" onClick={() => this._handleMoveLayerUp(i)} />
+                    ? <InlineSVG icon='arrow-up' className="action" onClick={() => this.handleMoveLayerUp(i)} />
                     : <div className="action" />}
                   {i !== layers.length - 1 
-                    ? <InlineSVG icon='arrow-down' className="action" onClick={() => this._handleMoveLayerDown(i)} />
+                    ? <InlineSVG icon='arrow-down' className="action" onClick={() => this.handleMoveLayerDown(i)} />
                     : <div className="action" />}
-                  <InlineSVG icon='eye' className="action" onClick={() => this._handleToggleVisibility(i)} />
-                  <InlineSVG icon='cross' className="action" onClick={() => this._handleRemoveLayer(i)} />
+                  <InlineSVG icon='eye' className="action" onClick={() => this.handleToggleVisibility(i)} />
+                  <InlineSVG icon='cross' className="action" onClick={() => this.handleRemoveLayer(i)} />
                 </div>
               </div>
             )
           })}
-          <div className="layer add" onClick={this._handleAddLayer}>
+          <div className="layer add" onClick={this.handleAddLayer}>
             <div>Add another layer</div>
             <InlineSVG icon="plus-circle" />
           </div>
         </div>
         <div className="actions separator">
-          <Button onClick={this._handleSelectTiles}>
+          <Button onClick={this.handleSelectTiles}>
             Add tilesets
           </Button>
-          <Button onClick={this._handleViewTilesetEditor}>
+          <Button onClick={this.handleViewTilesetEditor}>
             View Tileset Editor
           </Button>
         </div>
         <div className="tilesets separator">
           <div className="entities">
             <h4>Entities</h4>
-            {this._renderEntityGrid()}
+            {this.renderEntityGrid()}
           </div>
           <div className="simple">
             <h4>Tile</h4>
             { tilesets.map((tileset, index) => {
-              if (tileset.type !== 'aware') return this._renderSimpleGrid(tileset, index)
+              if (tileset.type !== 'aware') return this.renderSimpleGrid(tileset, index)
             })}
           </div>
           <div className="terrains">
             <h4>Terrains</h4>
             { tilesets.map((tileset, index) => {
-              if (tileset.type === 'aware') return this._renderTerrainGrid(tileset, index)
+              if (tileset.type === 'aware') return this.renderTerrainGrid(tileset, index)
             })}
           </div>
         </div>

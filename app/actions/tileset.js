@@ -1,4 +1,8 @@
 import electron from 'electron';
+import {
+  IndexToXY,
+  XYToIndex,
+} from 'utils';
 
 export function viewTilesetEditor(history) {
   return dispatch => {
@@ -107,6 +111,16 @@ export function selectTile(tile) {
   }
 }
 
+export const SELECT_SHAPE = 'SELECT_SHAPE';
+
+export function selectShape(columns, rows) {
+  return {
+    type: SELECT_SHAPE,
+    columns,
+    rows,
+  }
+}
+
 export const PAINT_TILE = 'PAINT_TILE';
 
 export function paintTile(tile, layer, selectedTile) {
@@ -120,12 +134,27 @@ export function paintTile(tile, layer, selectedTile) {
 
 export const PUT_DOWN_TILE = 'PUT_DOWN_TILE';
 
-export function putDownTile(tile, layer, selectedTile) {
-  return {
-    type: PUT_DOWN_TILE,
-    tile,
-    layer,
-    selectedTile,
+export function putDownTile(coordinates) {
+  return (dispatch, getState) => {
+    const {
+      app: {
+        tilesets,
+      },
+      global: {
+        selectedLayer,
+        selectedTile,
+        selectedShape,
+      },
+    } = getState();
+
+    dispatch({
+      type: PUT_DOWN_TILE,
+      tile: coordinates,
+      layer: selectedLayer,
+      tileset: tilesets[selectedTile[0]],
+      selectedTile,
+      selectedShape,
+    })
   }
 }
 
@@ -155,5 +184,41 @@ export function changeTilingMethod(method) {
   return {
     type: CHANGE_TILING_METHOD,
     method,
+  }
+}
+
+export const CHANGE_INITIAL_TILE = 'CHANGE_INITIAL_TILE';
+export function changeInitialTile(initialTileIndex) {
+  return {
+    type: CHANGE_INITIAL_TILE,
+    initialTileIndex,
+  }
+}
+
+export function receiveTileSelection(currentTileIndex, setIndex, grid, initialTileIndex) {
+  return (dispatch, getState) => {
+    if (initialTileIndex) dispatch(changeInitialTile(initialTileIndex));
+
+    const {
+      global: {
+        initialTileIndex: initial,
+      },
+    } = getState();
+
+    const [x1, y1] = IndexToXY(initial, grid);
+    const [x2, y2] = IndexToXY(currentTileIndex, grid);
+
+    const x = Math.min(x1, x2);
+    const y = Math.min(y1, y2);
+    const w = Math.abs(x1 - x2);
+    const h = Math.abs(y1 - y2);
+
+    const tileIndex = XYToIndex(x, y, grid);
+
+    dispatch(selectTile({
+      setIndex,
+      tileIndex,
+    }));
+    dispatch(selectShape(w + 1, h + 1));
   }
 }

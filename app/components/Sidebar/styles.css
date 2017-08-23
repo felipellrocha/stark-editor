@@ -104,3 +104,8 @@
     }
   }
 }
+
+:local(.cancelEvents) {
+  cursor: pointer;
+  pointer-events: none;
+}

@@ -53,7 +53,6 @@ propertyTypes =
   "ResolverType" /
   "TileLayer" /
   "string" /
-  "SDL_Texture" /
   "EID" /
   "bool"
 
@@ -64,6 +63,7 @@ property
   name:($(!(';' / ' = ').)*)
   value:(' = ' ($(!';'.)*))?
   ';'
+  isSupposedToBeNull:(_ '//private')?
 {
   const v = (function() {
     if (!value) {
@@ -81,7 +81,7 @@ property
   })();
 
   return {
-    type: property,
+    type: (!!isSupposedToBeNull) ? 'IGNORE' : property,
     pointer: !!(pointer),
     value: v,
     name: name,

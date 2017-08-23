@@ -4,7 +4,6 @@
   .row {
     display: flex;
     flex-wrap: wrap;
-    border-bottom: 1px solid #ddd;
 
     &:last-child {
       border-bottom: 0px;

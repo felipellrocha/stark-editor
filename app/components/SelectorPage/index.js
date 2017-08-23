@@ -12,7 +12,6 @@ import {
 
 
 import {
-  putDownTile,
   changeGridColumns,
   changeGridRows,
 } from 'actions';

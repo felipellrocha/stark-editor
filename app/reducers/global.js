@@ -8,6 +8,7 @@ import path from 'path';
 import electron from 'electron';
 
 import {
+  CHANGE_INITIAL_TILE,
   SAVE_FILENAME,
   LOAD_STAGE,
   UPDATE_PATHS,
@@ -26,6 +27,7 @@ const initialState = {
   basepath: electron.remote.app.getPath('home'),
   componentFilename: '',
   zoom: .5,
+  initialTile: 0,
   selectedMap: 0,
   selectedAction: 'put',
   selectedTerrainType: '6-tile',
@@ -33,7 +35,12 @@ const initialState = {
   selectedLayer: 0,
   selectedAnimation: null,
   selectedFrame: 0,
+  selectingShape: false,
   components: [ ],
+  selectedShape: {
+    columns: 1,
+    rows: 1,
+  }
 };
 
 export default handleActions({
@@ -43,6 +50,15 @@ export default handleActions({
       componentFilename: action.filename,
       components: action.components,
     }
+  },
+  SELECT_SHAPE: (state, action) => {
+    return {
+      ...state,
+      selectedShape: {
+        columns: action.columns,
+        rows: action.rows,
+      }
+    };
   },
   SELECT_MAP: (state, action) => {
     return {
@@ -64,6 +80,12 @@ export default handleActions({
   },
   SELECT_LAYER: (state, action) => {
     return Object.assign({}, state, { selectedLayer: action.layer });
+  },
+  CHANGE_INITIAL_TILE: (state, action) => {
+    return {
+      ...state,
+      initialTileIndex: action.initialTileIndex,
+    }
   },
   SELECT_TILE: (state, action) => {
     return Object.assign({}, state, { selectedTile: action.tile });

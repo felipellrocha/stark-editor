@@ -31,6 +31,11 @@ import {
   SAVE_FILENAME,
 } from 'actions';
 
+import {
+  IndexToXY,
+  XYToIndex,
+} from 'utils';
+
 export const initialState = {
   grid: {
     columns: 10,
@@ -184,11 +189,13 @@ export default handleActions({
   PUT_DOWN_TILE: (state, action) => {
     const {
       tile: {
-        x,
-        y,
+        x: x_click,
+        y: y_click,
       },
       layer,
+      tileset,
       selectedTile,
+      selectedShape,
     } = action;
 
     const {
@@ -196,18 +203,57 @@ export default handleActions({
       grid,
     } = state;
 
-    const index = (grid.columns * y) + x;
+    const index = XYToIndex(x_click, y_click, grid);
 
+    // calculate future values. Only proceed if at least
+    // one of the values is different
+    /*
+    if (
+      currentTile[0] === selectedTile[0] &&
+      currentTile[1] === selectedTile[1] &&
+      selectedShape.columns === 1 &&
+      selectedShape.rows === 1
+    ) { return state };
+    */
+
+    // create a new entire state first for performance reasons
+    const newState = {
+      ...state,
+      layers: [
+        ...state.layers.slice(0, layer),
+        {
+          ...state.layers[layer],
+          data: [
+            ...state.layers[layer].data,
+          ],
+        },
+        ...state.layers.slice(layer + 1, state.layers.length),
+      ],
+    };
+
+    const count = selectedShape.columns * selectedShape.rows;
     const currentLayer = layers[layer];
-    const currentTile = currentLayer.data[index];
+    const [x_s, y_s] = IndexToXY(selectedTile[1], tileset);
 
-    if (currentTile[0] === selectedTile[0] && currentTile[1] === selectedTile[1]) { return state };
+    [...Array(count)].forEach((_, i) => {
+      const [x_i, y_i] = IndexToXY(i, selectedShape);
 
-    const newData = arrayReplace(currentLayer.data, selectedTile, index);
-    const newLayer = Object.assign({}, currentLayer, { data: newData });
-    const newLayers = arrayReplace(state.layers, newLayer, layer);
+      const x_g = x_click + x_i;
+      const y_g = y_click + y_i;
 
-    return Object.assign({}, state, { layers: newLayers });
+      const x_t = x_s + x_i;
+      const y_t = y_s + y_i;
+
+      const gridIndex = XYToIndex(x_g, y_g, grid);
+      const tilesetIndex = XYToIndex(x_t, y_t, tileset);
+
+      newState.layers[layer].data[gridIndex] = [
+        selectedTile[0],
+        tilesetIndex,
+      ];
+    });
+
+    return newState;
   },
   LOAD_STAGE: (state, action) => {
     if (!action.tilemap) return initialState;

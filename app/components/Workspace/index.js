@@ -17,7 +17,6 @@ class component extends PureComponent {
     super(props);
 
     this._handlePutTile = this._handlePutTile.bind(this);
-    this._executePutTile = this._executePutTile.bind(this);
 
     this._handleMouseDown = this._handleMouseDown.bind(this);
     this._handleMouseUp = this._handleMouseUp.bind(this);
@@ -44,15 +43,12 @@ class component extends PureComponent {
     } = this.props;
 
     const xy = {
-      x: Math.floor(x / (tile.width + 1)),
-      y: Math.floor(y / (tile.height + 1)),
+      x: Math.floor(x / tile.width),
+      y: Math.floor(y / tile.height),
     };
 
-    if (method === 'put') dispatch(putDownTile(xy, selectedLayer, selectedTile));
+    if (method === 'put') dispatch(putDownTile(xy));
     else dispatch(paintTile(xy, selectedLayer, selectedTile));
-  }
-
-  _executePutTile(x, y) {
   }
 
   _handleMouseDown() {
@@ -77,8 +73,8 @@ class component extends PureComponent {
     } = this.props;
 
     const style = {
-      width: grid.columns * tile.width + (grid.columns - 1),
-      height: grid.rows * tile.height + (grid.rows - 1),
+      width: grid.columns * tile.width,
+      height: grid.rows * tile.height,
     }
 
     return (

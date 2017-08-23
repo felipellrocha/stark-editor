@@ -45,8 +45,8 @@ import {
 const initialState = {
   name: 'Untitled',
   tile: {
-    width: 48,
-    height: 48,
+    width: 16,
+    height: 16,
   },
   tilesets: [ ],
   sheets: [ ],

@@ -49,6 +49,8 @@ class component extends PureComponent {
         </div>
       );
     }
+    else if (field.type === 'AbilityList') {
+    }
     else if (field.type === 'bool') {
       const value = (field.value) ? field.value : false;
       return (
