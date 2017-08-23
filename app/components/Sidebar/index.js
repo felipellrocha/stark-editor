@@ -4,6 +4,8 @@ import { compose } from 'recompose';
 import classnames from 'classnames';
 import { withRouter } from 'react-router-dom'
 
+import path from 'path';
+
 import { memoize } from 'lodash';
 
 import {
@@ -285,6 +287,7 @@ class component extends PureComponent {
   render() {
     const {
       name,
+      basepath,
       maps,
       tile,
       entities,
@@ -292,9 +295,31 @@ class component extends PureComponent {
       layers,
       selectedLayer,
       selectedMap,
+      selectedTile,
+      selectedShape,
     } = this.props;
 
+    const [
+      setIndex,
+      tileIndex,
+    ] = selectedTile;
+
     const map = maps[selectedMap];
+    const tileset = tilesets[setIndex];
+    const preview = {};
+    
+    if (tileset) { 
+      const tilesetSrc = path.resolve(basepath, tileset.src);
+      const left = (tileIndex % tileset.columns) * tile.width;
+      const top = Math.floor(tileIndex / tileset.columns) * tile.height;
+      const width = tile.width * selectedShape.columns;
+      const height = tile.height * selectedShape.rows;
+
+      preview['backgroundImage'] = `url('file://${tilesetSrc}')`;
+      preview['backgroundPosition'] = `-${left}px -${top}px`;
+      preview['backgroundSize'] = `${width}px ${height}px`;
+      preview['backgroundRepeat'] = 'no-repeat';
+    }
 
     return (
       <div className={styles.component}>
@@ -360,6 +385,8 @@ class component extends PureComponent {
               if (tileset.type === 'aware') return this.renderTerrainGrid(tileset, index)
             })}
           </div>
+          <div className="preview" style={preview}>
+          </div>
         </div>
       </div>
     );
@@ -400,12 +427,16 @@ export default compose(
     tile: state.app.tile,
     entities: state.app.entities,
     tilesets: state.app.tilesets,
-    basepath: state.app.basepath,
 
     layers: state.tilemap.layers,
 
+    basepath: state.global.basepath,
+
     selectedLayer: state.global.selectedLayer,
     selectedMap: state.global.selectedMap,
+
+    selectedTile: state.global.selectedTile,
+    selectedShape: state.global.selectedShape,
   })),
   withRouter,
 )(component);

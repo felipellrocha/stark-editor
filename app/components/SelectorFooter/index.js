@@ -84,7 +84,6 @@ class component extends PureComponent {
     return (
       <div className={classes}>
         <div className="left">
-          <Tile setIndex={setIndex} tileIndex={tileIndex} className={styles.tile} />
           <div className="clear" onClick={this.handleClear}>
             <InlineSVG className={styles.icon} icon="cross" /> Clear tile selection
           </div>
