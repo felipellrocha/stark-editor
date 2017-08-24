@@ -34,6 +34,7 @@ import {
 import {
   IndexToXY,
   XYToIndex,
+  areCoordinatesInside,
 } from 'utils';
 
 export const initialState = {
@@ -233,7 +234,7 @@ export default handleActions({
 
     const count = selectedShape.columns * selectedShape.rows;
     const currentLayer = layers[layer];
-    const [x_s, y_s] = IndexToXY(selectedTile[1], tileset);
+    const [x_s, y_s] = IndexToXY(selectedTile[1], tileset || grid);
 
     [...Array(count)].forEach((_, i) => {
       const [x_i, y_i] = IndexToXY(i, selectedShape);
@@ -244,8 +245,10 @@ export default handleActions({
       const x_t = x_s + x_i;
       const y_t = y_s + y_i;
 
+      if (!areCoordinatesInside(x_g, y_g, grid)) return;
+
       const gridIndex = XYToIndex(x_g, y_g, grid);
-      const tilesetIndex = XYToIndex(x_t, y_t, tileset);
+      const tilesetIndex = XYToIndex(x_t, y_t, tileset || grid);
 
       newState.layers[layer].data[gridIndex] = [
         selectedTile[0],

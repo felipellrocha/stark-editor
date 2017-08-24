@@ -17,6 +17,7 @@ import {
 import {
   writeFile,
   selectTile,
+  selectShape,
   openFile,
   changeZoom,
   changeTilingMethod,
@@ -65,6 +66,7 @@ class component extends PureComponent {
     } = this.props;
 
     dispatch(selectTile({setIndex: EMPTY, tileIndex: 0}));
+    dispatch(selectShape(1, 1));
   }
 
   render() {

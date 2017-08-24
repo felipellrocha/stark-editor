@@ -41,7 +41,7 @@ const initialState = {
   selectedShape: {
     columns: 1,
     rows: 1,
-  }
+  },
 };
 
 export default handleActions({

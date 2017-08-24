@@ -309,16 +309,16 @@ class component extends PureComponent {
     const preview = {};
     
     if (tileset) { 
-      const tilesetSrc = path.resolve(basepath, tileset.src);
+      const src = path.resolve(basepath, tileset.src);
       const left = (tileIndex % tileset.columns) * tile.width;
       const top = Math.floor(tileIndex / tileset.columns) * tile.height;
       const width = tile.width * selectedShape.columns;
       const height = tile.height * selectedShape.rows;
 
-      preview['backgroundImage'] = `url('file://${tilesetSrc}')`;
+      preview['backgroundImage'] = `url('file://${src}')`;
       preview['backgroundPosition'] = `-${left}px -${top}px`;
-      preview['backgroundSize'] = `${width}px ${height}px`;
-      preview['backgroundRepeat'] = 'no-repeat';
+      preview['width'] = `${width}px`;
+      preview['height'] = `${height}px`;
     }
 
     return (
@@ -385,7 +385,8 @@ class component extends PureComponent {
               if (tileset.type === 'aware') return this.renderTerrainGrid(tileset, index)
             })}
           </div>
-          <div className="preview" style={preview}>
+          <div className="preview">
+            <div style={preview} />
           </div>
         </div>
       </div>
