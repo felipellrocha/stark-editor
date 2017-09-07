@@ -1,5 +1,6 @@
 :local(.component) {
   font-family: Helvetica Neue;
+  overflow: hidden;
 
   .row {
     display: flex;

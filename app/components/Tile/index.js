@@ -31,6 +31,16 @@ const COLORS = [
 
 function noop () { }
 
+const getMemberValue = (component) => (key) => component.members[key].value;
+
+const getColor = memoize(function(id) {
+
+  const str = Array.from(id);
+  const index = str.reduce((prev, c) => prev + c.charCodeAt(0), 0) % COLORS.length;
+
+  return COLORS[index];
+});
+
 class component extends PureComponent {
   constructor(props) {
     super(props);
@@ -147,11 +157,14 @@ class component extends PureComponent {
   renderEntityTile() {
     const {
       tile,
+      grid,
+      basepath,
       tileIndex: id,
       entities,
       className,
       hideGrid,
       togglableGrid,
+      workspaceGrid,
     } = this.props;
 
     const classes = classnames(
@@ -168,7 +181,31 @@ class component extends PureComponent {
     };
 
     const entity = entities[id];
-    
+    console.log(entity.components);
+
+    if (workspaceGrid)
+    entity.components.forEach(component => {
+      const member = getMemberValue(component);
+
+      switch (component.name) {
+        case 'SpriteComponent':
+          const src = path.resolve(basepath, member('src'));
+          style.height = (member('h') > 0) ? member('h') : style.height;
+          style.width = (member('w') > 0) ? member('w') : style.width;
+          style.backgroundImage = `url('file://${src}')`;
+          style.opacity = 1;
+          break;
+        case 'RenderComponent':
+          if (member('shouldTileX')) {
+            style.position = 'absolute';
+            style.right = 0;
+            style.left = 0;
+            style.width = 'auto';
+          }
+          break;
+      }
+    })
+
     return (
       <div className={classes} style={style} onClick={this._dispatchAction} onDragStart={noop} onDrop={noop}>
         {entity.name}
@@ -256,19 +293,12 @@ class component extends PureComponent {
   }
 }
 
-const getColor = memoize(function(id) {
-
-  const str = Array.from(id);
-  const index = str.reduce((prev, c) => prev + c.charCodeAt(0), 0) % COLORS.length;
-
-  return COLORS[index];
-});
-
 export default connect(
   (state, props) => ({
     tile: state.app.tile,
     tilesets: state.app.tilesets,
     entities: state.app.entities,
+    grid: state.tilemap.grid,
     basepath: state.global.basepath,
     hideGrid: state.global.hideGrid,
   }),

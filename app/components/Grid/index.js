@@ -67,6 +67,7 @@ class component extends PureComponent {
                     data={data}
                     selected={selectedIndexes[tileIndex]}
                     togglableGrid={this.props.togglableGrid}
+                    workspaceGrid={this.props.workspace}
                   />
                 )
               })}
