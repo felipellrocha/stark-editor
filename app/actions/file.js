@@ -13,7 +13,7 @@ import {
 	UUID,
 } from 'utils';
 
-export function selectTilesets(history) {
+export function selectTilesets() {
   return (dispatch, getState) => {
     const {
       app: {

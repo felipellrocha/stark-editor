@@ -128,10 +128,9 @@ class component extends PureComponent {
   handleSelectTiles() {
     const {
       dispatch,
-      history,
     } = this.props;
 
-    dispatch(selectTilesets(history));
+    dispatch(selectTilesets());
   }
 
   handleViewTilesetEditor() {
@@ -362,10 +361,10 @@ class component extends PureComponent {
         </div>
         <div className="actions separator">
           <Button onClick={this.handleSelectTiles}>
-            Add tilesets
+            Add texture
           </Button>
           <Button onClick={this.handleViewTilesetEditor}>
-            View Tileset Editor
+            View texture editor
           </Button>
         </div>
         <div className="tilesets separator">
@@ -376,7 +375,7 @@ class component extends PureComponent {
           <div className="simple">
             <h4>Tile</h4>
             { tilesets.map((tileset, index) => {
-              if (tileset.type !== 'aware') return this.renderSimpleGrid(tileset, index)
+              if (tileset.type === 'tile') return this.renderSimpleGrid(tileset, index)
             })}
           </div>
           <div className="terrains">

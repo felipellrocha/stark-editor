@@ -10,6 +10,9 @@ export default {
   'save': () => writeFile(),
   'save-as': () => writeFile(true),
   'open': openFile,
+  'textures-screen': () => () => {
+    window.location.hash = '/import';
+  },
   'entity-screen': () => () => { 
     window.location.hash = '/entity';
   },

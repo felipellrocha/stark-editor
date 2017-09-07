@@ -72,6 +72,7 @@ export default class MenuBuilder {
       label: 'Game',
       submenu: [
         { label: 'Tiling', accelerator: 'Command+T', click: () => { this.mainWindow.send('tiling-screen'); } },
+        { label: 'Textures', accelerator: 'Command+X', click: () => { this.mainWindow.send('textures-screen'); } },
         { label: 'Animations', accelerator: 'Command+Y', click: () => { this.mainWindow.send('animations-screen') } },
         { label: 'Entity', accelerator: 'Command+E', click: () => { this.mainWindow.send('entity-screen') } },
       ]

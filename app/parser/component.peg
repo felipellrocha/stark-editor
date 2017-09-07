@@ -50,6 +50,7 @@ propertyTypes =
   "int" /
   "script" /
   "point" /
+  "TextureSource" /
   "ResolverType" /
   "TileLayer" /
   "string" /

@@ -13,13 +13,14 @@ import {
 } from 'components';
 
 
-class component extends PureComponent {
+class Form extends PureComponent {
   constructor(props) {
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
     this.renderArray = this.renderArray.bind(this);
     this.renderObject = this.renderObject.bind(this);
+    this.renderInput = this.renderInput.bind(this);
   }
 
   handleChange(value, field, i) {
@@ -37,6 +38,10 @@ class component extends PureComponent {
   }
 
   renderInput(field, i) {
+    const {
+      tilesets,
+    } = this.props;
+
     if (field.type === 'int') {
       const value = field.value ? field.value : 0;
       return (
@@ -62,6 +67,20 @@ class component extends PureComponent {
           />
         </div>
       );
+    }
+    else if (field.type === 'TextureSource') {
+      const value = (field.value) ? field.value : '';
+      return (
+        <div className="value">
+          <select value={value} onChange={event => this.handleChange(event.target.value, field, i)}>
+            { tilesets.map(tileset => {
+              return (
+                <option key={tileset.src} value={tileset.src}>{tileset.name}</option>
+              );
+            })}
+          </select>
+        </div>
+      )
     }
     else if (field.type === 'ResolverType') {
       const value = field.value ? parseInt(field.value) : 0;
@@ -220,4 +239,8 @@ const toggleBit = (value, bit) => {
   return (v & bit) ? v - bit : v + bit;
 }
 
-export default component;
+export default connect(
+  state => ({
+    tilesets: state.app.tilesets,
+  }),
+)(Form);

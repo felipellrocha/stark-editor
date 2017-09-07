@@ -205,17 +205,17 @@ export default handleActions({
     } = state;
 
     const index = XYToIndex(x_click, y_click, grid);
+    const currentLayer = layers[layer];
+    const currentTile = currentLayer.data[index];
 
-    // calculate future values. Only proceed if at least
+    // TODO: calculate future values. Only proceed if at least
     // one of the values is different
-    /*
     if (
-      currentTile[0] === selectedTile[0] &&
-      currentTile[1] === selectedTile[1] &&
       selectedShape.columns === 1 &&
-      selectedShape.rows === 1
+      selectedShape.rows === 1 &&
+      currentTile[0] === selectedTile[0] &&
+      currentTile[1] === selectedTile[1]
     ) { return state };
-    */
 
     // create a new entire state first for performance reasons
     const newState = {
@@ -233,8 +233,18 @@ export default handleActions({
     };
 
     const count = selectedShape.columns * selectedShape.rows;
-    const currentLayer = layers[layer];
+
     const [x_s, y_s] = IndexToXY(selectedTile[1], tileset || grid);
+
+    // if the tileset type is not a normal tile, then we need to handle
+    // it a bit differently
+    if (selectedTile[0] < 0) {
+      const gridIndex = XYToIndex(x_click, y_click, grid);
+      const tilesetIndex = XYToIndex(x_s, y_s, grid);
+      newState.layers[layer].data[gridIndex] = selectedTile;
+
+      return newState;
+    }
 
     [...Array(count)].forEach((_, i) => {
       const [x_i, y_i] = IndexToXY(i, selectedShape);
@@ -248,7 +258,7 @@ export default handleActions({
       if (!areCoordinatesInside(x_g, y_g, grid)) return;
 
       const gridIndex = XYToIndex(x_g, y_g, grid);
-      const tilesetIndex = XYToIndex(x_t, y_t, tileset || grid);
+      const tilesetIndex = XYToIndex(x_t, y_t, tileset);
 
       newState.layers[layer].data[gridIndex] = [
         selectedTile[0],

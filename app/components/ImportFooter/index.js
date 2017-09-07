@@ -9,32 +9,20 @@ import {
 } from 'components';
 
 import {
-  writeFile,
-  openFile,
   changeTerrain,
+  selectTilesets,
 } from 'actions';
 
 import styles from './styles.css';
 
 class component extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    this._handleChangeTerrainType = this._handleChangeTerrainType.bind(this);
-  }
-
-  _handleChangeTerrainType(event) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(changeTerrain(event.target.value));
-  }
-
   render() {
     const {
       className,
       selectedTerrainType,
+
+      changeTerrainType,
+      importTextures,
     } = this.props;
 
     const classes = classnames(styles.component, className);
@@ -43,12 +31,17 @@ class component extends PureComponent {
       <div className={classes}>
         <div className="left">
           <div>Terrain type:
-            <select value={selectedTerrainType} onChange={this._handleChangeTerrainType} >
+            <select value={selectedTerrainType} onChange={changeTerrainType} >
               <option value='6-animated'>6 Type:Animated</option>
               <option value='6-tile'>6 Type</option>
               <option value='4-tile'>4 Type</option>
             </select>
           </div>
+        </div>
+        <div className="right">
+          <Button onClick={importTextures}>
+            Add texture
+          </Button>
         </div>
       </div>
     );
@@ -58,5 +51,9 @@ class component extends PureComponent {
 export default connect(
   state => ({
     selectedTerrainType: state.global.selectedTerrainType,
+  }),
+  dispatch => ({
+    changeTerrainType: (event) => dispatch(changeTerrain(event.target.value)),
+    importTextures: () => dispatch(selectTilesets()),
   }),
 )(component);

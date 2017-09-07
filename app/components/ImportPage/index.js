@@ -119,6 +119,7 @@ class component extends PureComponent {
                   <select value={tileset.type} onChange={event => this._handleChangeTilesetType(event, i)} >
                     <option value='tile'>Tile</option>
                     <option value='aware'>Aware</option>
+                    <option value='image'>Image</option>
                   </select>
                 </div>
               </div>
