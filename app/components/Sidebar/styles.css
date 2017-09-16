@@ -46,14 +46,16 @@
     padding: 5px 5px;
     font-size: 12px;
     font-weight: 100;
-    display: flex;
     justify-content: space-between;
+    border-bottom: 1px dotted #eee;
 
     .actions {
       display: flex;
       width: 50%;
+      padding-top: 5px;
 
       .action {
+        padding: 0 10px 0 0;
         flex: 0 1 25%;
       }
     }
@@ -105,6 +107,7 @@
   }
 
   .preview {
+    background: #fff;
     border-top: 1px solid #eee;
     position: fixed;
     height: 100px;

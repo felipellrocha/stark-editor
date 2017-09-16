@@ -22,6 +22,7 @@ import {
   selectTilesets,
   selectTile,
   changeLayerName,
+  changeLayerType,
   addLayer,
   moveLayerUp,
   moveLayerDown,
@@ -42,31 +43,18 @@ import styles from './styles.css';
 
 function noop () { }
 
-class component extends PureComponent {
+class LayerComponent extends PureComponent {
   constructor(props) {
     super(props);
 
+    this.handleSelectLayer = this.handleSelectLayer.bind(this);
+    this.handleChangeLayerName = this.handleChangeLayerName.bind(this);
+    this.handleChangeLayerType = this.handleChangeLayerType.bind(this);
     this.handleMoveLayerUp = this.handleMoveLayerUp.bind(this);
     this.handleMoveLayerDown = this.handleMoveLayerDown.bind(this);
-    this.handleAddLayer = this.handleAddLayer.bind(this);
-    this.handleChangeLayerName = this.handleChangeLayerName.bind(this);
-    this.handleSelectTiles = this.handleSelectTiles.bind(this);
-    this.handleSelectLayer = this.handleSelectLayer.bind(this);
-    this.handleViewTilesetEditor = this.handleViewTilesetEditor.bind(this);
-    this.renderSimpleGrid = this.renderSimpleGrid.bind(this);
-    this.renderEntityGrid = this.renderEntityGrid.bind(this);
-    this.renderTerrainGrid = this.renderTerrainGrid.bind(this);
-    this.handleToggleVisibility = this.handleToggleVisibility.bind(this);
     this.handleRemoveLayer = this.handleRemoveLayer.bind(this);
-
-    this.handleSelectTile = this.handleSelectTile.bind(this)
-    this.handleMouseDown = this.handleMouseDown.bind(this);
-    this.handleMouseUp = this.handleMouseUp.bind(this);
-
-    this.state = {
-      initialIndex: 0,
-      selecting: false,
-    };
+    this.handleAddLayer = this.handleAddLayer.bind(this);
+    this.handleToggleVisibility = this.handleToggleVisibility.bind(this);
   }
 
   handleAddLayer() {
@@ -77,52 +65,133 @@ class component extends PureComponent {
     dispatch(addLayer());
   }
 
-  handleMoveLayerUp(layer) {
+  handleMoveLayerUp() {
     const {
       dispatch,
+      index,
     } = this.props;
 
-    dispatch(moveLayerUp(layer));
+    dispatch(moveLayerUp(index));
   }
 
-  handleMoveLayerDown(layer) {
+  handleMoveLayerDown() {
     const {
       dispatch,
+      index,
     } = this.props;
 
-    dispatch(moveLayerDown(layer));
+    dispatch(moveLayerDown(index));
   }
 
-  handleChangeLayerName(layer, event) {
+  handleChangeLayerName(event) {
     const {
       dispatch,
+      index,
     } = this.props;
 
-    dispatch(changeLayerName(layer, event.target.value));
+    dispatch(changeLayerName(index, event.target.value));
   }
 
-  handleSelectLayer(layer) {
+  handleSelectLayer() {
     const {
       dispatch,
+      index,
     } = this.props;
 
-    dispatch(selectLayer(layer));
+    dispatch(selectLayer(index));
   }
 
-  handleRemoveLayer(layer) {
+  handleRemoveLayer() {
     const {
       dispatch,
+      index,
     } = this.props;
 
-    dispatch(removeLayer(layer));
+    dispatch(removeLayer(index));
   }
 
-  handleToggleVisibility(layer) {
+  handleChangeLayerType(event) {
     const {
       dispatch,
+      index,
     } = this.props;
 
-    dispatch(toggleLayerVisibility(layer));
+    dispatch(changeLayerType(index, event.target.value));
+  }
+
+  handleToggleVisibility() {
+    const {
+      dispatch,
+      index,
+    } = this.props;
+
+    dispatch(toggleLayerVisibility(index));
+  }
+
+  render() {
+    const {
+      layer,
+      index,
+      layersLength,
+      selectedLayer,
+    } = this.props;
+
+    const classes = classnames('layer', {
+      'selected': selectedLayer === index,
+      'not-visible': !layer.visible,
+    });
+
+    return (
+      <div
+        className={classes}
+        onClick={this.handleSelectLayer}
+      >
+        <input
+          onChange={this.handleChangeLayerName}
+          value={ layer.name }
+        />
+        <div className="actions">
+          {index !== 0
+            ? <InlineSVG icon='arrow-up' className="action" onClick={this.handleMoveLayerUp} />
+            : <div className="action" />}
+          {index !== layersLength - 1 
+            ? <InlineSVG icon='arrow-down' className="action" onClick={this.handleMoveLayerDown} />
+            : <div className="action" />}
+          <InlineSVG icon='eye' className="action" onClick={this.handleToggleVisibility} />
+          <InlineSVG icon='cross' className="action" onClick={this.handleRemoveLayer} />
+          <select value={layer.type} onChange={this.handleChangeLayerType}>
+            <option value='tile'>Tile</option>
+            <option value='object'>Object</option>
+          </select>
+        </div>
+      </div>
+    )
+  }
+};
+
+const Layer = connect(state => ({
+    selectedLayer: state.global.selectedLayer,
+  }),
+)(LayerComponent);
+
+class component extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.handleSelectTiles = this.handleSelectTiles.bind(this);
+    this.handleViewTilesetEditor = this.handleViewTilesetEditor.bind(this);
+    this.renderSimpleGrid = this.renderSimpleGrid.bind(this);
+    this.renderEntityGrid = this.renderEntityGrid.bind(this);
+    this.renderTerrainGrid = this.renderTerrainGrid.bind(this);
+
+    this.handleSelectTile = this.handleSelectTile.bind(this)
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+
+    this.state = {
+      initialIndex: 0,
+      selecting: false,
+    };
   }
 
   handleSelectTiles() {
@@ -319,6 +388,8 @@ class component extends PureComponent {
       preview['width'] = `${width}px`;
       preview['height'] = `${height}px`;
     }
+    
+    console.log('draw-sidebar');
 
     return (
       <div className={styles.component}>
@@ -326,33 +397,7 @@ class component extends PureComponent {
         <h2>{ map.name }</h2>
         <div className="separator">
           {layers.map((layer, i) => {
-            const classes = classnames('layer', {
-              'selected': selectedLayer === i,
-              'not-visible': !layer.visible,
-            });
-
-            return (
-              <div
-                key={ layer.id }
-                className={classes}
-                onClick={() => this.handleSelectLayer(i)}
-              >
-                <input
-                  onChange={event => this.handleChangeLayerName(i, event)}
-                  value={ layer.name }
-                />
-                <div className="actions">
-                  {i !== 0
-                    ? <InlineSVG icon='arrow-up' className="action" onClick={() => this.handleMoveLayerUp(i)} />
-                    : <div className="action" />}
-                  {i !== layers.length - 1 
-                    ? <InlineSVG icon='arrow-down' className="action" onClick={() => this.handleMoveLayerDown(i)} />
-                    : <div className="action" />}
-                  <InlineSVG icon='eye' className="action" onClick={() => this.handleToggleVisibility(i)} />
-                  <InlineSVG icon='cross' className="action" onClick={() => this.handleRemoveLayer(i)} />
-                </div>
-              </div>
-            )
+            return (<Layer layer={layer} index={i} layersLength={ layers.length } key={ layer.id } />)
           })}
           <div className="layer add" onClick={this.handleAddLayer}>
             <div>Add another layer</div>
@@ -432,7 +477,6 @@ export default compose(
 
     basepath: state.global.basepath,
 
-    selectedLayer: state.global.selectedLayer,
     selectedMap: state.global.selectedMap,
 
     selectedTile: state.global.selectedTile,

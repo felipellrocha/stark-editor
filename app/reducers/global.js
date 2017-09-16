@@ -8,6 +8,10 @@ import path from 'path';
 import electron from 'electron';
 
 import {
+  TOGGLE_HIDE_GRID,
+  RECEIVE_COMPONENTS,
+  SELECT_OBJECT,
+  SELECT_SHAPE,
   CHANGE_INITIAL_TILE,
   SAVE_FILENAME,
   LOAD_STAGE,
@@ -29,6 +33,7 @@ const initialState = {
   zoom: .5,
   initialTile: 0,
   selectedMap: 0,
+  selectedObject: null,
   selectedAction: 'put',
   selectedTerrainType: '6-tile',
   selectedTile: [EMPTY, 0],
@@ -56,6 +61,12 @@ export default handleActions({
       ...state,
       componentFilename: action.filename,
       components: action.components,
+    }
+  },
+  SELECT_OBJECT: (state, action) => {
+    return {
+      ...state,
+      selectedObject: action.id
     }
   },
   SELECT_SHAPE: (state, action) => {

@@ -1,6 +1,5 @@
 // HOC
 export App from './App'
-export Routes from './Routes'
 
 // Regular components
 export Grid from './Grid'
@@ -12,6 +11,7 @@ export ScriptDraft from './ScriptDraft'
 export InlineSVG from './InlineSVG'
 export Dialog from './Dialog'
 export Entity from './Entity'
+export Objects from './Objects'
 
 // Footers
 export SelectorFooter from './SelectorFooter'

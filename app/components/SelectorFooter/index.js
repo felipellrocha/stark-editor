@@ -21,6 +21,7 @@ import {
   openFile,
   changeZoom,
   changeTilingMethod,
+  changeEntityForObject,
   toggleHideGrid,
 } from 'actions';
 
@@ -30,83 +31,106 @@ class component extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.handleClear = this.handleClear.bind(this);
-    this.handleChangeZoom = this.handleChangeZoom.bind(this);
-    this.handleChangeTileMethod = this.handleChangeTileMethod.bind(this);
-    this.handleGrid = this.handleGrid.bind(this);
+    this.renderTile = this.renderTile.bind(this);
+    this.renderObject = this.renderObject.bind(this);
   }
 
-  handleGrid() {
+  renderTile() {
     const {
-      dispatch,
-    } = this.props;
-
-    dispatch(toggleHideGrid());
-  }
-
-  handleChangeTileMethod(value) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(changeTilingMethod(value));
-  }
-
-  handleChangeZoom(e) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(changeZoom(e.target.value));
-  }
-
-  handleClear() {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(selectTile({setIndex: EMPTY, tileIndex: 0}));
-    dispatch(selectShape(1, 1));
-  }
-
-  render() {
-    const {
-      selectedTile: [
-        setIndex,
-        tileIndex,
-      ],
       hideGrid,
-      zoom,
       selectedAction,
-      className,
-    } = this.props;
 
-    const classes = classnames(styles.component, className);
+      handleClear,
+      handleGrid,
+      handleChangeTileMethod,
+    } = this.props;
 
     return (
-      <div className={classes}>
+      <div className="actions">
         <div className="left">
-          <div className="clear" onClick={this.handleClear}>
+          <div className="clear" onClick={handleClear}>
             <InlineSVG className={styles.icon} icon="cross" /> Clear tile selection
           </div>
-          <div className="clear" onClick={this.handleGrid}>
+          <div className="clear" onClick={handleGrid}>
             <InlineSVG className={ hideGrid && styles.selectedIcon } icon="page-break" />
             {hideGrid ? 'Show' : 'Hide' } grid
           </div>
         </div>
         <div className="middle">
-          <div>
-            <div>Zoom</div>
-            <input type="range" min="0" max="1" step="0.05" value={zoom} onChange={this.handleChangeZoom} />
-          </div>
-        </div>
-        <div className="right">
-          <a onClick={() => this.handleChangeTileMethod('put')}>
+          <a onClick={() => handleChangeTileMethod('put')}>
             <InlineSVG icon="pencil" className={ selectedAction === 'put' && styles.selectedIcon } />
           </a>
-          <a onClick={() => this.handleChangeTileMethod('paint')}>
+          <a onClick={() => handleChangeTileMethod('paint')}>
             <InlineSVG icon="drop" className={ selectedAction === 'paint' && styles.selectedIcon } />
           </a>
+        </div>
+      </div>
+    )
+  }
+
+  renderObject() {
+    const {
+      entities,
+      layers,
+      selectedLayer,
+      selectedObject,
+
+      handleChangeEntity,
+    } = this.props;
+
+    const layer = layers[selectedLayer];
+    const object = layer.data[selectedObject];
+
+    return (
+      <div className="actions">
+        <div className="left">
+          <div>
+            <span>Entity:</span>
+            <select onChange={handleChangeEntity} value={object.entity}>
+              <option value="" />
+              {Object.entries(entities).map(([id, entity]) => {
+                return (
+                  <option key={id} value={id}>{entity.name}</option>
+                )
+              })}
+            </select>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  render() {
+    const {
+      className,
+      selectedLayer,
+      selectedObject,
+      layers,
+      zoom,
+
+      handleChangeZoom,
+    } = this.props;
+
+    const classes = classnames(styles.component, className);
+    const layer = layers[selectedLayer];
+
+    const leftSide = (() => {
+      if (layer.type === 'object') {
+        if (selectedObject) return this.renderObject();
+        else (<div className="actions" />);
+      } else {
+        return this.renderTile()
+      }
+    })();
+
+    return (
+      <div className={classes}>
+        { leftSide }
+        <div className="right">
+          <div>
+            <div>Zoom</div>
+            <input type="range" min="0" max="1" step="0.05" value={zoom} onChange={handleChangeZoom} />
+          </div>
         </div>
       </div>
     );
@@ -114,11 +138,27 @@ class component extends PureComponent {
 }
 
 export default compose(
-  connect(state => ({
-    selectedTile: state.global.selectedTile,
-    selectedAction: state.global.selectedAction,
-    zoom: state.global.zoom,
-    hideGrid: state.global.hideGrid,
-  })),
+  connect(
+    state => ({
+      entities: state.app.entities,
+      layers: state.tilemap.layers,
+      selectedLayer: state.global.selectedLayer,
+      selectedObject: state.global.selectedObject,
+      selectedAction: state.global.selectedAction,
+      zoom: state.global.zoom,
+      hideGrid: state.global.hideGrid,
+    }),
+
+    dispatch => ({
+      handleGrid: () => dispatch(toggleHideGrid()),
+      handleChangeTileMethod: (value) => dispatch(changeTilingMethod(value)),
+      handleChangeZoom: (e) => dispatch(changeZoom(e.target.value)),
+      handleChangeEntity: (e) => dispatch(changeEntityForObject(e.target.value)),
+      handleClear: () => {
+        dispatch(selectTile({setIndex: EMPTY, tileIndex: 0}));
+        dispatch(selectShape(1, 1));
+      }
+    }),
+  ),
   withRouter,
 )(component);

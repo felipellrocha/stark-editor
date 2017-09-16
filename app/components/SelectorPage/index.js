@@ -81,9 +81,7 @@ class component extends PureComponent {
       <div className={styles.component}>
         <Sidebar />
         <div className="work-area" style={style} >
-          <Workspace
-            layers={layers}
-          />
+          <Workspace />
         </div>
         <InlineSVG className="action columns-remove" icon="minus" onClick={this._handleRemoveColumn} />
         <InlineSVG className="action columns-add" icon="plus" onClick={this._handleAddColumn} />
@@ -100,7 +98,6 @@ export default compose(
     tile: state.app.tile,
     data: state.app.data,
     zoom: state.global.zoom,
-    layers: state.tilemap.layers,
     grid: state.tilemap.grid,
   })),
 )(component);

@@ -12,7 +12,13 @@
   justify-content: space-between;
   align-items: center;
 
-  .left, .right {
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .left, .right, .middle {
     display: flex;
     align-items: center;
     font-size: 12px;
@@ -31,6 +37,10 @@
     display: flex;
     align-items: center;
     padding-left: 10px;
+  }
+
+  select {
+    margin-left: 5px;
   }
 }
 

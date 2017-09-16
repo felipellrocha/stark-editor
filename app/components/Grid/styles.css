@@ -3,6 +3,7 @@
   overflow: hidden;
 
   .row {
+    pointer-events: none;
     display: flex;
     flex-wrap: wrap;
 

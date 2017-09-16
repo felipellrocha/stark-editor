@@ -181,7 +181,6 @@ class component extends PureComponent {
     };
 
     const entity = entities[id];
-    console.log(entity.components);
 
     if (workspaceGrid)
     entity.components.forEach(component => {
@@ -194,7 +193,11 @@ class component extends PureComponent {
           style.width = (member('w') > 0) ? member('w') : style.width;
           style.backgroundImage = `url('file://${src}')`;
           style.opacity = 1;
-          break;
+          style.backgroundColor = 'transparent';
+        break;
+        case 'DimensionComponent':
+          style.resize = 'both';
+        break;
         case 'RenderComponent':
           if (member('shouldTileX')) {
             style.position = 'absolute';
@@ -202,7 +205,13 @@ class component extends PureComponent {
             style.left = 0;
             style.width = 'auto';
           }
-          break;
+          if (member('shouldTileY')) {
+            style.position = 'absolute';
+            style.top = 0;
+            style.bottom = 0;
+            style.width = 'auto';
+          }
+        break;
       }
     })
 

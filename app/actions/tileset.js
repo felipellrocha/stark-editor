@@ -10,6 +10,15 @@ export function viewTilesetEditor(history) {
   }
 }
 
+export const CHANGE_LAYER_TYPE = 'CHANGE_LAYER_TYPE';
+export function changeLayerType(layer, layerType) {
+  return {
+    type: CHANGE_LAYER_TYPE,
+    layer,
+    layerType,
+  }
+}
+
 export const TOGGLE_HIDE_GRID = 'TOGGLE_HIDE_GRID';
 export function toggleHideGrid() {
   return {
@@ -118,6 +127,34 @@ export function selectTile(tile) {
   }
 }
 
+export const SELECT_OBJECT = 'SELECT_OBJECT';
+
+export function selectObject(id) {
+  return {
+    type: SELECT_OBJECT,
+    id,
+  }
+}
+
+export const CHANGE_ENTITY_FOR_OBJECT = 'CHANGE_ENTITY_FOR_OBJECT';
+export function changeEntityForObject(id) {
+  return (dispatch, getState) => {
+    const {
+      global: {
+        selectedObject,
+        selectedLayer,
+      }
+    } = getState();
+    
+    dispatch({
+      type: CHANGE_ENTITY_FOR_OBJECT,
+      selectedObject,
+      selectedLayer,
+      id,
+    })
+  }
+}
+
 export const SELECT_SHAPE = 'SELECT_SHAPE';
 
 export function selectShape(columns, rows) {
@@ -130,12 +167,40 @@ export function selectShape(columns, rows) {
 
 export const PAINT_TILE = 'PAINT_TILE';
 
-export function paintTile(tile, layer, selectedTile) {
-  return {
-    type: PAINT_TILE,
-    tile,
-    layer,
-    selectedTile,
+export function paintTile(tile) {
+  return (dispatch, getState) => {
+    const {
+      global: {
+        selectedLayer,
+        selectedTile,
+      },
+    } = getState();
+
+    dispatch({
+      type: PAINT_TILE,
+      tile,
+      layer: selectedLayer,
+      selectedTile,
+    })
+  }
+}
+
+export const PUT_DOWN_OBJECT = 'PUT_DOWN_OBJECT';
+
+export function putDownObject(initial, end) {
+  return (dispatch, getState) => {
+    const {
+      global: {
+        selectedLayer,
+      },
+    } = getState();
+
+    dispatch({
+      type: PUT_DOWN_OBJECT,
+      initial,
+      end,
+      selectedLayer,
+    });
   }
 }
 

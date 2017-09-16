@@ -36,3 +36,18 @@ export function compareCoordinates(c1, c2, data, grid) {
 export function compareTiles(t1, t2) {
   return t1[0] === t2[0] && t1[1] === t2[1]
 }
+
+export function makeRect(c1, c2) {
+  const x_min = Math.min(c1.x, c2.x);
+  const y_min = Math.min(c1.y, c2.y);
+
+  const x_max = Math.max(c1.x, c2.x);
+  const y_max = Math.max(c1.y, c2.y);
+
+  return {
+    x: x_min,
+    y: y_min,
+    w: x_max - x_min,
+    h: y_max - y_min,
+  }
+}

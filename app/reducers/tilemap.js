@@ -20,21 +20,25 @@ import {
   MOVE_LAYER_DOWN,
   REMOVE_LAYER,
   CHANGE_LAYER_NAME,
+  CHANGE_LAYER_TYPE,
 
   CHANGE_GRID_COLUMNS,
   CHANGE_GRID_ROWS,
 
+  PUT_DOWN_OBJECT,
   PUT_DOWN_TILE,
   PAINT_TILE,
 
   LOAD_STAGE,
   SAVE_FILENAME,
+
 } from 'actions';
 
 import {
   IndexToXY,
   XYToIndex,
   areCoordinatesInside,
+  makeRect,
 } from 'utils';
 
 export const initialState = {
@@ -45,12 +49,14 @@ export const initialState = {
   layers: [ ],
 };
 
+const generateEmptyTilemap = () => [...Array(initialState.grid.rows * initialState.grid.columns)].map((_, i) => [EMPTY, 0]);
+
 initialState.layers = ['background', 'middleground', 'foreground'].map(name => ({
   id: UUID(),
   type: 'tile',
   name: name,
   visible: true,
-  data: [...Array(initialState.grid.rows * initialState.grid.columns)].map((_, i) => [EMPTY, 0]),
+  data: generateEmptyTilemap,
 }));
 
 export default handleActions({
@@ -127,6 +133,26 @@ export default handleActions({
     return Object.assign({}, state, { layers: layers });
   },
 
+  CHANGE_LAYER_TYPE: (state, action) => {
+    const layer = state.layers[action.layer];
+    const newLayer = Object.assign({}, layer, {
+      type: action.layerType,
+      data: (action.layerType === 'object') ? [ ] : generateEmptyTilemap(),
+    });
+    const newLayers = arrayReplace(state.layers, newLayer, action.layer);
+
+    return Object.assign({}, state, { layers: newLayers });
+  },
+  CHANGE_LAYER_NAME: (state, action) => {
+    const layer = state.layers[action.layer];
+
+    if (layer.name === action.value) return state;
+
+    const newLayer = Object.assign({}, layer, { name: action.value });
+    const newLayers = arrayReplace(state.layers, newLayer, action.layer);
+
+    return Object.assign({}, state, { layers: newLayers });
+  },
   TOGGLE_LAYER_VISIBILITY: (state, action) => {
     const layer = state.layers[action.layer];
     const newLayer = Object.assign({}, layer, { visible: !layer.visible });
@@ -179,14 +205,69 @@ export default handleActions({
 
     return Object.assign({}, state, { layers: newLayers });
   },
-  CHANGE_LAYER_NAME: (state, action) => {
-    const layer = state.layers[action.layer];
-    const newLayer = Object.assign({}, layer, { name: action.value });
-    const newLayers = arrayReplace(state.layers, newLayer, action.layer);
 
-    return Object.assign({}, state, { layers: newLayers });
+  CHANGE_ENTITY_FOR_OBJECT: (state, action) => {
+    const {
+      selectedLayer,
+      selectedObject,
+      id,
+    } = action;
+
+    const layer = state.layers[selectedLayer];
+    const object = layer.data[selectedObject];
+
+    return  {
+      ...state,
+      layers: [
+        ...state.layers.slice(0, selectedLayer),
+        {
+          ...layer,
+          data: {
+            ...layer.data,
+            [selectedObject]: {
+              ...object,
+              entity: id,
+            }
+          }
+        },
+        ...state.layers.slice(selectedLayer + 1, state.layers.length),
+      ],
+    }
   },
+  PUT_DOWN_OBJECT: (state, action) => {
+    const {
+      initial,
+      end,
+      selectedLayer,
+    } = action;
 
+    const {
+      x, y, w, h,
+    } = makeRect(initial, end);
+
+    const layer = state.layers[selectedLayer];
+    const id = UUID();
+
+    return {
+      ...state,
+      layers: [
+        ...state.layers.slice(0, selectedLayer),
+        {
+          ...layer,
+          data: {
+            ...layer.data,
+            [id]: {
+              id,
+              rect: { x, y, w, h },
+              components: [],
+              entity: '',
+            }
+          },
+        },
+        ...state.layers.slice(selectedLayer + 1, state.layers.length),
+      ]
+    };
+  },
   PUT_DOWN_TILE: (state, action) => {
     const {
       tile: {
@@ -273,19 +354,21 @@ export default handleActions({
 
     // clean up integers
     action.tilemap.layers = action.tilemap.layers.map(layer => {
-      const data = layer.data.map(t => {
-        const [set, tile] = t;
+      const data = (layer.type === 'object') ?
+        layer.data :
+        layer.data.map(t => {
+          const [set, tile] = t;
 
-        const setIndex = parseInt(set);
-        const tileIndex = parseInt(tile);
-        
-        if (set !== -2) return [setIndex, tileIndex];
-        else return [setIndex, tile];
-      });
+          const setIndex = parseInt(set);
+          const tileIndex = parseInt(tile);
+          
+          if (set !== -2) return [setIndex, tileIndex];
+          else return [setIndex, tile];
+        });
 
-      return Object.assign({}, layer, {
-        data,
-      });
+        return Object.assign({}, layer, {
+          data,
+        });
     });
     // clean up integers
 
@@ -294,15 +377,17 @@ export default handleActions({
   SAVE_FILENAME: (state, action) => {
     // clean up integers
     const layers = state.layers.map(layer => {
-      const data = layer.data.map(t => {
-        const [set, tile] = t;
+      const data = (layer.type === 'object') ?
+        layer.data :
+        layer.data.map(t => {
+          const [set, tile] = t;
 
-        const setIndex = parseInt(set);
-        const tileIndex = parseInt(tile);
-        
-        if (set !== -2) return [setIndex, tileIndex];
-        else return [setIndex, tile];
-      });
+          const setIndex = parseInt(set);
+          const tileIndex = parseInt(tile);
+          
+          if (set !== -2) return [setIndex, tileIndex];
+          else return [setIndex, tile];
+        });
 
       return Object.assign({}, layer, {
         data,

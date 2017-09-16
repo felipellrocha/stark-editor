@@ -15,7 +15,65 @@ import {
   Tile,
 } from 'components';
 
-class component extends PureComponent {
+function noop () { }
+
+class Grid extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.putTile = this.putTile.bind(this);
+
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+
+    this.state = {
+      mouseDown: false,
+    }
+  }
+
+  putTile(e) {
+    if (!this.state.mouseDown && e.type !== 'click') { return }
+
+    this.props.onMouseMove(e);
+
+    const {
+      offsetX: x,
+      offsetY: y,
+    } = e.nativeEvent;
+
+    const {
+      dispatch,
+      tile,
+      method,
+      selectedLayer,
+      selectedTile,
+      actionMethod,
+    } = this.props;
+
+    const xy = {
+      x: Math.floor(x / tile.width),
+      y: Math.floor(y / tile.height),
+    };
+
+    if (actionMethod) dispatch(actionMethod(xy));
+  }
+
+  onMouseDown(e) {
+    this.setState({
+      mouseDown: true,
+    });
+
+    this.props.onMouseDown(e);
+  }
+
+  onMouseUp(e) {
+    this.setState({
+      mouseDown: false,
+    });
+
+    this.props.onMouseUp(e);
+  }
+
   render() {
     const {
       tile,
@@ -38,9 +96,9 @@ class component extends PureComponent {
         className={classes}
         style={{width: grid.columns * tile.width}}
 
-        onMouseMove={this.props.onMouseMove}
-        onMouseDown={this.props.onMouseDown}
-        onMouseUp={this.props.onMouseUp}
+        onMouseMove={this.putTile}
+        onMouseDown={this.onMouseDown}
+        onMouseUp={this.onMouseUp}
       >
         {rows.map((_, y) => {
           const columns = [...Array(grid.columns)]
@@ -78,6 +136,14 @@ class component extends PureComponent {
     );
   }
 }
+
+Grid.defaultProps = {
+  actionMethod: noop,
+  onMouseUp: noop,
+  onMouseDown: noop,
+  onMouseMove: noop,
+};
+
 const getSelectedIndexes = function(selectedShape, selectedTile, grid) {
   if (!selectedShape || !selectedTile) return {};
 
@@ -112,4 +178,4 @@ export default connect(
         selectedShape: state.global.selectedShape,
       }) : data;
   },
-)(component);
+)(Grid);
