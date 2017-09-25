@@ -4,6 +4,8 @@ import { compose } from 'recompose';
 import classnames from 'classnames';
 import { withRouter } from 'react-router-dom'
 
+import path from 'path';
+
 import { memoize } from 'lodash';
 
 import {
@@ -11,6 +13,7 @@ import {
   addAnimation,
   selectAnimation,
   changeAnimationName,
+  changeAnimationSpritesheet,
   changeAnimationFrameLength,
 } from 'actions';
 
@@ -22,60 +25,13 @@ import {
 
 import styles from './styles.css';
 
-class component extends PureComponent {
+class AnimationSidebar extends PureComponent {
   constructor(props) {
     super(props);
-
-    this.toggleDialog = this.toggleDialog.bind(this);
-    this.addSpriteSheet = this.addSpriteSheet.bind(this);
-    this.addAnimation = this.addAnimation.bind(this);
-    this.selectAnimation = this.selectAnimation.bind(this);
-    this.changeAnimationName = this.changeAnimationName.bind(this);
-    this.changeAnimationFrameLength = this.changeAnimationFrameLength.bind(this);
 
     this.state = {
       dialogIsOpen: false,
     };
-  }
-
-  changeAnimationFrameLength(name, event) {
-    event.stopPropagation();
-
-    const {
-      dispatch,
-    } = this.props;
-
-    const length = event.target.value;
-
-    dispatch(changeAnimationFrameLength(name, length));
-  }
-
-  changeAnimationName(oldName, event) {
-    event.stopPropagation();
-
-    const {
-      dispatch,
-    } = this.props;
-
-    const newName = event.target.value;
-
-    dispatch(changeAnimationName(oldName, newName));
-  }
-
-  selectAnimation(name) {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(selectAnimation(name));
-  }
-
-  addSpriteSheet() {
-    const {
-      dispatch,
-    } = this.props;
-
-    dispatch(selectSpriteSheets());
   }
 
   toggleDialog() {
@@ -84,28 +40,17 @@ class component extends PureComponent {
     }))
   }
 
-  addAnimation() {
-    const {
-      dispatch,
-    } = this.props;
-
-    const name = this.animationName.value;
-
-    if (!name) return;
-
-    dispatch(addAnimation(name));
-
-    this.setState(state => ({
-      dialogIsOpen: false,
-    }))
-    this.animationName.value = "";
-  }
-
   render() {
     const {
       sheets,
       animations,
       selectedAnimation,
+
+      addAnimation,
+      selectAnimation,
+      changeAnimationName,
+      changeAnimationSpritesheet,
+      changeAnimationFrameLength,
     } = this.props;
 
     return (
@@ -124,14 +69,14 @@ class component extends PureComponent {
               <div
                 className={classes}
                 key={animation.id}
-                onClick={() => this.selectAnimation(key)}
+                onClick={() => selectAnimation(key)}
               >
                 <div>
                   <label>Name:</label>
                   <input
                     type="text"
                     value={key}
-                    onChange={event => this.changeAnimationName(key, event)}
+                    onChange={event => changeAnimationName(key, event.target.value)}
                   />
                 </div>
                 <div>
@@ -139,15 +84,19 @@ class component extends PureComponent {
                   <input
                     type="number"
                     value={animation.numberOfFrames}
-                    onChange={event => this.changeAnimationFrameLength(key, event)}
+                    onChange={event => changeAnimationFrameLength(key, event.target.value)}
                   />
                 </div>
                 <div>
                   <label>Sheet:</label>
                   <select
                     type="select"
+                    value={animation.spritesheet}
+                    onChange={event => changeAnimationSpritesheet(key, event.target.value)}
                   >
-                    {sheets.map((sheet, i) => (<option value={i}>{sheet}</option>))}
+                    {sheets.map((sheet, i) => {
+                      return (<option key={sheet.src} value={i}>{sheet.name}</option>);
+                    })}
                   </select>
                 </div>
               </div>
@@ -159,21 +108,10 @@ class component extends PureComponent {
           </div>
         </div>
         <div className="sheets">
-          <h3>Import Sprite sheets</h3>
-          <Button onClick={this.addSpriteSheet}>
-            Add sprite sheet
-          </Button>
-          {sheets.map(sheet => {
-            return (
-              <div>
-                <img src={sheet} />
-              </div>
-            )
-          })}
         </div>
         <Dialog
           visible={this.state.dialogIsOpen}
-          onContinue={this.addAnimation}
+          onContinue={addAnimation}
           onCancel={this.toggleDialog}
         >
           What is the name of the animation?
@@ -184,11 +122,33 @@ class component extends PureComponent {
   }
 }
 
+const mapStateToProps = (state) => ({
+  sheets: state.app.tilesets,
+  animations: state.app.animations,
+  selectedAnimation: state.global.selectedAnimation,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  changeAnimationFrameLength: (name, value) => dispatch(changeAnimationFrameLength(name, value)),
+  changeAnimationName: (name, value) => dispatch(changeAnimationName(name, value)),
+  changeAnimationSpritesheet: (name, value) => dispatch(changeAnimationSpritesheet(name, value)),
+  selectAnimation: (name) => dispatch(selectAnimation(name)),
+  addAnimation: () => {
+    const name = this.animationName.value;
+
+    if (!name) return;
+
+    dispatch(addAnimation(name));
+
+    this.setState(state => ({
+      dialogIsOpen: false,
+    }))
+    this.animationName.value = "";
+  }
+});
+
+
 export default compose(
-  connect(state => ({
-    sheets: state.app.sheets,
-    animations: state.app.animations,
-    selectedAnimation: state.global.selectedAnimation,
-  })),
+  connect(mapStateToProps, mapDispatchToProps),
   withRouter,
-)(component);
+)(AnimationSidebar);

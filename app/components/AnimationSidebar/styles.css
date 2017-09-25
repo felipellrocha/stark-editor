@@ -24,6 +24,10 @@
     padding: 10px 0;
   }
 
+  .sheets img {
+    max-width: 100%;
+  }
+
   .animation {
     padding: 5px 5px;
     font-size: 12px;

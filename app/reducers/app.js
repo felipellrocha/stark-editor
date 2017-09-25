@@ -19,6 +19,7 @@ import {
   ADD_ANIMATION,
   CHANGE_ANIMATION_NAME,
   CHANGE_ANIMATION_FRAME_LENGTH,
+  CHANGE_ANIMATION_SPRITESHEET,
   MOVE_SPRITE,
   CREATE_KEYFRAME,
   DELETE_KEYFRAME,
@@ -210,6 +211,18 @@ export default handleActions({
       },
     }
   },
+  CHANGE_ANIMATION_SPRITESHEET: (state, action) => {
+    return {
+      ...state,
+      animations: {
+        ...state.animations,
+        [action.name]: {
+          ...state.animations[action.name],
+          spritesheet: parseInt(action.sheet),
+        },
+      },
+    }
+  },
   CHANGE_ANIMATION_NAME: (state, action) => {
     const {
       animations: {
@@ -287,14 +300,6 @@ export default handleActions({
 
     const frame = state.animations[selectedAnimation].keyframes[selectedFrame];
 
-    let x = frame.x;
-    let y = frame.y;
-
-    if (coord === 'ArrowUp') y += 1;
-    if (coord === 'ArrowRight') x += 1;
-    if (coord === 'ArrowDown') y -= 1;
-    if (coord === 'ArrowLeft') x -= 1;
-    
     return {
       ...state,
       animations: {
@@ -305,8 +310,7 @@ export default handleActions({
             ...state.animations[selectedAnimation].keyframes,
             [selectedFrame]: {
               ...state.animations[selectedAnimation].keyframes[selectedFrame],
-              x,
-              y,
+              ...coord,
             }
           }
         }

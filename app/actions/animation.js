@@ -35,7 +35,6 @@ export function addAnimation(name) {
 }
 
 export const CHANGE_ANIMATION_FRAME_LENGTH = 'CHANGE_ANIMATION_FRAME_LENGTH';
-
 export function changeAnimationFrameLength(name, numberOfFrames) {
   return {
     type: CHANGE_ANIMATION_FRAME_LENGTH,
@@ -45,7 +44,6 @@ export function changeAnimationFrameLength(name, numberOfFrames) {
 }
 
 export const CHANGE_ANIMATION_NAME = 'CHANGE_ANIMATION_NAME';
-
 export function changeAnimationName(name, newName) {
   return {
     type: CHANGE_ANIMATION_NAME,
@@ -54,8 +52,16 @@ export function changeAnimationName(name, newName) {
   }
 }
 
-export const SELECT_ANIMATION = 'SELECT_ANIMATION';
+export const CHANGE_ANIMATION_SPRITESHEET = 'CHANGE_ANIMATION_SPRITESHEET';
+export function changeAnimationSpritesheet(name, sheet) {
+  return {
+    type: CHANGE_ANIMATION_SPRITESHEET,
+    name,
+    sheet,
+  }
+}
 
+export const SELECT_ANIMATION = 'SELECT_ANIMATION';
 export function selectAnimation(name) {
   return {
     type: SELECT_ANIMATION,
@@ -64,7 +70,6 @@ export function selectAnimation(name) {
 }
 
 export const SELECT_FRAME = 'SELECT_FRAME';
-
 export function selectFrame(index) {
   return {
     type: SELECT_FRAME,
@@ -74,32 +79,75 @@ export function selectFrame(index) {
 
 export const DELETE_KEYFRAME = 'DELETE_KEYFRAME';
 
-export function deleteKeyframe(selectedAnimation, selectedFrame) {
-  return {
-    type: DELETE_KEYFRAME,
-    selectedAnimation,
-    selectedFrame,
+export function deleteKeyframe(selectedFrame) {
+  return (dispatch, getState) => {
+    const {
+      global: {
+        selectedAnimation,
+      },
+    } = getState();
+
+    dispatch({
+      type: DELETE_KEYFRAME,
+      selectedAnimation,
+      selectedFrame,
+    });
   }
 }
 
 export const CREATE_KEYFRAME = 'CREATE_KEYFRAME';
+export function createKeyframe(clone) {
+  return (dispatch, getState) => {
+    const {
+      global: {
+        selectedAnimation,
+        selectedFrame,
+      },
+    } = getState();
 
-export function createKeyframe(selectedAnimation, selectedFrame, clone) {
-  return {
-    type: CREATE_KEYFRAME,
-    selectedAnimation,
-    selectedFrame,
-    clone,
+    dispatch({
+      type: CREATE_KEYFRAME,
+      selectedAnimation,
+      selectedFrame,
+      clone,
+    });
   }
 }
 
 export const MOVE_SPRITE = 'MOVE_SPRITE';
+export function moveSprite(coord) {
+  return (dispatch, getState) => {
+    const {
+      global: {
+        selectedAnimation,
+        selectedFrame,
+      },
+    } = getState();
 
-export function moveSprite(selectedAnimation, selectedFrame, coord) {
-  return {
-    type: MOVE_SPRITE,
-    selectedAnimation,
-    selectedFrame,
-    coord,
+    dispatch({
+      type: MOVE_SPRITE,
+      selectedAnimation,
+      selectedFrame,
+      coord,
+    });
+  }
+}
+
+export const RESIZE_SPRITE = 'RESIZE_SPRITE';
+export function resizeSprite(coord) {
+  return (dispatch, getState) => {
+    const {
+      global: {
+        selectedAnimation,
+        selectedFrame,
+      },
+    } = getState();
+
+    dispatch({
+      type: RESIZE_SPRITE,
+      selectedAnimation,
+      selectedFrame,
+      coord,
+    });
   }
 }

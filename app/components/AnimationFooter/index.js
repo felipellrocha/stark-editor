@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { compose } from 'recompose';
@@ -13,21 +13,22 @@ import {
 import {
   selectFrame,
   deleteKeyframe,
+  moveSprite,
 } from 'actions';
+
+import { getFrame } from 'utils';
 
 import styles from './styles.css';
 import button from 'components/Button/styles.css';
 
-class component extends PureComponent {
+class AnimationFooter extends Component {
   constructor(props) {
     super(props);
 
-    this.selectFrame = this.selectFrame.bind(this);
     this.toggleAnimation = this.toggleAnimation.bind(this);
     this.toggleContextMenu = this.toggleContextMenu.bind(this);
-    this.deleteKeyframe = this.deleteKeyframe.bind(this);
     this.isKeyframe = this.isKeyframe.bind(this);
-    this.animate = this.animate.bind(this);
+    this.animate =  this.animate.bind(this);
 
     this.animation = null;
     this.state = {
@@ -36,26 +37,18 @@ class component extends PureComponent {
     };
   }
 
-  deleteKeyframe() {
+  animate() {
     const {
-      dispatch,
+      selectedFrame,
       selectedAnimation,
-    } = this.props;
-    
-    const {
-      contextIndex,
-    } = this.state;
-
-    dispatch(deleteKeyframe(selectedAnimation, contextIndex));
-    this.toggleContextMenu(-1, event);
-  }
-
-  selectFrame(index) {
-    const {
+      animations,
       dispatch,
     } = this.props;
 
-    dispatch(selectFrame(index));
+    const animation = animations[selectedAnimation];
+    if (!animation) return;
+
+    dispatch(selectFrame((selectedFrame + 1) % animation.numberOfFrames));
   }
 
   toggleContextMenu(index, event) {
@@ -94,30 +87,27 @@ class component extends PureComponent {
     return !!(keyframe);
   }
 
-  animate() {
-    const {
-      dispatch,
-      selectedFrame,
-      selectedAnimation,
-      animations,
-    } = this.props;
-
-    const animation = animations[selectedAnimation];
-
-    if (!animation) return;
-
-    dispatch(selectFrame((selectedFrame + 1) % animation.numberOfFrames));
-  }
-
   render() {
     const {
       animations,
       selectedAnimation,
       selectedFrame,
       animating,
+
+      deleteKeyframe,
+      selectFrame,
+      animate,
+
+      changeX,
+      changeY,
+      changeW,
+      changeH,
     } = this.props;
     
     const animation = animations[selectedAnimation];
+    const frame = animation ? getFrame(animation.keyframes, selectedFrame) : undefined;
+    console.log(frame);
+
     const frameCount = (animation && animation.numberOfFrames) ? animation.numberOfFrames : 0;
 
     const classes = classnames(styles.component);
@@ -127,31 +117,42 @@ class component extends PureComponent {
     return (
       <div className={classes}>
         <div className="left">
-          {arr.map((_, i) => {
-            const classes = classnames('frame', {
-              keyframe: !!(animation.keyframes[i]),
-              selected: i === selectedFrame,
-            });
+          <div className="frames">
+            {arr.map((_, i) => {
+              const classes = classnames('frame', {
+                keyframe: !!(animation.keyframes[i]),
+                selected: i === selectedFrame,
+              });
 
-            return (
-              <div
-                className={classes}
-                onClick={() => this.selectFrame(i)}
-                onContextMenu={event => this.toggleContextMenu(i, event)}
-              >
-                <div className="indicator" />
-              </div>
-            )
-          })}
+              return (
+                <div
+                  key={i}
+                  className={classes}
+                  onClick={() => selectFrame(i)}
+                  onContextMenu={event => this.toggleContextMenu(i, event)}
+                >
+                  <div className="indicator" />
+                </div>
+              )
+            })}
+          </div>
           <InlineSVG className={animating && 'animating'} icon="play" onClick={this.toggleAnimation} />
         </div>
+        {(animation && frame) &&
+          <div className="right">
+            <span>X: <input type="number" value={frame.x} onChange={changeX} /></span>
+            <span>Y: <input type="number" value={frame.y} onChange={changeY} /></span>
+            <span>Width: <input type="number" value={frame.w} onChange={changeW} /></span>
+            <span>Height: <input type="number" value={frame.h} onChange={changeH} /></span>
+          </div>
+        }
         <Dialog
           visible={this.state.contextIndex >= 0}
           onCancel={event => this.toggleContextMenu(-1, event)}
         >
           <div className="menu">
             <Button
-              onClick={this.deleteKeyframe}
+              onClick={deleteKeyframe}
               className={classnames(button.full, button.frame)}
               disabled={!this.isKeyframe(this.state.contextIndex)}
             >
@@ -164,12 +165,47 @@ class component extends PureComponent {
   }
 }
 
-export default compose(
-  connect(state => ({
-    animations: state.app.animations,
+const mapStateToProps = state => ({
+  animations: state.app.animations,
 
-    selectedAnimation: state.global.selectedAnimation,
-    selectedFrame: state.global.selectedFrame,
-  })),
+  selectedAnimation: state.global.selectedAnimation,
+  selectedFrame: state.global.selectedFrame,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatch,
+  changeX: (event) => {
+    const value = event.target.value;
+    const coord = { x: parseInt(value) };
+    dispatch(moveSprite(coord));
+  },
+  changeY: (event) => {
+    const value = event.target.value;
+    const coord = { y: parseInt(value) };
+    dispatch(moveSprite(coord));
+  },
+  changeW: (event) => {
+    const value = event.target.value;
+    const coord = { w: parseInt(value) };
+    dispatch(moveSprite(coord));
+  },
+  changeH: (event) => {
+    const value = event.target.value;
+    const coord = { h: parseInt(value) };
+    dispatch(moveSprite(coord));
+  },
+  deleteKeyframe: () => {
+    const {
+      contextIndex,
+    } = this.state;
+
+    dispatch(deleteKeyframe(contextIndex));
+    this.toggleContextMenu(-1, event);
+  },
+  selectFrame: (index) =>  dispatch(selectFrame(index)),
+});
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
   withRouter,
-)(component);
+)(AnimationFooter);
